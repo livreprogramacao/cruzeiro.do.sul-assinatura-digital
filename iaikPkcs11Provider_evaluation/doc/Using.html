@@ -1,0 +1,1279 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+  <HEAD>
+    <TITLE>IAIK JCE Provider for PKCS#11</TITLE>
+    <META NAME="Keywords" CONTENT="IAIK, Java, Security, Hardware, JCA, JCE, PKCS#11, Cryptoki, Signature, Encryption, Decryption, Cryptography">
+    <META NAME="Description" CONTENT="A Java JCA/JCE Provider that uses PKCS#11 compatible Cryptographic Tokens">
+  </HEAD>
+  <BODY>
+
+    <TABLE BORDER=0>
+      <TR>
+        <TD><IMG SRC="images/siclogo.jpg" ALT="SIC Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD><IMG SRC="images/iaik_logo.gif" ALT="IAIK Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD>
+          <H2>Using the IAIK JCE Provider for PKCS#11</H2>
+        </TD>
+      </TR>
+    </TABLE>
+
+    <h2>Table of Contents</h2>
+    <H3><a href="#Introduction">Introduction</a></H3>
+    <H3><a href="#Configuration">Configuration of the Provider</a></H3>
+    <H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#GlobalConfiguration">Global Configuration</a></H4>
+    <H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#StaticRegistration">Static Provider Registration</a></H4>
+    <H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#DynamicRegistration">Dynamic Provider Registration</a></H4>
+    <H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Unregister">Unregister a Provider</a></H4>
+    <H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Properties">Configuration Properties</a></H4>
+    <H5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#SlotSelection">Slot Selection</a></H5>
+    <H5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#ExampleProperties">Example Properties File</a></H5>
+    <H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Algorithms">Algorithms</a></H4>
+    <H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#DelegateProvider">Delegate Provider</a></H4>
+    <H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LoginManager">Login Manager</a></H4>
+    <H5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#DefaultLoginManagerExampleProperties">Example Properties File for the Default Login Manager</a></H5>
+
+    <H3><a href="#Keys">Handling of Keys</a></H3>
+    <H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#KeyGenerators">Key-Pair Generators and Secret Key Generators</a></H4>
+    <H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#KeyStores">The Handling of KeyStores</a></H4>
+    <H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#MultipleProviders">Using multiple providers/modules parallel</a></H4>
+    <H3><a href="#Authentication">User Authentication - Prompting the PIN</a></H3>
+    <H3><a href="#Random">The Secure Random</a></H3>
+    <H3><a href="#Path">The Library Path</a></H3>
+    <H3><a href="#Protected">Protected Methods and Member Variables</a></H3>
+    <H3><a href="#Recommend">Recommended Use</a></H3>
+		<H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Recommend_SecureToken">As Secure Token</a></H4>
+		<H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Recommend_JSSE">JSSE</a></H4>
+		<H4>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Recommend_IAIK">IAIK Libraries</a></H4>
+    <H3><a href="#Demo">A Simple RSA Signing Demo</a></H3>
+
+    <hr>
+
+    <H2><a name="Introduction"></a>Introduction</H2>
+      <p>This is a cryptographic service provider for Java. It uses a 
+			<A HREF="http://www.rsasecurity.com/rsalabs/pkcs/pkcs-11/index.html">PKCS#11
+			</A> token to process the cryptographic operations 
+      like signature creation or decryption. This allows accessing cryptographic 
+      hardware, which provides a PKCS#11 compliant library, through the standard 
+      JCA/JCE API of Java. Most cryptographic hardware products support PKCS#11 
+      - hardware security modules as well as smart cards.
+      <p>The library implements a 
+			<A HREF="http://java.sun.com/products/jce/">JCE</A> provider as specified 
+			by SUN. This document assumes that the reader is familiar with the general 
+      concepts of the JCA and JCE architecture. The PKCS#11 module that it uses 
+      is configurable via properties. It is possible to configure the provider 
+      statically or dynamically at runtime. To access the PKCS#11 module of the 
+      cryptographic token, this library uses the 
+			<A HREF="http://jcewww.iaik.graz.ac.at/download/evaluation/index.php#PKCS11Wrapper">
+			IAIK PKCS#11 Wrapper</A>. To give the provider a quick test run, have
+			a look at the <a href="QuickStart.html">Quick Start Guide</a>.
+      <p>It is even possible to install several such PKCS#11 JCE providers in 
+      parallel. For instance, this allows generation of keys on a hardware 
+			security module and downloading them to a smart card in a single 
+			application.
+      <p>Using a PKCS#11 provider, private keys which reside on a protected 
+      hardware token (e.g. a smart card or a hardware security module[HSM]) 
+      appear as usual key objects as known from Java. These key objects are 
+      constructed in a manner that allows them to operate even with keys which 
+      are not extractable from the token. The application can list the available 
+      keys through a PKCS#11 key store. Such a key store reflects the keys and 
+      certificates which are on the underlying cryptographic token.
+      <p>Key objects of the PKCS#11 provider represent keys which actually 
+      reside in a cryptographic hardware token. With respect to this, these keys 
+      differ from software keys. If an application uses a key for signing, the 
+      PKCS#11 provider does not transfer the key to the Java VM. It rather sends 
+      the input data to the token and tells the token to perform the signature 
+      creation with the specified key. In this case, the signature key never 
+      leaves the token. The input data travels to the key and the algorithm 
+      implementation, which both reside on the token. The PKCS#11 provider can 
+      convert certain key types to software keys on demand; for example public 
+      keys. For private and secret keys, this is usually impossible. This 
+      implies that an application which works with PKCS#11 keys should take care 
+      to use an algorithm implementation from the same JCE provider instance 
+      from which it got the key object. For instance, if the application gets a 
+      private RSA key object from a <code>PKCS11</code> key store of the 
+      provider <code>IAIK PKCS#11:1</code>, it should also get the 
+      <code>java.security.Signature</code> object from the same provider 
+      instance. If it instantiates the <code>java.security.Signature</code> 
+      object through a simple 
+      <code>java.security.Signature.getInstance("SHA1withRSA")</code> call, it 
+      may end up with a software RSA signature implementation. A software 
+      implementation will be unable to handle a hardware key. If the application 
+      tries to use this PKCS#11 private key object with this signature 
+      implementation, it will cause an 
+      <code>java.lang.UnsupportedOperationException</code> with the message 
+      <i>"Private Exponent value is sensitive."</i>. Thus, an application must 
+      ensure that it always gets the algorithm implementation from the same 
+      provider instance from which it got the key objects. 
+
+    <H2><a name="Configuration"></a>Configuration of the Provider</H2>
+      <p>Before you can start to configure the PKCS#11 provider, you should have 
+      installed it. Please, refer to the <A HREF="Install.html">installation</A> 
+      part of the documentation.
+      <p>The configuration consists roughly of two steps: the registration of 
+      the provider(s) to the Java runtime environment (called provider installation
+      in the JCA/JCE terminology) and the internal 
+      configuration of the provider and its instances. In general, all 
+      configuration settings can be provided statically through properties files 
+      as well as through the API at runtime by the application. The settings in 
+      the properties files provides the default values. Values provided through 
+      the API override these default values.
+      <p>Each instance of this provider binds to exactly one PKCS#11 slot of one 
+      module (driver). One PKCS#11 slot usually represents a smart card reader 
+      slot or a slot for a hardware module. Once, the provider is bound to a 
+      slot it only works with cryptographic tokens in this slot. The provider can 
+      be configured two ways - static or dynamic, or even with a combination of 
+      them, if multiple instances of the provider are used. Please notice that 
+      you do not need to use both types. It is sufficient to use one of these 
+      two methods.<br>
+      The multiple instances of this provider only differ in their name. The 
+      name of the n-th instance of this provider is
+      <pre><code>  IAIK PKCS#11:&lt;n></code></pre>
+      <p>where <code>&lt;n></code> is the number of the instance. For example, 
+      the second instance of this provider would have the name
+      <pre><code>  IAIK PKCS#11:2</code></pre>
+      <p>This counter in the provider's name covers statically configured 
+      instances and dynamically created instances likewise. Keep in mind that 
+      this counter has nothing to do with the overall number of JCE providers in 
+      Java, it refers only to instances of this implementation. Moreover, in 
+      general there is no relation between this instance counter and the 
+      provider order in Java; this is, this instance counter is not related to 
+      the array indices returned by 
+      <code>java.security.Security.getProviders()</code>.
+
+      <H3><a name="GlobalConfiguration"></a>Global Configuration</H3>
+        <p>The global configuration file that holds common configuration data is 
+        stored in the properties file 
+        <code>iaik/pkcs/pkcs11/provider/IAIKPkcs11Global.properties</code>, 
+        which can reside anywhere in the CLASSPATH.
+        <p><b>Attention!</b> Please note that if the provider JAR file is in the 
+        <code>lib/ext</code> directory, all properties file must also be
+        in a JAR file in this directory. Otherwise the system classloader,
+        which usually loads resources from this directory, will not find 
+        them. The system classloader does not search the application classpath.
+        This holds for other configuration properties files as well.
+        <p>The default file, which 
+        resides in the <code>iaik/pkcs/pkcs11/provider/default</code> directory 
+        of the provider's jar file, contains something like this
+<pre><code>  enableSoftwareDelegation = true
+  globalDelegateProvider = iaik.pkcs.pkcs11.provider.DefaultDelegateProvider
+  globalKeyHandler = iaik.pkcs.pkcs11.provider.DefaultKeyHandler
+  providerInstance.1=iaik/pkcs/pkcs11/provider/IAIKPkcs11_SmartCard.properties
+</code></pre>
+        <p>The entry <code>enableSoftwareDelegation</code> defines if the 
+        provider may use a delegate software-provider implementation to process 
+        operations, if the operation cannot be performed by the token. Note that 
+        this property is global to all provider instances. This delegation 
+        feature is supported by Ciphers, KeyAgreements, MACs, SecureRandoms, 
+        Signatures and Hashes.
+        <p>
+        The application can influence the delegation, if the software delegation 
+        is enabled. Setting the <code>globalDelegateProvider</code> property, 
+        the application can define its own delegation provider. This entry is 
+        the full qualified class name, where the class must implement the 
+        interface <code>iaik.pkcs.pkcs11.provider.DelegateProvider</code>. Note 
+        that this is the delegate provider used by engine classes that do not 
+        know to which provider instance they belong. For example, this occurs 
+        with engine classes that have not been initialized with a key object 
+        yet, because several engine classes can only get a provider instance 
+        through the key object. However, if an engine class knows to which 
+        provider instance it belongs, it does not use the global delegate 
+        provider any longer but rather its own delegate provider. The following 
+        sections show how to configure this.
+        <p>
+        The <a name="KeyHandler"><code>globalKeyHandler</code></a> property 
+				specifies the key handler.
+        The provider creates an instance of this class and uses it to handle
+        keys which are passed to crypto operations of this provider. 
+        Each crypto operation object of this provider calls the corresponding
+        method of this handler. The handler method may import the provided
+        key into the PKCS#11 token if it is a software key. The configured
+        key handler class must implement the 
+        <code>iaik.pkcs.pkcs11.provider.KeyHandler</code> interface. The
+        provider uses the default implementation of this interface if the
+        application did not specify a different. This class is
+        <code>iaik.pkcs.pkcs11.provider.DefaultKeyHandler</code>. It 
+        implements such an automatic key import feature, which is switched
+        off by default. To switch this feature on, the application can call
+<pre><code>  ((DefaultKeyHandler) IAIKPkcs11.getGlobalKeyHandler()).setAutoConversion(true)
+</code></pre>
+        Alternatively, developers can provide a properties file called
+				<code>iaik/pkcs/pkcs11/provider/DefaultKeyHandler.properties</code>. 
+				The default key handler class reads this properties file at class
+				initialization time. It can contain a boolean entry called
+				<code>AUTO_CONVERSION</code>. Setting it to <code>true</code> enables
+				the automatic key import feature.
+<pre><code>  AUTO_CONVERSION = true
+</code></pre>
+				Calling <code>setAutoConversion(true)</code> is not required in addition. 
+				However, such a method call has always higher priority than the value
+				configured in the properties file.
+				<p>
+        When developers use this feature, they should take care to always keep
+        the keys in the right key stores. The PKCS#11 provider will accept pure
+        software keys and import them on demand. The existence of these software
+        copies of the key may diminish security of the overall system. To
+        keep the keys always on a hardware token, application must correctly 
+        use keys of the PKCS#11 provider.
+				<p>
+				Enabling the automatic key conversion feature may increase the system
+				performance. However, this is not always the case. In fact, in many
+				cases the performance of symmetric key operations and hash functions
+				in a crypto hardware is lower than in software in the Java VM. 
+				Developers who aim at maximum performance should carefully test the
+				performance and not inconsiderately delegate all crypto operations to
+				the hardware token.  
+        <p>
+        The <code>providerInstance.1</code> entry defines that the first 
+        instance of this provider should read its configuration from the 
+        properties file 
+        <code>iaik/pkcs/pkcs11/provider/IAIKPkcs11_SmartCard.properties</code>. 
+        For further instances of the provider the properties con be specified 
+        analogous setting <code>providerInstance.2</code>, 
+        <code>providerInstance.3</code> and so on.
+        If there is no properties file specified for a certain instance, the 
+        default file 
+        <code>iaik/pkcs/pkcs11/provider/IAIKPkcs11.properties</code> is used 
+        instead. It is allowed that two or more provider instances share one and 
+        the same properties file, if there is no <code>SLOT_ID</code> specified 
+        in the properties file and if the specified 
+        <code>PKCS11_NATIVE_MODULE</code> provides at least as many slots as 
+        there are provider instances; i.e. each provider needs it own slot. It 
+        is impossible to bind two different provider instances to the same slot 
+        of the same library.
+        
+      <H3><a name="StaticRegistration"></a>Static Provider Registration</H3>
+        <p>The static registration of providers uses the provider installation 
+        mechanism from Java. You simply add this provider one or more times to 
+        the list in the <code>jre/lib/security/java.security</code>. This list 
+        may look like this for Java VMs up to version 1.3.x (for 1.4.x see the 
+        note below)
+<pre><code>  #
+  # List of providers and their preference orders:
+  #
+  security.provider.1=sun.security.provider.Sun
+  security.provider.2=com.sun.rsajca.Provider
+  security.provider.3=iaik.pkcs.pkcs11.provider.IAIKPkcs11
+  security.provider.4=iaik.pkcs.pkcs11.provider.IAIKPkcs11
+</code></pre>
+        <p>This means that here are two instances of our provider installed. 
+        These instances have the name <code>IAIK PKCS#11:1</code> for the 
+        provider at position three and <code>IAIK PKCS#11:2</code> for the 
+        provider at position four. But how can these two providers know which 
+        PKCS#11 module to use each?
+        <p>The multiple providers first look into the properties of the file 
+        <code>iaik/pkcs/pkcs11/provider/IAIKPkcs11Global.properties</code>, 
+        which can reside anywhere in the CLASSPATH. This file may contain 
+        something like this
+<pre><code>  providerInstance.1=iaik/pkcs/pkcs11/provider/firstInstance.properties
+  providerInstance.2=iaik/pkcs/pkcs11/provider/secondInstance.properties
+</code></pre>
+        <p>Out of this file, each instance reads which configuration to use. 
+        Each instance knows which instance number it has. For example, the 
+        second instance of our provider would read its configuration from the 
+        properties file 
+        <code>iaik/pkcs/pkcs11/provider/secondInstance.properties</code>, which 
+        can also reside anywhere in the CLASSPATH. In the simplest case, the 
+        content of this configuration file may look as follows.
+<pre><code>  PKCS11_NATIVE_MODULE = eTPkcs11.dll
+</code></pre>
+        <p>This means that the second provider uses the PKCS#11 module 
+        <code>eTPkcs11.dll</code>, which is the PKCS#11 module for Safenet eToken. 
+        However, there are several other properties that can 
+        be configured. The default settings for all properties are in the file 
+        <code>iaik/pkcs/pkcs11/provider/default/IAIKPkcs11.properties</code>. 
+        All of the properties in this file can be overridden by the 
+        configuration for the specific instance of the provider. The application 
+        should provide its own properties files and add them in the CLASSPATH. 
+        You even must not modify the provider's jar file, if you use the signed 
+        file. This would break the signature. Have a look at batch files for 
+        running the demos, they show how to include own properties files 
+        correctly.
+        <p>The Java VMs of the versions 1.4.x have a bug that prevents 
+        registering the same provider class more than once. They simply ignore 
+        all additional occurrences silently. As a workaround, we included 
+        additional subclasses of the <code>IAIKPkcs11</code> provider which are 
+        called <code>IAIKPkcs112</code>, <code>IAIKPkcs112</code> and 
+        <code>IAIKPkcs113</code>. You can use these class names for the second, 
+        third and fourth provider. Your 
+        <code>jre/lib/security/java.security</code> file may look like this
+<pre><code>  #
+  # List of providers and their preference orders:
+  #
+  security.provider.1=sun.security.provider.Sun
+  security.provider.2=com.sun.rsajca.Provider
+  security.provider.3=iaik.pkcs.pkcs11.provider.IAIKPkcs11
+  security.provider.4=iaik.pkcs.pkcs11.provider.IAIKPkcs112
+</code></pre>
+        <p>The effect is exactly the same as before. You may choose to use this 
+        solution also for VM of version 1.3.x and below; it also works there. So 
+        you can use the same configuration for all VMs.
+        <p>If the provider has been registered statically as just explained,
+        the Java Runtime will instantiate a provider instance during VM startup.
+        To get a reference to this provider instance, the application can use
+<pre><code>  IAIKPkcs11 pkcs11provider = (IAIKPkcs11) Security.getProvider("IAIK PKCS#11:1");
+</code></pre>
+or 
+<pre><code>  IAIKPkcs11 pkcs11provider = IAIKPkcs11.getProviderInstance(1);
+</code></pre>
+        The name <code>IAIK PKCS#11:1</code> and the instance counter <code>1</code> 
+        select the first provider instance. It may vary if you have configured 
+        more than one provider.
+
+      <H3><a name="DynamicRegistration"></a>Dynamic Provider Registration</H3>
+        <p>For dynamic registration using 
+        <code>Security.addProvider(Provider)</code> or 
+        <code>Security.insertProvider(Provider, int)</code> the situation is similar. Especially, if the application 
+        instantiates the providers using the default constructor <code>new 
+        IAIKPkcs11()</code>. Then the same mechanism applies than for static 
+        registration; this means, if the application instantiates two providers 
+        by calling <code>new IAIKPkcs11()</code> two times, these instances read 
+        their configuration file out of the 
+        <code>iaik/pkcs/pkcs11/provider/IAIKPkcs11GlobalInstance.properties
+        </code> file as seen with static configuration. Notice, that the instance 
+        counter counts all instances, statically registration and dynamically 
+        created. The counter does not decrease, if an instance gets garbage 
+        collected. The statically configured providers always come before any 
+        dynamically created.
+        <p>The second way to create a provider dynamically is using the 
+        constructor <code>new IAIKPkcs11(Properties configuration)</code>. The 
+        application can provide configuration properties that override the 
+        statically configured properties for this instance. However, the 
+        provider will use the static configuration for this instance 
+        nevertheless in case the given properties do not specify a required 
+        property - it still uses the static configuration as default. The 
+        contents of the configuration properties provided to the constructor 
+        follow exactly the same rules as shown for the static case.
+        
+      <H3><a name="Unregister"></a>Unregister a Provider</H3>
+        <p>Removing a registered provider can be accomplished by calling <code>IAIKPkcs11.discardProviderInstance(Provider);</code>.
+        This performs a clean shutdown of the specified provider. Acquired tokens and slots are released, all managed sessions are closed. Further, the specified provider is unregistered from the JCA framework.</p>
+
+      <H3><a name="Properties"></a>Configuration Properties</H3>
+        <p>Now we have a look at the configuration properties. Each instance of the IAIKPkcs11 provider need such properties to initialize itself properly. As already explained, these properties can be provided by static configuration or directly to the constructor. The application may omit any entry it likes, the provider will search in the default configuration properties for such entries.
+        <p>If you do not know exactly what features your PKCS#11 module offers, you should run the <code>GetInfo</code> demo which comes with this library. Its output provides valuable information about the module, its available slots and tokens, the supported cryptographic mechanisms and the objects on the tokens.
+        <p>The possible entries in such a properties object are as follows. <code>PKCS11_NATIVE_MODULE</code> is the only required entry, all other entries are optional.
+        <ul>
+          <li>
+            <p><b>PKCS11_NATIVE_MODULE</b>
+            <br>The value of this property is a string, more precisely the  name
+            of a library. The value of  this entry is the native PKCS#11  module
+            of the cryptographic  hardware. It may  be necessary to  provide the
+            file with the full path, if the module is not in the search path  of
+            the system.<br>
+            Note, if you have a 64-bit PKCS#11 module of your crypto hardware, you 
+            must also use the 64-bit versions of the Wrapper native library,
+            and you must also use a 64-bit Java VM 
+            (e.g. <code>java -d64 ...</code>)<br>
+            <b>Default</b>: <code>&lt;not set&gt;</code><br>
+            <b>Use</b>: <code><b>required</b></code><br>
+            <b>Format</b>: <code>file name</code> (remind to use double backslashes "\\" in the path)<br>
+            <b>Examples</b>: <code>cs2_pkcs11.dll</code> (for Utimaco CryptoServer LAN)<br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cryptoki.dll</code> (for SafeNet ProtectServer and Safenet Luna)<br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eTPkcs11.dll</code> (for Safenet eToken)<br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bp201w32HSM.dll</code> (for AEP Networks Keyper)<br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cknfast.dll</code> (for nCipher nFast or nShield)<br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;softokn3.dll</code> (for the Mozilla or Netscape crypto module, see also next property)<br>
+            &nbsp;</p>
+          </li>
+
+          <li>
+            <p><b>PKCS11_WRAPPER_PATH</b>
+            <br>With this property you can specify the path to the native library of the IAIK PKCS#11 Wrapper.
+            The native library can also be added to the library path by using the VM argument -Djava.library.path.
+            If the native library is neither configured here nor can be found in the library path, it will be loaded from 
+            the wrapper jar file.
+            <br>
+            <b>Default</b>: <code>&lt;not set&gt;</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>file name</code> (remind to use double backslashes "\\" in the path)<br>
+            <b>Examples</b>: <code>C:\\Development\\Pkcs11Provider\\lib\\win32\\pkcs11wrapper.dll</code>
+          </li>
+
+          <li>
+            <p><b>MODULE_INITIALIZATION_PARAMETERS</b>
+            <br>With this property, it is possible to pass parameters to the PKCS#11 module during module initialization.
+               The provider will append a null termination to it before passing it to the module.<br> 
+               This non-standard option has been allowed to enable access to Netscape and Mozilla key modules.
+               <br>
+            <b>Default</b>: <code>&lt;not set&gt;</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a string</code> (remind to use double backslashes "\\" to get a single backslash '\' in the actual string)<br>
+            <b>Examples</b>: <code>configdir='C:/Documents\\ and\\ Settings/mmustermann/Application\\ Data/Mozilla/Profiles/default/cfxcrpru.slt' certPrefix='' keyPrefix='' secmod='secmod.db'</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;configdir='/u/relyea/.netscape' certprefix='' secmod='secmod.db'</code><br><br>
+            &nbsp;</p>
+          </li>
+
+          <li>
+            <p><b>SLOT_ID</b>
+            <br>
+            This property identifies the slot, i.e. a physical card reader.
+            <br>
+            There are different ways to refer to a slot. First, there is the 
+            unique slot ID of the PKCS#11 module. The ID is a positive integer 
+            and depends on the PKCS#11 module, and it is not for sure that the 
+            available IDs correspond to the number of available hardware slots. 
+            You may use the GetSlotList demo to get the ID of a slot [e.g. card 
+            reader]. 
+            <br>
+            The second way to address a slot is by its index in the list of all 
+            available slots. The index is zero or a positive integer, and it is 
+            written in square brackets. The index starts with zero for the first 
+            slot, e.g. <code>[1]</code> refers to the second slot in the list of 
+            all available slots of this module.
+            <br>
+            If you omit this property, the provider uses the first unused slot 
+            with a token present; if there is no token available, it uses the 
+            first unused slot it finds at all (even if there is currently no 
+            token inserted). If it finds a slot that is not already used by 
+            another instance of this provider, this instance uses this slot. The 
+            respective slot is remembered as used by this new instance. No two 
+            instances of this provider will (and will not try to) bind to the 
+            same slot of the same PKCS#11 module.<br>
+            <b>Default</b>: <code>&lt;not set&gt;</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>n</code> or <code>[n]</code><br>
+            where n is an integer >= 0<br>
+            <b>Examples</b>: <code>1</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1000</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1]</code><br>
+            &nbsp;</p>
+          </li>
+
+          <li>
+            <p><b>USER_PIN</b>
+            <br>With this entry, it is possible to hardcode the user PIN for the PKCS#11 token. If this entry is set, the provider will pass this PIN to the login manager upon a login attempt. It up to the configured login manager, if it really uses this PIN for login; the default login manager uses it. If this entry is not set, the login manager may try to get the PIN for example from the user via a user interface dialog.<br>
+            <b>Default</b>: <code>&lt;not set&gt;</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a string</code> (note that leading and trailing spaces are cut off unless they are escaped with a backslash)<br>
+            <b>Examples</b>: <code>1234</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ super# passphrase\ </code> (note the space after the second backslash)<br>
+            &nbsp;</p>
+          </li>
+
+          <li>
+            <p><b>LOGIN_KEYSTORE_SESSION_ON_DEMAND</b>
+            <br>This is a boolean property. If it is set to true, the key store 
+                will operate using a public session as long as possible. This may 
+                help preventing a PIN-prompt before the actual cryptographic 
+                operation starts.<br>
+                Please note that this can lead to problems with certain token 
+                configurations. This may result in the token key store not 
+                reflecting the complete contents of the token correctly. So 
+                please use this property with special care. Verify carefully if 
+                it works with your tokens.<br>
+            <b>Default</b>: <code>false</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>true</code> or <code>false</code><br>
+            <b>Examples</b>: <code>false</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true</code><br>
+            &nbsp;</p>
+          </li>
+
+          <li>
+            <p><b>KEY_STORE_SUPPORT_PROVIDER</b>
+            <br>This is the name of a JCA provider. The PKCS#11 key store uses this provider to hash certificates and to create key factories and secret key factories; it is not used to parse certificates, the IAIK certificate classes are rather used directly, because of its better support for certificate extensions. It uses these factories to create key specs. This provider is no longer used by engine classes to get a software delegate. They rather use the new delegation feature, which can be configured via the <code>DELEGATE_PROVIDER</code> entry and the <code>globalDelegateProvider</code> in the global configuration.<br>
+            <b>Default</b>: <code>&lt;not set&gt;</code> (means that JCA defaults are used)<br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a JCA provider name</code><br>
+            <b>Examples</b>: <code>IAIK</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUN</code><br>
+            &nbsp;</p>
+          </li>
+
+          <li>
+            <p><b>CHECK_MECHANISM_SUPPORTED</b>
+            <br>This feature enables the dynamic mechanism support check. If set to <code>true</code> (enabled), the provider check on request of an algorithm implementation from the JCA/JCE framework, if the currently present token supports the necessary PKCS#11 mechanism to process this algorithm. If the currently present token does not support the required mechanism or if there is currently no token present, the provider does not report this algorithm to the JCA/JCE framework; the behavior is, as if this algorithm does not exist in the provider. However, this feature does not add any additional algorithms than those listed in the properties configured with the <code>ALGORITHM_PROPERTIES</code> property; this means, this feature just disables those algorithms that are not supported by the currently present token.<br>
+            Please note that this feature may not work as expected with Java 5 (also known as JDK 1.5). This is caused by a fundamental change in the implementation instantiation mechanism of the Java Cryptography Architecture (JCA).<br> 
+            <b>Default</b>: <code>false</code> (disabled)<br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>true</code> or <code>false</code><br>
+            <b>Examples</b>: <code>false</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true</code><br>
+            &nbsp;</p>
+          </li>
+          
+          <li>
+          	<p><b>USE_UTF8_ENCODING</b>
+         		<br>Set the character encoding that shall be used to read and save character array attributes (e.g. labels) and PINs.<br>
+					  <b>Default</b>: <code>true</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>true</code> or <code>false</code><br>
+            <b>Examples</b>: <code>false</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true</code><br>
+            &nbsp;</p>
+            </li>
+
+          <li>
+            <p><b>DELEGATE_PROVIDER</b>
+            <br>This is the handler that provides the implementations for delegate engines. If software delegation is enabled in general, an engine object of this provider asks this handler for an implementation of an algorithm to which it can delegate the job. An engine class can only use this handler, if it knows to which provider instance it belongs. If it does not know, it uses the global delegate provider.<br>
+            <b>Default</b>: <code>iaik.pkcs.pkcs11.provider.DefaultDelegateProvider</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a qualified class name</code><br>
+            <b>Examples</b>: <code>com.anycompany.project.OurIAIKPkcs11DelegateProvider</code><br>
+            &nbsp;</p>
+          </li>
+
+          <li>
+            <p><b>ALGORITHM_PROPERTIES</b>
+            <br>This entry points to a properties file that contains the algorithms list of this provider.
+            The configured file must be must be a relative path from a directory in the CLASSPATH, because this properties file is loaded via a ClassLoader.<br>
+            <b>Default</b>: <code>iaik/pkcs/pkcs11/provider/IAIKPkcs11Algorithm.properties</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a path name relative to the CLASSPATH</code> (use a slash '/' as path separator for all platforms)<br>
+            <b>Examples</b>: <code>com/anycompany/project/OurSmartCardsAlgorithms.properties</code><br>
+            &nbsp;</p>
+          </li>
+
+          <li>
+            <p><b>SESSION_POOL_MAX_SIZE</b>
+            <br>This is the maximum number of sessions to keep in the session pool of the token manager. The token manager creates sessions on demand and not in advance. This means the session pool is empty right after start. Only open sessions that are currently unused are kept in the pool to be able to reuse them on demand. This number must be equal or greater than one (1). If it is smaller, one (1) will be used instead.<br>
+            <b>Default</b>: <code>100</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a decimal integer that is greater than or equal to one (1)</code><br>
+            <b>Examples</b>: <code>5</code><br>
+            &nbsp;</p>
+          </li>
+
+          <li>
+            <p><b>LOGIN_MANAGER</b>
+            <br>This string provides the implementation class of the iaik.pkcs.pkcs11.provider.LoginManager interface. The provider uses this implementation for session login, change of the user PIN and session logout. The login manager is also responsible for prompting PINs if required. The provider does not use any other means to login sessions or prompt PINs. The login manager is the only part of the system that may prompt PINs, login sessions, change the PIN and logout sessions.<br>
+            The default login manager implementation can be configured separately (see separate section below).
+            If the module and token provides a secondary authentication mechanism (e.g. a PIN pad) the provider will use it regardless of this setting, if the <code>USE_PROTECTED_AUTHENTICATION_PATH</code> property is set to true.<br>
+            <b>Default</b>: <code>iaik.apps.util.passphrase.PassphraseDialog</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a qualified class name</code><br>
+            <b>Examples</b>: <code>iaik.apps.util.passphrase.PassphraseDialog</code><br>
+            &nbsp;</p>
+          </li>
+					
+          <li>
+            <p><b>MULTI_THREAD_INIT</b>
+            <br>This boolean entry indicates if the provider initializes the PKCS#11 module for multi-threaded operation or not.<br>
+								If this is set to true, the provider will initialize the module with <code>CKF_OS_LOCKING_OK</code> set to true.
+								If set to false, the provider will initialize the module without any argument (<code>NULL_PTR</code>).<br>
+								To safely use a PKCS#11 module with multiple threads concurrently, this must be set to true.<br>
+            <b>Default</b>: <code>true</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>true</code> or <code>false</code><br>
+            <b>Examples</b>: <code>false</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true</code><br>
+            &nbsp;</p>
+          </li>
+					
+          <li>
+            <p><b>MODULE_ALREADY_INITIALIZED</b>
+            <br>This property tells the provider what to do if initializing the
+                PKCS#11 module fails with a CKR_CRYPTOKI_ALREADY_INITIALIZED 
+                error. In applets it can happen that the browser, which often runs
+                within the same system process, has already initialized the module.
+                In this case, the PKCS#11 provider may receive an error when it 
+                tries to initialize the module.<br>
+                If this value is <code>ignore</code>, the provider will continue
+                as if the error did not happen. Please note that the module may
+                have been initialized with different parameters and not as 
+                configured for the PKCS#11 provider.<br>
+                If this property has the value <code>exception</code>, the 
+                provider will throw a <code>TokenException</code> upon 
+                provider instantiation.<br>
+            <b>Default</b>: <code>ignore</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>exception</code> or <code>ignore</code><br>
+            <b>Examples</b>: <code>ignore</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exception</code><br>
+            &nbsp;</p>
+          </li>
+          
+          <li>
+            <p><b>PKCS11_WRAPPER_NATIVE_DEBUG</b>
+             <br>  This boolean property indicates that the debug version of the 
+                 native wrapper library included in the wrapper jar file shall be used. 
+                 The library will only be loaded from the jar file if not set otherwise, i.e. 
+                 if the library is included in the search path or set with the property 
+                 PKCS11_WRAPPER_PATH.
+               <b>Default</b>: <code>false</code><br>
+               <b>Use</b>: <code>optional</code><br>
+               <b>Format</b>: <code>true</code> or <code>false</code><br>
+          </li>
+					
+        </ul>
+
+        <H4><a name="SlotSelection"></a>Slot Selection</H4>
+          <p>In certain  applications, it  is necessary  to select  the slot  or
+          token in the application at runtime. Thus, the application only wants to
+          configure the module (i.e. <code>PKCS11_NATIVE_MODULE</code>) in advance 
+          and select the slot from a list of all available slots of this module.
+          It may present the list to the user for selection, or it may select the
+          slot by investigating the properties of the slots.
+          <p>The application can  call the static  method <code>getModule</code>
+          of the <code>IAIKPkcs11</code> class. The usage is the same as for the 
+          constructors of this class. From the returned module, the application 
+          can get the list of all slots by calling <code>getSlotList</code>.
+          Calling <code>getSlotList</code> with <code>false</code> returns all
+          available slots including those that do not contain a token. Using
+          <code>true</code> returns only such slots that currently contain a
+          token. The application can call 
+          <code>getToken().getTokenInfo()</code> for each of these tokens to get
+          information.
+          <p>A typical piece of code may look like this:
+<pre><code>
+  Properties properties = new Properties();
+  properties.put("PKCS11_NATIVE_MODULE", "cryptoki.dll");
+  Module module = IAIKPkcs11.getModule(properties);
+  Slot[] slots = module.getSlotList(true);
+  TokenInfo[] infos = new TokenInfo[slots.length];
+  for (int i = 0; i < slots.length; i++) {
+    infos[i] = slots[i].getToken().getTokenInfo();
+  }
+  printTokenInfos(infos);
+  
+  if (slots.length == 0) {
+    System.err.println("No token available!");
+    return;
+  }
+  Slot selectedSlot = slots[0]; // select one slot
+  
+  properties.put("SLOT_ID", Long.toString(selectedSlot.getSlotID()));
+  
+  IAIKPkcs11 provider = new IAIKPkcs11(properties);
+  Security.addProvider(provider);
+</code></pre>          
+
+        <H4><a name="ExampleProperties"></a>Example Properties File</H4>
+          <p>This is the content of an example properties file for the provider. Remind that <code>PKCS11_NATIVE_MODULE</code> is the only required entry, all other entries are optional.
+<pre><code>  # SafeNet ProtectServer
+  PKCS11_NATIVE_MODULE =cryptoki.dll
+
+  # we do not set initialization parameters, because our PKCS#11 module does not need it.
+  # to access the private keys and certificates of mozilla or netscape we would use a string like that below.
+  # for mozilla or netscape we would set the slot to "SLOT_ID = 2", to access the private keys.
+  # MODULE_INITIALIZATION_PARAMETERS = configdir='C:/Mozilla\\ 1.3/Profiles/default/cfxcrpru.slt' certPrefix='' keyPrefix='' secmod='secmod.db'
+  
+  # the ID of the slot to use, (you may use the GetInfo demo of the PKCS#11 wrapper to get the ID of a slot [e.g. card reader])
+  # if you omit this property, the provider uses the first slot with a token present, if there is no token available, it uses
+  # the first slot it finds.
+  # SLOT_ID = 1
+
+  # if this is set to true, the keystore will operate using a public session as long as possible. this
+  # may help preventing a PIN-prompt before the actual crypto operation starts. we do not set this.
+  LOGIN_KEYSTORE_SESSION_ON_DEMAND = false
+  
+  # the key store uses this provider to hash certificates and generate key specs
+  KEY_STORE_SUPPORT_PROVIDER = IAIK
+
+  # define, if the provider should check, if a requested algorithm is supported by
+  # the underlying PKCS#11 token.
+  CHECK_MECHANISM_SUPPORTED = true
+
+  # the full qualified class name of the delegation provider
+  DELEGATE_PROVIDER = iaik.pkcs.pkcs11.provider.DefaultDelegateProvider
+
+  # the algorithms list of this provider
+  ALGORITHM_PROPERTIES = com/anycompany/project/OurSmartCardsAlgorithms.properties
+
+  # the maximum number of sessions to keep in the session pool of the token manager.
+  SESSION_POOL_MAX_SIZE = 100
+  
+  # the login manager to use for login of the user, for changing the user PIN
+  # and for logout.
+  LOGIN_MANAGER = iaik.pkcs.pkcs11.provider.DefaultLoginManager
+	
+  # initialize for multi-threaded use.
+  MULTI_THREAD_INIT = true
+	
+</code></pre>
+
+      <H3><a name="Algorithms"></a>Algorithms</H3>
+        <P>By default, the IAIK JCE Provider for PKCS#11 always registers all algorithms listed in the feature description of the documentation regardless of the supported features of any present token. One reason for this behavior is that SUN's JCE architecture does not support removing an already registered algorithm. Thus, it would not be possible to adapt the list of algorithms on demand. The mechanisms that the provider can access through PKCS#11 depend on the token currently present, and this may change at any time.
+        <P>However, the application can modify the list of algorithms that the provider registers. The provider simply reads a properties file from the CLASSPATH and registers the algorithms as listed in this file. The name of this properties file can be configured with the <code>ALGORITHM_PROPERTIES</code> entry in the provider's configuration properties.
+        The default file is <code>iaik/pkcs/pkcs11/provider/default/IAIKPkcs11Algorithm.properties</code>, which is included in the provider's jar file. It contains all algorithms listed in the <a href="Features.html">features</a> section.
+        If the application provides an own algorithms file with the name specified in the provider's configuration (default: <code>iaik/pkcs/pkcs11/provider/IAIKPkcs11Algorithm.properties</code>) in the CLASSPATH, the provider will use this file instead of the default file.
+        <P>A configuration option allows to modify the list of supported algorithms dynamically. This option can be enabled by setting the property with the key CHECK_MECHANISM_SUPPORTED. If this feature is enabled, the provider reads the list of supported algorithms as configured with the <code>ALGORITHM_PROPERTIES</code>, but it does not pass any algorithm to the JCA/JCE framework, if the currently present token does not support the required PKCS#11 mechanism or if there is currently no token present. Notice that this feature may not work as expected with every Java runtime environment; for example, most SUN VMs cache the algorithms of a provider internally in their JCA/JCE framework. This means, if the VM uses an algorithm of an provider, it expects that this algorithm is available at any time and does not request this algorithm from the provider, but rather takes the implementation class out of its own cache. Moreover, this feature may not work at all with Java 5 (also known as JDK 1.5). This is caused by a fundamental change in the implementation instantiation mechanism of the Java Cryptography Architecture (JCA).
+
+      <H3><a name="DelegateProvider"></a>Delegate Provider</H3>
+        <p>First, this provider reads all algorithms configured as described before. If the provider is configured not to check whether the token supports the mechanism (CHECK_MECHANISM_SUPPORTED entry) or if the VM bypasses this feature by using its class cache,  it would be necessary that the token really supports the mechanisms required to process this algorithm. If the token does not support the mechanism, the provider can use a software implementation to process the algorithm. We call this subsidiary implementation delegate. This is the situation for secure randoms and message digests. For ciphers, algorithm parameters, signatures, MACs, key agreements, key factories and secret key factories, the situation is similar. However, here the provider can decide to use a software implementation, if the provided input key is not a PKCS#11 key.<br>
+        To enable the software delegation, the global property <code>enableSoftwareDelegation</code> must be set to true. Then, there are two types of delegate providers that can be configured - the global delegate provider and the provider's delegate provider. The global delegate provider is used, when the implementation class of the PKCS#11 provider does not know, to which provider instance it belongs. For instance, this is the case for signature and cipher engine classes that have not been initialized with a PKCS#11 key yet, because these classes can only establish a relation to a provider instance through the PKCS#11 key object. The global delegate provider can be configured with the <code>globalDelegateProvider</code> property in the global properties file. The provider's delegate provider can be configured using the <code>DELEGATE_PROVIDER</code> property of the provider's configuration file (for example <code>iaik/pkcs/pkcs11/provider/IAIKPkcs11.properties</code>). The configured delegate provider classes must implement the <code>iaik.pkcs.pkcs11.provider.DelegateProvider</code> interface.<br>
+        There is a default implementation of the delegate provider - the <code>iaik.pkcs.pkcs11.provider.DefaultDelegateProvider</code>. The provider uses this implementation as global and local delegate provider, if no other was configured. This implementation can be configured using the <code>iaik.pkcs.pkcs11.provider.DefaultDelegateProvider.properties</code>. Within this properties, provider names can be set for the different classes of algorithms: ciphers, algorithm parameters, message digests, signatures, MACs, secure randoms, key agreements, key factories and secret key factories. Moreover, the default delegate provider tries to get an algorithm implementation from a fallback JCE provider, if the configured provider returned an implementation of the IAIKPkcs11 provider. The PKCS#11 provider will not use one of its own implementation as delegate to avoid endless loops. Seperate multiple delegation providers by a comma.
+
+      <H3><a name="LoginManager"></a>Login Manager</H3>
+        <p>The login manager is responsible for login of sessions, for changing the user PIN and for logout of sessions. The provider always calls its login manager for these tasks, and it never does any of these tasks itself. Moreover, the provider does not do any user interaction; it does not prompt any PIN for instance, this is the responsibility of the login manager. The login manager can be configured statically using the properties file of the provider, or it can be configured at runtime through the API of the provider (see the configuration section above for details).
+        <p>The default implementation of the login manager provides various features.<br>
+        The most frequently used method to authenticate the user is prompting a PIN. If the user enters the correct PIN, he is granted privileged access. In practice, there are two basically different ways to enter the PIN. The first is entering the PIN in a simple dialog box. The default login manager opens this dialog box, if a PIN is required. After the user entered the PIN, it forwards the PIN to the token. In the second method, the token has own means to authenticate the user. Most often, this is a special smart card reader with its own PIN-pad. Here, the user enters the PIN directly on the reader, and the reader sends this PIN directly to the card. This has the advantage that the PIN does not ever pass through the host (e.g. the PC). There is no way to spy out the PIN from the PC. There are even more advanced ways to authenticate the user. There are smart card readers with a fingerprint reader on it that can be used to authenticate the user in addition to a PIN or instead of a PIN. The login manager automatically detects, if a token has own means to authenticate the user and uses these if present. Thus, if such means are present the login manager uses them automatically per default; to change this behavior, see <code>USE_PROTECTED_AUTHENTICATION_PATH</code> below. However, the application can configure an own PIN dialog that should be used, if the login manager needs to prompt the PIN via a dialog. Refer to the configuration section below to see how to do this. Alternatively to using a dialog, the application can provide the PIN via the <code>load</code> method of the PKCS#11 key store. In this case the provider will pass this PIN to the login manager, and it may use it instead of prompting a PIN from the user. The default login manager does this, but alternative implementations of a login manager may decide not to use it.
+        <p>The default login manager supports prompting the PIN and changing the PIN using configurable dialogs. It comes with implementations for GUI dialogs for Java Swing and console dialogs. There are also pseudo dialogs that just pass fixed PINs without any user dialog. With its default configuration, it will always use a protected authentication path (e.g. a PIN pad or a finger print reader on the card reader) it this feature is available and supported by the underlying PKCS#11 module.<br>
+        It is possible to configure the default login manager statically with a properties file called <code>iaik/pkcs/pkcs11/provider/DefaultLoginManager.properties</code>.
+        <p>This properties file can contain the following entries. All entries are optional; the properties files can even be omitted completely, if the defaults are acceptable or if the default login manager is unused.<br>
+        <ul>
+          <li>
+            <p><b>DEFAULT_PROMPT_DIALOG</b>
+            <br>This string provides the implementation class of the <code>iaik.apps.util.passphrase.PassphrasePrompt</code> interface to use for PIN prompting. If the module and token provides a secondary authentication mechanism (e.g. a PIN pad) the login manager will use it regardless of this setting, if the <code>USE_PROTECTED_AUTHENTICATION_PATH</code> property is set to true.<br>
+            <b>Default</b>: <code>iaik.apps.util.passphrase.PassphraseDialog</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a qualified class name</code><br>
+            <b>Examples</b>: <code>iaik.apps.util.passphrase.PassphraseDialog</code> (a JDialog of swing) <br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iaik.apps.util.passphrase.PassphraseFrameDialog</code> (a JFrame of swing)<br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iaik.apps.util.passphrase.PassphraseHolder</code> (via a char[] array from the application)<br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iaik.apps.util.passphrase.PassphraseConsoleDialog</code> (via the console - standard in and out)<br>
+            &nbsp;
+          </li>
+
+          <li>
+            <p><b>DEFAULT_PROMPT_MESSAGE_PREFIX</b>
+            <br>If the login manager prompts the user for a PIN, it will prepend this message to the prompt message. Additionally, it will append information about the token to which the user should login.<br>
+            <b>Default</b>: <code>Please enter User-PIN for this token</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a string</code> (may include keyword <code>$(TOKEN_LABEL)</code>)<br>
+            <b>Examples</b>: <code>Please enter User-PIN for this token</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Please enter the passphrase for the smart card with this label</code><br>
+            &nbsp;
+          </li>
+
+          <li>
+            <p><b>WRONG_PIN_WARNING</b>
+            <br>This is the message that the login manager will present to the user after he entered a wrong PIN. It will be part of the message for prompting the PIN again. You can use the $(TRIALS_LEFT) placeholder in the string. The login manager will replace it with the number of left trials.<br>
+            <b>Default</b>: <code>Wrong PIN! You have $(TRIALS_LEFT) trials left.</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a string</code> (may include keyword <code>$(TRIALS_LEFT)</code>)<br>
+            <b>Examples</b>: <code>Wrong PIN! You have $(TRIALS_LEFT) trials left.</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You entered the wrong passphrase. $(TRIALS_LEFT) trials left.</code><br>
+            &nbsp;
+          </li>
+
+          <li>
+            <p><b>NUMBER_OF_USER_LOGIN_RETRIES</b>
+            <br>This is the number of retries that are left to enter the right PIN. It is required to configure this, because PKCS#11 does not provide this information. PKCS#11 just provides information, if there is just one trial left.<br>
+            <b>Default</b>: <code>3</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a decimal integer</code><br>
+            <b>Examples</b>: <code>3</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5</code><br>
+            &nbsp;
+          </li>
+
+          <li>
+            <p><b>PIN_FINAL_TRY_WARNING</b>
+            <br>This is the message that warns the user that the next PIN entry will be the last try. 
+            You can use the <code>$(TOKEN_LABEL)</code> placeholder in the string. 
+            The login manager will replace it with the label of the token.<br>
+            <b>Default</b>: <code>Warning! The token reported that this will be the final try before the PIN gets blocked.</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a string</code> (may include keyword <code>$(TOKEN_LABEL)</code>)<br>
+            <b>Examples</b>: <code>Warning! The token reported that this will be the final try before the PIN gets blocked.</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This will be the last trial for entering the correct PIN for <code>$(TOKEN_LABEL)</code>.</code><br>
+            &nbsp;
+          </li>
+
+          <li>
+            <p><b>DEFAULT_CHANGE_DIALOG</b>
+            <br>This string provides the implementation class of the <code>iaik.apps.util.passphrase.NewPassphrasePrompt</code> interface to use for changing the PIN. If the module and token provides a secondary authentication mechanism (e.g. a PIN pad) the login manager will use it regardless of this setting, if the <code>USE_PROTECTED_AUTHENTICATION_PATH</code> property is set to true.<br>
+            <b>Default</b>: <code>iaik.apps.util.passphrase.NewPassphraseDialog</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a qualified class name</code><br>
+            <b>Examples</b>: <code>iaik.apps.util.passphrase.NewPassphraseDialog</code> (a JDialog of swing) <br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iaik.apps.util.passphrase.NewPassphraseFrameDialog</code> (a JFrame of swing) <br> 
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iaik.apps.util.passphrase.NewPassphraseHolder</code> (via a char[] array from the application)<br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iaik.apps.util.passphrase.NewPassphraseConsoleDialog</code> (via the console - standard in and out)<br>
+            &nbsp;
+          </li>
+
+          <li>
+            <p><b>DEFAULT_NEW_PROMPT_MESSAGE_PREFIX</b>
+            <br>If the login manager prompts the user for a new PIN, it will prepend this message to the prompt message. Additionally, it will append information about the token for which the user should enter a new PIN.<br>
+            <b>Default</b>: <code>Please enter new User-PIN for this token.</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>a string</code><br>
+            <b>Examples</b>: <code>Please enter new User-PIN for this token.</code><br>
+                     <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Please enter a new passphrase for the smart card with this label.</code><br>
+            &nbsp;
+          </li>
+
+          <li>
+            <p><b>USE_PROTECTED_AUTHENTICATION_PATH</b>
+            <br>This boolean value specifies if the login manager shall use the protected authentication path for prompting the user PIN, if such path is available. A protected authentication path is a PIN pad on the reader or a fingerprint reader for instance.<br>
+            <b>Default</b>: <code>true</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>true</code> or <code>false</code><br>
+            <b>Examples</b>: <code>false</code><br>
+            &nbsp;
+          </li>
+          
+          <li>
+            <p><b>FORCE_PROTECTED_AUTHENTICATION_PATH</b>
+            <br>This boolean value specifies if the login manager shall always use the protected authentication path for prompting the user PIN, no matter if the corresponding token info flag indicates if the token supports it. A protected authentication path is a PIN pad on the reader or a fingerprint reader for instance. If this is set to true, the login manager will always pass null values for the PINs to the login and set-PIN functions of the PKCS#11 module.<br>
+            <b>Default</b>: <code>false</code><br>
+            <b>Use</b>: <code>optional</code><br>
+            <b>Format</b>: <code>true</code> or <code>false</code><br>
+            <b>Examples</b>: <code>true</code>
+          </li>
+        </ul>
+        
+        <H4><a name="DefaultLoginManagerExampleProperties"></a>Example Properties File for the Default Login Manager</H4>
+          <p>This is the content of an example properties file for the default login manager. Remind that all entries are optional, the properties files can even be omitted completely, if the defaults are acceptable or if the default login manager is unused.
+<pre><code>  # the implementation of the iaik.apps.util.passphrase.PassphrasePrompt interface to use for PIN prompting
+  # if the module/token provides a secondary authentication mechanism (e.g. a PIN pad) the login manager will
+  # use it regardless of this setting, if the USE_PROTECTED_AUTHENTICATION_PATH property is set to true.
+  DEFAULT_PROMPT_DIALOG = iaik.apps.util.passphrase.PassphraseDialog
+
+  # the string to prepend to the prompt message
+  DEFAULT_PROMPT_MESSAGE_PREFIX = Please enter User-PIN for this token
+
+  # use $(TRIALS_LEFT) keyword to insert the number of trials that are left
+  WRONG_PIN_WARNING = Wrong PIN! You have $(TRIALS_LEFT) trials left.
+
+  NUMBER_OF_USER_LOGIN_RETRIES = 3
+  
+  # message that warns the user that the next PIN entry will be the last try.
+  PIN_FINAL_TRY_WARNING = Warning! The token reported that this will be the final try before the PIN gets blocked.
+
+  # the implementation of the iaik.apps.util.passphrase.PassphrasePrompt interface to use for PIN change.
+  # if the module/token provides a secondary authentication mechanism (e.g. a PIN pad) the login manager will
+  # use it regardless of this setting, if the USE_PROTECTED_AUTHENTICATION_PATH property is set to true.
+  DEFAULT_CHANGE_DIALOG = iaik.apps.util.passphrase.NewPassphraseDialog
+  
+  # the string to prepend to the prompt message. 
+  DEFAULT_NEW_PROMPT_MESSAGE_PREFIX = Please enter new User-PIN for this token
+  
+  # the warning message to display, if the entered new PIN was invalid. 
+  INVALID_NEW_PIN_WARNING = The entered new PIN is invalid.
+  
+  # the warning message to display, if the entered new PIN has an invalid length. 
+  NEW_PIN_LENGTH_WARNING = The length of the new PIN is invalid.
+
+  # specifies if the login manager shall use the protected authentication path for
+  # prompting the user PIN, if such path is available.
+  USE_PROTECTED_AUTHENTICATION_PATH = true
+
+  # specifies if the login manager shall always use null values as PINs when doing a login
+  # or a PIN change. 
+  FORCE_PROTECTED_AUTHENTICATION_PATH = false
+</code></pre>
+
+        
+    <H2><a name="Keys"></a>Handling of Keys</H2>
+      <p>This provider can handle different types of keys, keys of other providers which are
+         usually software keys, and keys of this provider. Key object of this provider are
+         special proxy objects which hold references to the actual keys on the token. For
+         certain keys, for example private keys, the key material can never be extracted
+         from the token. This is different to software keys of JCA and JCE, which hold
+         all key material inside the Java object. As a result, such proxy key objects cannot
+         be used in combination with algorithm implementations of other JCA and JCE providers.
+         These providers do not know how to handle such proxy key objects, and they are unaware 
+         of PKCS#11 in most cases. In case of unprotected keys on the token, the proxy key objects
+         can expose the key material on request to the applications. Such keys can also be
+         used in combination with other JCA and JCE providers.
+			<p>This provider also comes with a feature that allows automatic conversion 
+			   of software keys into keys of this provider. During this conversion,
+				 the provider imports software keys into the token. To see how to
+				 enable and use this feature, please refer to section describing the 
+				 <a href="#KeyHandler">key handler</a>.
+      <p>The following sections provide some details about the special features of key and
+         key-pair generators and key stores.
+				 
+    <H3><a name="KeyGenerators"></a>Key-Pair Generators and Secret Key Generators</H3>
+      <p>The <code>KeyPairGenerator</code> and <code>KeyGenerator</code> implementation of this provider work
+        similar to pure software implementations. There a few differences though. Any random source passed
+        to a key or key-pair generator is simply ignored. If an application wants to inject random into
+        a hardware token, it can use a <a href="#Random">random</a> object from this token and feed seed into it.
+        The initialization method taking the key size work as specified in the JCA and the JCE, only the secret
+        key generators for key derivation from other keys are an exception. They do not support initialization
+        with a key size only. They require initialization with 
+        <code>iaik.pkcs.pkcs11.provider.keygenerators.PKCS11KeyDerivationSpec</code> objects.
+      <p>Per default, the private key of a generated key key-pair will be stored permanently. 
+        It is also marked private and sensitive. For the properties of public keys, the default 
+        settings of the underlying token is used. Secret keys are handled like private key, except
+        that the are not stored permanently per default. They get deleted automatically when
+        the session to the token is closed. Please note that keys of this provider are
+        always objects of <code>iaik.pkcs.pkcs11.provider.keys.IAIKPKCS11Key</code>. All such keys
+        can be destroyed by calling <code>destroy()</code>.
+      <p>In addition, the key and key-pair generators support initialization with special 
+        <code>iaik.pkcs.pkcs11.provider.keygenerators.PKCS11KeyGenerationSpec</code> and
+        <code>iaik.pkcs.pkcs11.provider.keypairgenerators.PKCS11KeyPairGenerationSpec</code> objects respectively.
+        Such objects allow the specification of more details about the key generation; e.g. if the
+        keys should be stored permanently or just temporarily, for which crypto operations to
+        enable the key, or on which token to generate the key if there is more than one available.
+
+
+    <H3><a name="KeyStores"></a>The Handling of KeyStores</H3>
+      <p>The handling of key stores requires some explanation. If your 
+      application uses just one provider instance of the PKCS#11 provider, 
+      the handling is simple. In this case, the application can instantiate and 
+      initialize the key store as known from Java. This will look like this.
+<pre><code>  KeyStore tokenKeyStore = KeyStore.getInstance("PKCS11KeyStore");
+  tokenKeyStore.load(null, null);
+</code></pre>
+      <p>The first line creates a new instance of a PKCS#11 key store. The 
+      application will always get a key store instance from this call, even if 
+      there is currently no token in the slot of this provider. After this call, 
+      the returned key store is uninitialized, it is not ready for use yet. The 
+      second line initializes the key store. Opposed to software key stores, 
+      this does not initialize the key store to an empty state. It rather reads 
+      keys and certificates from the PKCS#11 token and sets these objects in the 
+      key store. If there is currently no token in the slot, the key store will 
+      simply contain no entries but will still be fully functional (read below 
+      for further explanation). The key store is now ready for use. The provider 
+      will prompt a passphrase or PIN on demand using its login manager. The 
+      default login manager will use its configured passphrase dialog. 
+      Alternatively, you can pass a PIN (or password) as the second parameter to 
+      the <code>load</code> method. In this case, the default login manager will 
+      not try to prompt the PIN itself from the user, it will rather use the 
+      provided PIN. Please notice that the key store stores a reference to this 
+      provided PIN, because it will need it if the application calls the 
+      <code>store</code> method later to change the user PIN (see below).
+      <p>If the application uses several instances of the IAIKPkcs11 provider, 
+      it has two options to get an initialized key store. First, it can get the 
+      initialized key store directly from the provider instance. This looks like 
+      this
+<pre><code>  KeyStore tokenKeyStore = pkcs11Provider_.getTokenManager().getKeyStore();
+</code></pre>
+      <p>where <code>pkcs11Provider_</code> is the instance of the <code>IAIKPkcs11</code> provider. Second, the application can instantiate the key store as usual and then initialize it. For initialization, the application must provide the name of the instance that this key store shall operate with. Just instantiating the key store is not enough, and if the application calls <code>tokenKeyStore.load(null, null)</code>, it always(!) binds the key store to the first instance of the IAIKPkcs11 provider. This is the case, because there is no means for the KeyStoreSPI class to get the instance of the provider that was used to instantiate it. This means, it does not help to provide the provider name and calling <code>KeyStore.getInstance("PKCS11KeyStore", providerName)</code>, the call to the <code>load(InputStream, char[])</code> method with appropriate arguments is required nevertheless. The correct usage will look like this
+<pre><code>  KeyStore cardKeyStore = KeyStore.getInstance("PKCS11KeyStore");
+  String providerName = pkcs11Provider_.getName();
+  ByteArrayInputStream providerNameInpustStream = new ByteArrayInputStream(providerName.getBytes("UTF-8"));
+  cardKeyStore.load(providerNameInpustStream, null);
+</code></pre>
+      <p>The password parameter of the load method (this is the second 
+      parameter, which is <code>null</code> here) will be used if provided (i.e. 
+      if it is not <code>null</code>). If it is null, the default login manager 
+      will use the configured method for prompting the PIN on demand. If the 
+      application just provides the instance number as a string instead of the 
+      complete provider name, the key store will also accept it.
+      <p>The PKCS#11 key store of this provider supports setting new entries, 
+      which includes keys and certificates. All newly set keys and certificates 
+      become token objects, which means that they are stored permanently rather 
+      than only for the current session. The set-methods store keys and 
+      certificates directly to the token, there is no need to call the 
+      store-method of the key store. Moreover, all newly inserted private keys 
+      and secret keys become private objects with their sensitive flag set (see 
+      PKCS#11 for detailed explanation). The 
+      <code>demo.pkcs.pkcs11.provider.keystore.ImportPKCS12</code> sample demonstrates 
+      how to import the keys and certificates from a PKCS#12 file into a PKCS#11 
+      token. Using key factories provide a more flexible means for creating 
+      objects on the token. The 
+      <code>demo.pkcs.pkcs11.provider.keyfactory.AsymmetricKeyFactoryDemo</code> shows how to use 
+      such a factory. Keep in mind that the aliases that the application 
+      specifies when setting new key or certificate entries may not remain the 
+      same, if other applications modify the objects on the token. This is 
+      because object labels in PKCS#11 are not guaranteed to be unique. If the 
+      cards are only used with this provider, this problem should not occur.
+      <p>It is important to mention that a PKCS#11 key store reflects the 
+      objects on a PKCS#11 token. For the standard implementation given above 
+      (retrieved by the name "PKCS11KeyStore"), the keystore will also reflect, if 
+      another application or another thread adds or removes objects from the token. 
+      It automatically updates its key and certificate lists. This holds even, if 
+      the user removes the token or inserts a new token. If there is no token in 
+      the slot of the provider, the keystore will be valid and accessible, but 
+      it will not contain any entries. Thus, an application can get and 
+      initialize the key store once and use it throughout the application 
+      session. There is no need to get a new key store, if the token is removed,
+      changed, or a new one is inserted.<br>
+      When using the fast keystore implementation (retrieved by 
+      <code>KeyStore.getInstance("FastPKCS11KeyStore");</code> no checks are done 
+      to detect changes (new, deleted or modified token objects) from other applications 
+      or threads. As a result, the keystore operations are faster, but special care 
+      has to be taken in case of external changes.
+      <p>The aliases of certificates and keys on the token are constructed using 
+      their PKCS#11 object labels. If the label does not provide a unique alias, 
+      <code>"(h)"</code> is appended, where <code>h</code> is the PKCS#11 handle 
+      of the object. If this does not provide a unique alias either, 
+      <code>"[n]"</code> is appended, where <code>n</code> is an integer 
+      starting with 2.
+      For private keys, the label of the associated user certificate is used as 
+      a basis for the alias of the key entry. For other keys, the key's label 
+      (of the PKCS#11 key object) is used as an alias. If this alias is already 
+      used, the object handle and a running integer is appended as described for 
+      certificates.
+      <p>When the key store reads the keys and certificates from the token, it 
+      tries to create certificate chains for private key entries. It takes the 
+      certificate with the same PKCS#11 ID as the private key as user 
+      certificate. Then it tries to create a certificate chain using all 
+      certificates on the token. It arranges the certificates by matching the 
+      issuer distinguished name and subject distinguished name. It also checks, 
+      if authority key identifiers and subject key identifiers match if present. 
+      Nothing else is checked; for example, the signatures of the certificates 
+      are not checked. End-user certificate appear only in the certificate chain 
+      of their matching private key, if there is a private key. All other 
+      certificates appear as trusted certificate entries under a different alias 
+      as well.
+      <p>It is also possible to change the user PIN of the token using the <code>KeyStore</code> interface. The application can change the user PIN by calling the <code>store</code> method.
+<pre><code>      tokenKeyStore.store(null, newUserPIN);
+</code></pre>
+      <p>The application can provide the new user PIN directly, if it already 
+      knows the PIN. If the application also provided the PIN when loading the 
+      key store, this method will not pop up any dialog. Changing the user PIN 
+      for a PKCS#11 token always requires the old (current) PIN to be provided 
+      in addition to the new PIN. Thus, this method may need to prompt the 
+      current user PIN even if the application specified the new user PIN and 
+      if the current user PIN has not been passed to the key store before. <br>
+      The <code>store</code> method of this key store handles the first 
+      parameter, the output stream, in the same way as the <code>load</code> 
+      method. If the application provides a stream, the method writes the name 
+      of the associated PKCS#11 provider to it. If the parameter is 
+      <code>null</code>, the method ignores this parameter.
+      <p>Please note that the scheme for storing certificate are quite 
+      different in PKCS#11 tokens and Java <code>KeyStore</code>s. For 
+      instance, there are no certificate chains on the tokens, only single
+      certificates. To cope with this difference as good
+      as possible, the PKCS#11 <code>KeyStore</code> implementation tries to
+      arrange certificate chains automatically using all available certificates. 
+      When adding a key entry together with it's certificate chain, the label of the key 
+      is also used as label for all certificates. Certificates added as seperate certificate 
+      entry have a unique labeling and can therefore be recognized as trusted 
+      certificate entries of the store. A certificate may also appear in multiple 
+      certificat chains, if issuer and subject match and no certificate with matching 
+      label was found. When deleting certificate
+      chains or key entries, only certificates having the same label as the enduser
+      certificate or key will be deleted. This ensures that 
+      no certificates assigned to other certificate chains or keys are removed.
+            
+      <H3><a name="MultipleProviders"></a>Using multiple providers/modules parallel</H3>
+      <p>If you use multiple tokens in parallel and therefore use more instances of
+      IAIK Pkcs#11-Provider (one instance per token) there are some points to consider.
+      <UL>
+      	<LI><b>Keystores</b></LI>
+      	As already described above in section handling of keystores you have to specify 
+      	the respective provider instance as InputStream to the keystore.load method. Otherwise,
+      	you can't be sure that you are working with the correct token.<br><br>
+      	<LI><b>Key generation / Key Pair generation</b></LI>
+      	To create keys on the correct token, you have to initialize the KeyGenerator or 
+      	KeyPairGenerator with the respective tokenmanager. <br>
+      	e.g.:
+<pre><code>TokenManager tokenManager = pkcs11Provider_.getTokenManager();
+iaik.pkcs.pkcs11.objects.KeyPair template = IAIKPkcs11.getGlobalKeyHandler().getKeyPairGeneratorTemplate(algorithm, -1);
+PKCS11KeyPairGenerationSpec spec = new PKCS11KeyPairGenerationSpec(template.getPublicKey(), template.getPrivateKey());
+spec.setTokenManager(tokenManager);
+keyPairGenerator.initialize(spec);</code></pre>
+      </UL>
+      	
+
+    <H2><a name="Authentication"></a>User Authentication - Prompting the PIN</H2>
+      <p>To use certain functionality of a PKCS#11 token, the application (which 
+        accesses the PKCS#11 module&mdash;the provider in this case) must normally 
+        login the user to the token, otherwise it has no access to certain 
+        functions and objects. For example, listing all key objects including the 
+        private keys on the token requires the user to be logged in. An 
+        application which is based on this provider implementation does not need 
+        to care about this. The provider object has a login manager object that 
+        does session login and prompting the user PIN if required. The provider 
+        instance always uses this login manager for login; it does never use other 
+        means. As a consequence, the login manager is the only part in the system 
+        that may need to do any user interaction. This provides a clean separation 
+        of the provider from code that may need to interact with the user. The 
+        login manager can be configured in the provider (see provider 
+        configuration section for details). 
+      <p>Please note that the provider usually only needs to login just once. 
+         This login state remains active until the application explicitly performs
+         a logout using the <code>TokenManager</code>'s <code>logout</code> method.
+         An application may also call the <code>clearSessionPool</code> method of
+         the <code>TokenManager</code>. This method causes all cached sessions 
+         which are currently inactive to be closed. If there are no other active
+         sessions (e.g. cryptographic operations), the token will be logged out
+         automatically. The <code>loginUser</code>/<code>loginSO</code> method
+         may be useful, if the application wants to trigger the login itself.
+         Calling <code>logout</code> resets all open sessions to the anonymous
+         role. However, the provider may trigger the login itself if it is required.
+      <p>The default login manager, which is used if no other has been
+        configured, can also be configured to be useful for various use-cases.
+        Please refer to the section about the login manager for details
+
+    <H2><a name="Random"></a>The Secure Random</H2>
+      <p>The secure random generator also needs some additional explanation. One can use the secure random as known from JCE. This may look like this.
+<pre><code>  SecureRandom randomGenerator = SecureRandom.getInstance("PKCS11");
+  byte[] randomData = new byte[length];
+  randomGenerator.nextBytes(randomData);
+</code></pre>
+      <p>This code instantiates a new secure random of type PKCS11 and links it to the first instance of the PKCS#11 provider. Even if you instantiate the secure random and supply the name of another PKCS#11 provider instance like
+<pre><code>  SecureRandom randomGenerator = SecureRandom.getInstance("PKCS11", pkcs11Provider_.getName());
+</code></pre>
+      <p>the returned instance will be linked to the first PKCS#11 provider instance. This is due to the fact that the JCA creates the instance of the implementation class and not the provider. The PKCS#11 provider has no chance to initialize the secure random instance, and the secure random instance has no means to find out what provider instance was used to create its instance. There is no way to establish the link between the provider and the secure random instance. The secure random instance only knows that it is a PKCS11 secure random, but not to which PKCS#11 provider instance it belongs.
+      <p>However, the application can directly instantiate the PKCS11Random class like this.
+<pre><code>  SecureRandom randomGenerator = new PKCS11Random(pkcs11Provider_);
+</code></pre>
+      <p>Here, the application can provide the PKCS#11 provider instance. The created secure random will be linked to this PKCS#11 provider instance, and in consequence it will use the token in the slot of this provider.
+
+    <H2><a name="Path"></a>The Library Path</H2>
+      <p>The PKCS#11 JCE provider is based on the PKCS#11 Wrapper. The PKCS#11 
+      Wrapper needs a dynamic link library to work. This is the 
+      <code>pkcs11wrapper.dll</code> or <code>libpkcs11wrapper.so</code> 
+      respectively. The native libraries for Windows, Linux, MacOS and Solaris are included in the 
+      PKCS#11 wrapper's jar-file since version 1.4. If the wrapper native library is not configured
+      otherwise, the PKCS#11 wrapper will automatically try to use the appropriate library for 
+      the current system from the jar file. The library will be copied to Java's local temporary directory 
+      and loaded from there. There are also two other options to configure, which native library shall 
+      be used. First, you can put the library to the search path of the operating system or in the 
+      library search path of the VM. For instance, the search path of the 
+      operating system can be set via the PATH environment variable on Windows 
+      systems or via the LD_LIBRARY_PATH environment variable on UNIX systems. 
+      The library search path of the VM can be set via the 
+      <code>java.library.path</code> system property. For instance, provide 
+      <code>-Djava.library.path=../lib</code> at the command line for your VM, 
+      if the library is in the <code>../lib</code> directory.
+      As second option you can set the path to the native library with the  PKCS11_WRAPPER_PATH property  
+      in the properties file or dynamically during provider instantiation.
+
+    <H2><a name="Protected"></a>Protected Methods and Member Variables</H2>
+      <p>Many methods and member variables in the classes of this provider 
+      implementation are declared protected rather than private. This allows 
+      better extensibility. If you plan to override or use any protected method 
+      or variable, keep in mind that this may change in future versions of the 
+      provider. Public methods and variables may also change in a future 
+      release, but we will try to keep changes in the public interface as small 
+      as possible and reasonable. However, we may not hesitate to change 
+      protected methods or members if we think that this makes sense.
+
+    <H2><a name="Recommend">Recommended Use</a></H2>
+			<p>This section describes recommended ways of using this provider for 
+			certain use-cases. We assume that the <code>PKCS11_NATIVE_MODULE</code>
+			property has been configured appropriately.
+			
+			<H3><a name="Recommend_SecureToken">As Secure Token</a></H3>
+			<p>If an application wants to use smart cards or HSMs as secure key stores
+			and crypto devices, it is preferable to install the PKCS#11 JCE provider
+			as last provider in the JCA framework. For example with
+<pre><code>  IAIKPkcs11 pkcs11Provider = new IAIKPkcs11();
+  Security.addProvider(pkcs11Provider);
+</code></pre>
+			<p>Having it in the last position, existing applications will not get 
+			different algorithm implementations if they query the JCA/JCE framework
+			without explicitly specifying an provider. For instance, applications
+			which use
+<pre><code>  Signature anySignatureEngine = Signature.getInstance("SHA1WithRSA");
+</code></pre>
+			will get the same implementation as before without an installed PKCS#11 
+			provider.
+			<p>Having installed the provider, the application can get the available
+			keys by investigating the <a href="#KeyStores">key store</a>. 
+			We recommend getting the key store using
+<pre><code>  KeyStore cardKeyStore = KeyStore.getInstance("PKCS11KeyStore");
+  ByteArrayInputStream providerNameInputStream = new ByteArrayInputStream(pkcs11Provider.getName().getBytes("UTF-8"));
+  cardKeyStore.load(providerNameInputStream, null);
+</code></pre>
+			Instead of <code>null</code>, the application can also provide the PIN to
+			the <code>load</code> call. If the user replaces the card or inserts a new
+			card, it is recommended that the application gets a PKCS#11 key store
+			object. Using the method 
+			<code>pkcs11Provider.getTokenManager().waitForSlotEvent()</code>, an
+			application thread can wait for card insertion or removal.
+			<p>
+			To use the PKCS#11 provider algorithm implementations, the
+			application has to specify the provider explicitly, to prevent getting a 
+			pure software implementation of a different provider at a higher-priority
+			position.		 
+<pre><code>  Signature tokenSignatureEngine = Signature.getInstance("SHA1WithRSA", pkcs11Provider.getName());
+</code></pre>
+			This is especially required if the application wants to create a 
+			signature with a private key from the PKCS#11 key store. The provider can
+			also <a href="#KeyHandler">import software keys automatically</a>, but
+			this will provide no higher security than working without any hardware
+			token.
+			
+			<H3><a name="Recommend_JSSE">JSSE</a></H3>
+			<p>We refer to JSSE as of Java 1.4 or later. To use a PKCS#11 token with 
+			JSSE, the application has to install the PKCS#11 provider at a higher 
+			position than the JSSE provider.
+<pre><code>  IAIKPkcs11 pkcs11Provider = new IAIKPkcs11();
+  Security.insertProviderAt(pkcs11Provider, 2);
+</code></pre>
+			<p>This will cause the JSSE provider from SUN to take the algorithm
+			implementations of the PKCS#11 provider instead of those from the JSSE
+			provider. The application can also use a PKCS#11 key store instead of
+			a software key store for the JSSE key manager and trust manager. The
+			token keys can be used for server and client authentication; the token
+			can also perform the bulk encryption with symmetric ciphers and MAC
+			calculation. As of version 1.5, JSSE does not support the generation
+			of the symmetric keys directly on the token. JSSE does this internally in
+			software without any means for delegation.
+			Please refer to the JSSE reference guide for further details.
+			<p>Note that the PKCS#11 provider only handles PKCS#11 key objects on
+			the hardware token. PKCS#11 key objects are all keys from a PKCS#11 key
+			store or keys generated using key generators of this provider. 
+			Crypto operations with pure software keys are delegate to software 
+			providers per default. Enable the auto conversion feature of the 
+			default <a href="#KeyHandler">key handler</a> to automatically import all 
+			software keys into the token. 
+			Then, the token will perform all cryptographic operations.
+			This is especially useful for crypto accelerator boards.
+			<p>It may also be a good idea to enable the 
+			<code>CHECK_MECHANISM_SUPPORTED</code> feature if the used crypto hardware
+			does not support all crypto operations which are listed in the
+			<a href="#Algorithms">algorithms list</a>. <b>Attention!</b> This feature
+			may not work as expected in Java 1.5 due to a major change in the SUN JCA
+			framework.
+			
+			<H3><a name="Recommend_IAIK">IAIK Libraries</a></H3>
+			<p>There are several <a href="Demo.html">demos</a> included which show how 
+			to use the PKCS#11 provider in combination with IAIK libraries.
+			<p>This includes
+			<ul>
+				<li><b>IAIK-JCE</b>
+					<ul>
+						<li>PKCS#7 signature creation and decryption</li>
+						<li>X.509 Certificate signing</li>
+						<li>X.509 CRL signing</li>
+						<li>PKCS#10 certificate request signing</li>
+						<li>OCSP request and response signing</li>						
+					</ul>
+				</li> 
+				<li><b>IAIK-CMS</b>
+					<ul>
+						<li>CMS signature creation and decryption</li>
+						<li>S/MIME v3 signature creation and decryption</li>
+					</ul>
+				</li> 
+				<li><b>iSaSiLk</b>
+					<ul>
+						<li>Client and server authentication</li>
+					</ul>
+				</li> 
+				<li><b>XSECT</b>
+					<ul>
+						<li>XML Signature creation</li>
+					</ul>
+				</li> 
+			</ul>
+			
+    <H2><a name="Demo"></a>A Simple RSA Signing Demo</H2>
+      <p>This demo shows how to get a signature key with the label 
+      "mySignatureKey" from the key store and how to sign some data with this 
+      key. The signing algorithm is RSA with SHA-1 hashing on the host side. 
+      <p>Further sample codes are available in the various demo directories. Have
+      a look at the <a href="Demo.html">demo</a> document for an overview.
+<pre><code>
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.Signature;
+import iaik.pkcs.pkcs11.provider.IAIKPkcs11;
+
+
+
+public class SimpleDemo {
+
+  public static void main(String[] args) {
+    try {
+      // install the provider dynamically, configure it in iaik/pkcs/pkcs11/provider/IAIKPkcs11.properties
+      IAIKPkcs11 pkcs11Provider = new IAIKPkcs11();
+      Security.addProvider(pkcs11Provider);
+
+      // get the signature key
+      KeyStore tokenKeyStore = KeyStore.getInstance("PKCS11KeyStore");
+      tokenKeyStore.load(null, null);
+      PrivateKey signatureKey = (PrivateKey) tokenKeyStore.getKey("mySignatureKey", null);
+
+      // sign some data, SHA1 hash in software, RSA on the PKCS#11 token, ExternalSHA1WithRSA is equal to SHA1WithRSA
+      Signature signatureEngine = Signature.getInstance("ExternalSHA1WithRSA", pkcs11Provider.getName());
+      signatureEngine.initSign(signatureKey);
+      signatureEngine.update("This is some data to be signed.".getBytes());
+      byte[] signature = signatureEngine.sign();
+    } catch (Throwable th) {
+      th.printStackTrace();
+    }
+    System.exit(0);
+  }
+
+}
+</code></pre>
+    <HR>
+    <CENTER>Copyright (c) 1997 - 2003 IAIK. Copyright (c) 2003 - 2015 Stiftung SIC. All rights reserved.</CENTER>
+  </BODY>
+</HTML>
+                

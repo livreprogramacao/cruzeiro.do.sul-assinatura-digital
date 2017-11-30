@@ -1,0 +1,648 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Linux (vers 25 March 2009), see www.w3.org">
+  <meta name="generator" content="Bluefish 2.0.2">
+  <meta name="generator" content="Bluefish 2.0.2">
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii">
+  <meta name="generator" content="Bluefish 2.0.2">
+
+  <title>Install.html</title>
+  <style type="text/css">
+div.c19 {font-family: Trebuchet MS; text-align: center}
+  span.c18 {font-family: Trebuchet MS; font-size: 64%}
+  span.c17 {font-size: 64%}
+  span.c16 {color: #000000; font-family: Courier New}
+  span.c15 {font-family: Trebuchet MS; font-size: 100%; font-weight: bold}
+  span.c14 {font-size: 80%}
+  span.c13 {color: #FF0000}
+  span.c12 {font-family: Trebuchet MS; font-style: italic}
+  p.c11 {font-family: Trebuchet MS}
+  span.c10 {font-size: 100%}
+  code.c9 {font-style: italic}
+  div.c8 {text-align: right}
+  p.c7 {color: #000000; font-family: Trebuchet MS}
+  a.c6 {font-style: italic}
+  span.c5 {color: #0000FF}
+  span.c4 {font-family: Trebuchet MS}
+  div.c3 {font-style: italic; text-align: center}
+  div.c2 {text-align: center}
+  span.c1 {font-family: Trebuchet MS; font-size: 100%}
+  </style>
+  <style type="text/css">
+code.c1 {font-style: italic}
+  </style>
+</head>
+
+<body>
+  <table border="0" width="100%">
+    <tr>
+      <td width="8%"><a href="http://jce.iaik.tugraz.at/"><img src=
+      "images/siclogo.jpg" border="0"></a></td>
+
+      <td width="84%" align="center">
+        <h1>How to install IAIK-JCE</h1>
+      </td>
+
+      <td width="8%"><a href="http://jce.iaik.tugraz.at/"><img src=
+      "images/iaik_logo.gif" alt="IAIK Logo" border="0"></a></td>
+    </tr>
+  </table>
+
+  <div class="c2">
+    <table border="0" cellpadding="2">
+      <tr>
+        <td>
+          <span class="c1">When reading this file you should
+          already have unpacked the <i>IAIK-JCE</i> Distribution.
+          Download versions are available from</span>
+
+          <div class="c2"></div>
+
+          <div class="c3">
+            <span class="c1"><a href=
+            "http://jce.iaik.tugraz.at/download/">http://jce.iaik.tugraz.at/download/</a>.</span>
+          </div>
+
+          <p><span class="c4">Your installation directory will not
+          only contain the information files you are currently
+          reading, but also the follwoing sub-folders:</span></p>
+
+          <ul>
+            <li><span class="c4"><b>demo</b><br>
+            contains source and Javadoc of the IAIK-JCE demos, and
+            batch and shell scripts for running some demos (LDAP
+            search and OCSP query) on Windows or Linux,
+            respectively</span></li>
+
+            <li><span class="c4"><b>docs</b><br>
+            contains the API documentation in form of
+            JavaDoc</span></li>
+
+            <li><span class="c4"><b>lib</b><br>
+            contains the JCE library files (<i>iaik_jce.jar</i>,
+            <i>iaik_javax_crypto.jar</i>,
+            <i>iaik_jce_demo.jar</i>)</span></li>
+
+            <li><span class="c4"><b>lib-signed</b><br>
+            contains the signed versions of the library files
+            (<i>iaik_jce.jar</i>, <i>iaik_jce_native_aes.jar</i>)</span></li>
+            
+            <li><span class="c4"><b>lib-signed/trusted_library</b><br>
+            contains signed versions of the library files
+            with the &quot;Trusted Library = true&quot;
+            manifest entry</span></li>
+
+            <li><span class="c4"><b>images</b><br>
+            contains logos and images used in the
+            documentation</span></li>
+          </ul>
+
+          <p class="c7">First, ensure that you have installed a
+          Java runtime environment. This version toolkit has been
+          successfully tested with Java runtime environments of the
+          1.2, 1.3, 1.4, 1.5 and 1.6 series, and also with the most
+          recent versions of JDK 1.7 (JDK 1.5, 1.6, 1.7 are also
+          called JDK 5, 6, 7, respectively).<br>
+          Depending on your Java version, you may have to include
+          different jar files into your classpath. If you use Java
+          1.4 or later, you may need to install the <a class="c6"
+          href="#jurisdiction">Java[TM] Cryptography Extension
+          (JCE) Unlimited Strength Jurisdiction Policy
+          Files</a>.</p>
+
+          <p class="c7">In the following table you can see which
+          files to include into the classpath for which Java
+          version.</p>
+
+          <table border="1">
+            <tr>
+              <th></th>
+
+              <th>
+                <div class="c8"></div>
+              </th>
+
+              <th>
+                <div class="c2">
+                  <code class="c9">lib/iaik_jce.jar</code>
+                </div>
+              </th>
+
+              <th>
+                <div class="c2">
+                  <code class="c9">lib/iaik_javax_crypto.jar</code>
+                </div>
+              </th>
+
+              <th>
+                <div class="c2">
+                  <code class="c9">lib-signed/iaik_jce.jar</code>
+                </div>
+              </th>
+            </tr>
+
+            <tr>
+              <th>Java 1.1<br></th>
+
+              <td colspan="4">
+                <div class="c2">
+                  Not supported; use an IAIK-JCE version &lt;=
+                  3.181
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th rowspan="2">Java 1.2<br>
+              and<br>
+              Java 1.3</th>
+
+              <td>
+                <div class="c8">
+                  option 1
+                </div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  include
+                </div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  -
+                </div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  -
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="c8">
+                  option 2
+                </div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  -
+                </div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  include
+                </div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  include
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th>Java 1.4<br></th>
+
+              <td>
+                <div class="c8"></div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  -
+                </div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  -
+                </div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  include
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th>Java 1.5<br></th>
+
+              <td>
+                <div class="c8"></div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  -
+                </div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  -
+                </div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  include
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th>Java 1.6<br>
+              or later</th>
+
+              <td>
+                <div class="c8"></div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  -
+                </div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  -
+                </div>
+              </td>
+
+              <td>
+                <div class="c2">
+                  include
+                </div>
+              </td>
+            </tr>
+          </table>
+
+          <p class="c7"><span class="c5">Notice:</span> The
+          <code class="c9">lib/iaik_jce.jar</code> file and the
+          <code class="c9">lib-signed/iaik_jce.jar</code> file are
+          two different library files with different content!</p>
+
+          <p class="c7">Here is some background information.<br>
+          With version 4.0 we have stopped support for Java 1.1.
+          Please use an IAIK-JCE version &lt;= 3.181 if you still
+          have to use Java 1.1.<br>
+          The <code class="c9">lib/iaik_javax_crypto.jar</code>
+          file contains a JCE framework implemented by IAIK. This
+          implementation does not require JCE providers to be
+          signed. The JCE framework consists of all packages with a
+          name starting with <code>javax.crypto</code>.<br>
+          Despite the core of the IAIK crypto library (algorithms,
+          encoding/decoding, certificate handling, ...), the
+          <code class="c9">lib/iaik_jce.jar</code> file contains
+          all contents of the <code class=
+          "c9">lib/iaik_javax_crypto.jar</code> file. In
+          consequence, it does not make sense to include both jar
+          files (<code class="c9">lib/iaik_jce.jar</code> and
+          <code class="c9">lib/iaik_javax_crypto.jar</code>) into
+          the classpath. However, this holds only for the unsigned
+          version. The signed version of the IAIK crypto library
+          -the <code class="c9">lib-signed/iaik_jce.jar</code>
+          file- contains only the core crypto classes but
+          <b>not</b> the contents of the <code class=
+          "c9">lib/iaik_javax_crypto.jar</code> file (the JCE
+          framework classes).<br>
+          For Java 1.4 or later, you <b>only</b> need to include
+          the signed version of the IAIK crypto library, the
+          <code class="c9">lib-signed/iaik_jce.jar</code> file,
+          because Java versions 1.4 and later already contain a JCE
+          framework. This included version of the JCE framework
+          (compatible to version JCE 1.2.2) requires JCE providers
+          to be signed. Please notice that there are some versions
+          of JDK 1.3 which include a JCE framework (version JCE
+          1.2.1 or later) which also requires a signed crypto
+          provider. For instance, many IBM Java 1.3 versions
+          require that you use the signed provider jar file; i.e.
+          you must treat them as if they were Java 1.4. Remember,
+          if you use Java 1.4, don't forget to install the <a href=
+          "#jurisdiction">unlimited strength jurisdiction policy
+          files</a> or use the <a href="#jurisdiction">unlimited
+          strength version of IAIK-JCE</a>.</p>
+
+          <p><span class="c4"><span class="c5">Notice:</span>
+          Because of <a href="License.html#algorithms">license
+          issues</a> regarding the use of the RC5 and RC6
+          algorithms, the US distribution does not contain any RC5 or
+          RC6 implementation.
+          However, the standard JCE version can be easily extended
+          to support RC5 and RC6 by downloading and installing the
+          <i><code>iaik_rc.jar</code></i> RC5/RC6 extension library
+          file.<br>
+          Because the IDEA algorithm is also subject to specific
+          <a href="License.html#algorithms">patent regulations</a>,
+          the standard version does not contain IDEA either. The
+          <i><code>iaik_idea.jar</code></i> IDEA extension may be
+          downloaded and installed to extend the standard
+          version.<br>
+          Also the use of <i>Ephemeral Static Diffie Hellman
+          (ESDH)</i> may be subject to patent regulations; so ESDH
+          is also not included in the standard distribution. The
+          <i><code>iaik_esdh.jar</code></i> extension library file
+          may be downloaded and installed for using ESDH.<br>
+          All patent related jar files above
+          (<i><code>iaik_rc.jar</code></i>,
+          <i><code>iaik_idea.jar</code></i> and
+          <i><code>iaik_esdh.jar</code></i>) are contained in one
+          single zip archive file
+          (<i><code>iaik_jce_patented.zip</code></i>) to can
+          downloaded from our <a href=
+          "http://jce.iaik.tugraz.at/download/">website</a> if
+          required.</span> <span class="c4"><br>
+          <span class="c10">If you want to use all available
+          algorithms, you may alternatively download the <a class=
+          "c6" href=
+          "http://jce.iaik.tugraz.at/download/"><code>iaik_jce_full.zip</code></a>.
+          This zip-file contains a version of the IAIK-JCE that
+          includes all patented algorithms (i.e. IDEA, RC5/6, and
+          ESDH).</span></span></p>
+
+          <p class="c11"><span class="c10">Summing up, the
+          following library files are available:</span><br></p>
+
+          <table border width="77%" bordercolordark="#000080">
+            <tr>
+              <td valign="top" width="24%"><span class=
+              "c12">iaik_jce.jar</span></td>
+
+              <td valign="top" width="76%"><span class="c4">This is
+              the default version included in the distribution.
+              This version may or may not contain classes for RC5,
+              RC6, IDEA, and ESDH, depending on the zip-file you
+              have obtained.</span></td>
+            </tr>
+
+            <tr>
+              <td valign="top" width="24%"><span class=
+              "c12">iaik_rc.jar</span></td>
+
+              <td valign="top" width="76%"><span class="c4">This
+              Java Archive File contains <span class=
+              "c13">ONLY</span> the classes for RC5,
+              RC6</span></td>
+            </tr>
+
+            <tr>
+              <td valign="top" width="24%"><span class=
+              "c12">iaik_idea.jar</span></td>
+
+              <td valign="top" width="76%"><span class="c4">This
+              Java Archive File contains <span class=
+              "c13">ONLY</span> the classes for IDEA</span></td>
+            </tr>
+
+            <tr>
+              <td valign="top"><span class=
+              "c12">iaik_esdh.jar</span></td>
+
+              <td valign="top"><span class="c4">This Java Archive
+              File contains <span class="c13">ONLY</span> the
+              classes for ESDH</span></td>
+            </tr>
+
+            <tr>
+              <td valign="top" width="24%"><span class=
+              "c12">iaik_javax_crypto.jar</span></td>
+
+              <td valign="top" width="76%"><span class="c4">This
+              Java Archive File contains the JCE framework classes
+              implemented by IAIK.</span></td>
+            </tr>
+
+            <tr>
+              <td valign="top" width="24%"><span class=
+              "c12">iaik_jce_demo.jar</span></td>
+
+              <td valign="top" width="76%"><span class="c4">This
+              Java Archive File contains the demo
+              classes</span></td>
+            </tr>
+          </table><span class="c4"><br>
+          <span class="c1">Please note that (except for
+          <code class="c1">iaik_jce_demo.jar</code> and
+          <code class="c1">iaik_javax_crypto.jar</code>) any of the
+          archive files listed in the table above includes classes
+          implementing some JCE engine. For that reason each of
+          these <i>jar</i> files is available in two versions:
+          unsigned or signed, the latter to be used with a JCE
+          framework (like the one included in JDK1.4 or later) that
+          requires a JCE provider to sign its JCE archive files.
+          The signed versions of <i>iaik_jce.jar</i> do not contain
+          our JCE framework implementation
+          (<code>javax.crypto</code> package) because it is not
+          required when used with an alternative JCE
+          framework.</span></span>
+
+          <p class="c11"></p>
+
+          <p class="c11"><span class="c15">Classpath
+          Example</span></p>
+
+          <p class="c11"><span class="c1">Once you have installed
+          <i>IAIK-JCE</i>, and (optionally) downloaded any
+          extension library files, you have to properly update your
+          CLASSPATH or your development environment
+          settings.</span></p>
+
+          <p class="c11"><span class="c1">On Windows, you can use
+          the <i>set classpath</i> command:</span></p>
+
+          <p class="c11"><span class="c1 c16">&gt; set
+          CLASSPATH=%classpath%;&lt;your-install-directory&gt;\lib\iaik_jce.jar;</span></p>
+
+          <p class="c11"><span class="c1">If you use some
+          patented/licensed algorithm (e.g. IDEA) you also have to
+          include the corresponding library file into the classpath
+          (or use <i>iaik_jce.jar</i> from the full zip-file
+          immediately instead of the version of the us
+          distribution), e.g.:</span></p>
+
+          <p class="c11"><span class="c1 c16">&gt; set
+          CLASSPATH=%classpath%;&lt;your-install-directory&gt;\lib\iaik_idea.jar;</span></p>
+
+          <p class="c11"><span class="c1">For running the demos
+          include <i>iaik_jce_demo.jar</i> into the classpath,
+          e.g.:</span></p>
+
+          <p class="c11"><span class="c1 c16">&gt; set
+          CLASSPATH=%classpath%;&lt;your-install-directory&gt;\lib\iaik_jce_demo.jar;</span></p>
+
+          <p class="c11"><span class="c1">Please assure to take the
+          proper <i>iaik_jce.jar</i> file depending on the JCE
+          framework you are using. As noted above, the unsigned
+          version of <i>iaik_jce.jar</i> contains our JCE framework
+          implementation (JAVAX CRYPTO) and therefore maybe used
+          with any JDK that does not include the JCE framework.
+          When using JDK1.4 or later you will have to use the
+          signed version of <i>iaik_jce.jar</i>.<br></span></p>
+
+          <p class="c11"></p>
+
+          <p class="c11"><span class=
+          "c15">LdapURLConnection</span></p>
+
+          <p class="c11"><span class="c1">Class
+          <code>LdapURLConnection</code> of package
+          <code>iaik.x509.net.ldap</code> internally uses the Java
+          Naming and Directory Interface<sup><span class=
+          "c17">TM</span></sup> (JNDI); thus when using
+          <code>LdapURLConnection</code> you must have the required
+          JNDI jar files in your classpath. If you are using JDK
+          1.3 or later you do not have to take care about it since
+          JNDI is already contained in the standard JDK API. When
+          using a JDK version &lt; 1.3, you can get the required
+          packages (<code>jndi.jar</code>, <code>ldap.jar</code>,
+          <code>providerutil.jar</code>) from the <a href=
+          "http://java.sun.com/products/jndi" target="_blank">JNDI
+          homepage</a> at SUN/ORACLE.</span></p>
+
+          <p class="c11"></p>
+
+          <!--p class="c11"><span class="c15">Jar File
+          Integrity</span></p>
+
+          <p class="c11"><span class="c1">For each JAR file of
+          IAIK-JCE there also exists a <code>&lt;jar file
+          name&gt;.sha1</code> file (e.g.
+          <code>iaik_jce.jar.sha1</code>) that contains a
+          hexadecimal string representation of the hash value
+          calculated over the corresponding jar file. This hash
+          value may be used for verifying the integrity of the
+          corresponding jar file.</span></p>
+
+          <p class="c11"></p-->
+
+          <p><a name="jurisdiction" id="jurisdiction"><span class=
+          "c15">Unlimited Strengh Cryptography</span></a></p>
+
+          <p class="c11"><span class="c1">Due to import
+          restrictions of some countries JDK versions &gt;= 1.4
+          contain so-called jurisdiction policy files only allowing
+          strong but not unlimited cryptography. Trying to use
+          Cipher keys that exceed the restricted key size limit may
+          cause errors mentioning unsupported key sizes. However,
+          since most countries do not have any crypto restrictions,
+          unlimited versions of the jurisdiction policy files are
+          available to may be installed for allowing unlimited key
+          sizes and algorithm parameters. Usually, you can download
+          them from the same web page as the Java runtime or JDK.
+          Usually these files have to be put into the lib/security
+          subdirectory of your JRE; however some VMs (e.g. IBM) may
+          require to put them into another directory (e.g.
+          lib/ext). Please read the installation instructions that
+          come with these policy files. Take care to install these
+          policy files in the correct JRE installation (Note that
+          many JDKs install two JREs by default and that the one
+          which is used by default is not(!) the one embedded in
+          the JDK directory. To see which one is used, you may type
+          <code>java &minus;verbose
+          &minus;version</code>).</span></p>
+
+          <p class="c11"><span class="c1">IAIK-JCE (version 3.17 or
+          later) provides special versions of
+          <code>iaik_jce.jar</code> allowing to use unlimited
+          strength cryptography also if only the default
+          jurisdiction policy files are installed. These special
+          versions of <code>iaik_jce.jar</code> are contained in
+          the <i><code>lib-signed/unltd</code></i> sub-directory of
+          the IAIK-JCE distribution. If your application does not
+          directly create a <code>Cipher</code> object (if you are,
+          e.g., accessing a KeyStore or doing document encryption
+          with PKCS#7 or IAIK-CMS (version 4.02 or later), or, for
+          instance, using iSaSiLk (version 4.2 or later) for
+          SSL/TLS connections), you simply have to put this
+          unlimited strength version of <code>iaik_jce.jar</code>
+          into your classpath. If you yourself create a
+          <code>Cipher</code> object you should call:</span></p>
+          <pre>
+<span class="c1"><code>
+  Cipher cipher = iaik.utils.IaikSecurity.getCipher(...);
+</code></span>
+</pre><span class="c1">instead of calling</span>
+          <pre>
+<span class="c1"><code>
+  Cipher cipher = Cipher.getInstance(...);
+</code></span>
+</pre><span class="c1">Of course, these unlimited strength versions
+shall be used only in countries which do not have any restrictions
+to cryptographic key sizes or algorithm parameters (which are most
+countries). Therefore these file are not included in the IAIK-JCE
+install file; but can be separatly downloaded from our
+          <a href="http://jce.iaik.tugraz.at/sic/download" target=
+          "_blank">Website</a>. These versions of
+          <code>iaik_jce.jar</code> may be useful when you want to
+          deploy your application in countries with no crypto
+          restrictions, but do not want that all your end users
+          have to manually install the unlimited strength
+          jurisdiction policy files.</span>
+          
+          
+          <p><a name="aes_addon" id="aes_addon"><span class=
+          "c15">AES Addon</span></a></p>
+          Some modern amd64/EMT64 CPUs include Intel's new AES-NI instruction set extension, which allows great performance gains
+          for AES implementations. Since IAIK-JCE 5.0 we have been delivering an addon that allows the user to take advantage of AES-NI.
+		  In case your CPU supports AES-NI, include the <code>iaik_jce_native_aes.jar</code> into your classpath, extract the <code>*.so</code> 
+		  and <code>*.dll</code> from the jar's root directory to a separate (sub-)directory and set the <code>java.library.path</code> to this
+		  directory. This is usually achieved by adding <code>-Djava.library.path=(natives_directory)</code> to the java command line. 
+		  
+		  <p><a name="trusted_library" id="trusted_library"><span class=
+          "c15">Trusted Library</span></a></p>
+          When using signed/priviledged and unsigned/sandbox components together (&quot;mixed code&quot;) modern JDKs 
+          may require to include the &quot;Trusted-Library=true&quot; attribute into the manifest file of all signed 
+          components, otherwise a security warning may be raised. For that reason we provide versions of all 
+          signed IAIK-JCE jar files (see folder <code>lib-signed/trusted_library</code>) that may be used
+          especially for Java<sup>TM</sup> Java WebStart appliactions, applets or when using JavaScript code
+          that calls code within a privileged applet.
+		  
+
+		  <hr>
+          <p class="c11"><span class="c1">If there are still
+          problems please check the FAQs at <a href=
+          "http://jce.iaik.tugraz.at/products/01_jce/faq/">http://jce.iaik.tugraz.at/products/01_jce/faq/</a>,
+          visit the support web site at <a href=
+          "http://jce.iaik.tugraz.at/support/">http://jce.iaik.tugraz.at/support/</a>
+          or send an email to <a href=
+          "mailto:jce-support@iaik.tugraz.at">&lt;jce-support@iaik.tugraz.at&gt;</a>.</span></p>
+
+          <div class="c2">
+            <table border="0" cellpadding="2">
+              <tr>
+                <td><img src="images/arrow.gif" alt=
+                "arrow.gif (1267 Byte)" height="42" width=
+                "55"></td>
+
+                <td><span class="c18">Back to <a href=
+                "Readme.html">Readme</a></span></td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+
+  <div class="c19">
+    Copyright (c) 2002 by IAIK. Copyright (C) 2003 - 2013
+    Stiftung SIC. All rights reserved.
+  </div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.2-hudson-740-. --><xs:schema xmlns:tns="http://certificacao.webservices.cruzeirodosul.edu.br/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://certificacao.webservices.cruzeirodosul.edu.br/">
+
+<xs:complexType name="documentoEntregueModel">
+<xs:sequence>
+<xs:element name="codigoInstituicao" type="xs:int" minOccurs="0" />
+<xs:element name="rgmAluno" type="xs:long" minOccurs="0" />
+<xs:element name="nomeAluno" type="xs:string" minOccurs="0" />
+<xs:element name="codigoDocumento" type="xs:int" minOccurs="0" />
+<xs:element name="nomeDocumento" type="xs:string" minOccurs="0" />
+<xs:element name="sequencioDocumentos" type="xs:int" minOccurs="0" />
+<xs:element name="idArquivo" type="xs:long" minOccurs="0" />
+<xs:element name="caminhoArquivo" type="xs:string" minOccurs="0" />
+<xs:element name="nomeArquivo" type="xs:string" minOccurs="0" />
+<xs:element name="extensaoArquivo" type="xs:string" minOccurs="0" />
+<xs:element name="dataBaixa" type="xs:dateTime" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="empresasConsultaModel">
+<xs:sequence>
+<xs:element name="codigoEmpresa" type="xs:int" minOccurs="0" />
+<xs:element name="nomeEmpresa" type="xs:string" minOccurs="0" />
+<xs:element name="nomeAbreviado" type="xs:string" minOccurs="0" />
+<xs:element name="codigoTipoEnsino" type="xs:int" minOccurs="0" />
+<xs:element name="descricaoTipoEnsino" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="documentoEntregueModelArray" final="#all">
+<xs:sequence>
+<xs:element name="item" type="tns:documentoEntregueModel" minOccurs="0" maxOccurs="unbounded" nillable="true" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="empresasConsultaModelArray" final="#all">
+<xs:sequence>
+<xs:element name="item" type="tns:empresasConsultaModel" minOccurs="0" maxOccurs="unbounded" nillable="true" />
+</xs:sequence>
+</xs:complexType>
+</xs:schema>

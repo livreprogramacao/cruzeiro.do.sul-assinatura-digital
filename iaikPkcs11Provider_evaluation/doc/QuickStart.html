@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+  <HEAD>
+    <TITLE>IAIK JCE Provider for PKCS#11</TITLE>
+    <META NAME="Keywords" CONTENT="IAIK, Java, Security, Hardware, JCA, JCE, PKCS#11, Cryptoki, Signature, Encrpytion, Decryption, Cryptography">
+    <META NAME="Description" CONTENT="A Java JCA/JCE Provider that uses PKCS#11 compatible Cryptographic Tokens">
+  </HEAD>
+  <BODY>
+    <TABLE BORDER=0>
+      <TR>
+        <TD><IMG SRC="images/siclogo.jpg" ALT="SIC Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD><IMG SRC="images/iaik_logo.gif" ALT="IAIK Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD>
+          <H2>Quick Start Guide for the IAIK JCE Provider for PKCS#11</H2>
+        </TD>
+      </TR>
+    </TABLE>
+
+    <ol>
+      <li>Install the Provider (<A HREF="Install.html">Detailed Instructions</A>)
+        <ol type="a">
+          <li><p>Include the jar files <code>iaikPkcs11Provider.jar</code>, 
+            <code>iaikPkcs11Wrapper.jar</code> and <code>iaik_jce.jar</code> 
+            in your class path or put them in the <code>jre/lib/ext</code> 
+            directory of your Java runtime (use the signed versions of 
+            <code>iaikPkcs11Provider.jar</code> and <code>iaik_jce.jar</code> 
+            for JDK 1.4 and higher).</p>
+          </li>
+          <li>PKCS#11 wrapper native library:
+          	<ul>
+          			<li><p>The native libraries for Windows, Linux, MacOS and Solaris are included in the 
+          							PKCS#11 wrapper's jar-file since version 1.4. If the path to the wrapper's native library 
+          							is not configured (as given below) the PKCS#11 wrapper will automatically try to  
+          							copy it from the jar file to the local temporary directory configured for Java and load it from there.</p>
+          			 </li>
+          			 <li><p>In case of errors (e.g. if the temporary directory is not writable) or you prefer to define the used file yourself,
+          			         you can either put the shared library, e.g. <code>pkcs11wrapper.dll</code> for Windows and <code>libpkcs11wrapper.so</code> 
+          			         for UNIX, in any directory of your system's library search path or VM library path (e.g. <code>jre/bin</code>). 
+												 You can extend the VM library path using the <code>java.library.path</code> system property
+					  						(e.g. using the VM command line argument <code>-Djava.library.path=wrapper/native/windows/win-x86_64</code>).
+            						Alternatively, you can specify the absolute path to the library in your
+						            properties file with the key <code>PKCS11_WRAPPER_PATH</code>, eg. <code>PKCS11_WRAPPER_PATH = C:\\IAIK\\pkcs11wrapper.dll</code></p> 
+						      </li>
+						</ul>
+				 </li>
+        </ol>
+      </li>
+      <li>Configure the Provider (<A HREF="Using.html">Detailed Instructions</A>)
+        <p>
+        <ul>
+         <li>Using the properties file:
+		        <ol type="a">
+		          <li><p>Create a properties file called <code>iaik/pkcs/pkcs11/provider/IAIKPkcs11.properties</code> which contains the configuration for your provider (e.g. what hardware PKCS#11 module to use).<br>
+		              This properties file must contain at least one property entry with the key <code>PKCS11_NATIVE_MODULE</code>. Its value must be the PKCS#11 module of the crypto hardware; e.g. <br>
+		              <code>PKCS11_NATIVE_MODULE = cryptoki.dll</code><br>
+		              You may need to specify the PKCS#11 module with full path name, if it is not in your system's search path. The name of the PKCS#11 module may vary depending on your crypto hardware. Other entries are optional. For typical names of modules have a look at the <A HREF="Using.html">Detailed Usage Instructions</A>.
+		              You may use the configuration file of a demo as template.</p>  
+		           </li>
+		          <li><p>Put the configuration file somewhere in the class path taking the subdirectory structure into account (same as for class files).
+		              You may also include this configuration file in any jar file which is in your class path.</p>
+		           </li>
+		        </ol>
+		        </li>
+		        <li>
+		        	<p>Dynamically, by creating a Properties object (<code>Properties properties = new Properties()</code>). 
+		        					Then you can configure the same settings as if using the properties file. E.g. to set the PKCS#11 module add the property like this:
+		        					<code>properties.put(Constants.PKCS11_NATIVE_MODULE, "cryptoki.dll")</code>. Instantiate the PKCS#11 provider with these
+		        					properties: <code>new IAIKPkcs11(properties)</code> .
+		            </p>
+		        </li>
+		     </ul>
+       </p>
+      </li>
+      <li>Test the Provider Configuration (<A HREF="Demo.html">Detailed Instructions</A>)
+        <ol type="a">
+          <li><p>Try to run an application that makes a simple test with the provider. You may try some of the included demos; e.g. <code>demo.pkcs.pkcs11.provider.RSASigningDemo0</code> in the <code>demo</code> directory.</p>
+          </li>  
+        </ol>
+        </li>
+    </ol>
+
+    <HR>
+    <CENTER>Copyright (c) 1997 - 2003 IAIK. Copyright (c) 2003 - 2015 Stiftung SIC. All rights reserved.</CENTER>
+
+  </BODY>
+</HTML>

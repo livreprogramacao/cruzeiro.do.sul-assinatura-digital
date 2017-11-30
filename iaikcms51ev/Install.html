@@ -1,0 +1,375 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<link rel="StyleSheet" href="style.css" type="text/css">
+	<TITLE>IAIK-CMS Installation</TITLE>
+</HEAD>
+<BODY>
+<table border="0" width="100%">
+  <tr>
+    <td><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/siclogo.jpg" alt="IAIK" border="0"></a></td>
+
+    <td align="center"><h1>IAIK-CMS Installation</h1><h2><U>Cryptographic Message Syntax / S/MIME Version 3</U></h2></td>
+    <td align="right"><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/iaik_logo.gif" alt="SIC" border="0"></a></td>
+  </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<p>
+The IAIK-CMS distribution you have just installed has created the following directory structure:
+</p>
+<table border cellpadding=3>
+<tr><th>Directory</th><th>Contents</th></tr>
+<tr>
+   <td>
+      <code>InstallDirectory</code>
+   </td>
+   <td>
+      This file and other documentation linked from the main <A HREF="Readme.html">Readme</A> file
+   </td>
+</tr>
+<tr>
+   <td>
+       <code>InstallDirectory/docs</code>
+   </td>
+   <td>
+      JavaDoc API documentation 
+   </td>
+</tr>
+<tr>
+   <td>
+      <code>InstallDirectory/lib</code>
+   </td>
+   <td>
+      IAIK-CMS JAR files <code>iaik_cms.jar</code>, <code>iaik_cms_demo.jar</code>;
+      and IAIK-JCE provider files (<code>iaik_jce.jar</code>, signed
+      and unsigned version)
+   </td>
+</tr>
+<tr>
+   <td>
+      <code>InstallDirectory/demo</code>
+   </td>
+   <td>
+      Source code and Javadoc for various demo programs.
+      Batch files ans shell scripts for running the demos
+      on Windows or Linux. Libraries (eval versions)
+      required by the demos.
+   </td>
+</tr>
+<tr>
+   <td>
+      <code>InstallDirectory/demo/cmd</code>
+   </td>
+   <td>
+       Batch files for running the included demos on Windows.
+   </td>
+</tr>
+<tr>
+   <td>
+      <code>InstallDirectory/demo/docs</code>
+   </td>
+   <td>
+       Javadoc for the demo programs.
+   </td>
+</tr>
+<tr>
+   <td>
+      <code>InstallDirectory/demo/lib</code>
+   </td>
+   <td>
+       Library files (eval versions) required for demos (IAIK-PKCS11, IAIK-TSP, JavaMail(TM), JAF).
+   </td>
+</tr>
+<tr>
+   <td>
+      <code>InstallDirectory/demo/sh</code>
+   </td>
+   <td>
+       Shell scripts for running the included demos on Linux.
+   </td>
+</tr>
+<tr>
+   <td>
+      <code>InstallDirectory/demo/src</code>
+   </td>
+   <td>
+        Source code for various demo programs.
+   </td>
+</tr>   
+<tr>
+   <td>
+      <code>InstallDirectory/images</code>
+   </td>
+   <td>
+      Logos and images used in the dcoumentation
+   </td>
+</tr>
+</table>
+
+<h2>Classpath Setup</h2>
+
+In order to use the IAIK CMS/SMIME library you need to have the <CODE>iaik_cms.jar</CODE>
+file in your Java&#153; CLASSPATH at all times. There are a few things to
+note here:
+
+<ul>
+   <li>
+       IAIK-CMS operates on the IAIK-JCE Cryptography toolkit. Thus you will need the <code>iaik_jce_(full).jar</code>
+       in your classpath. 
+   </li>
+   <li>
+       If you are using JDK 1.4 or later make sure to use the signed version of <code>iaik_jce_(full).jar</code>.
+   </li>    
+   <li>
+       The <CODE>iaik_cms_demo.jar</code> file contains the demos in compiled
+       form. In case you recompile (some or all of) them make sure those classes appear in your
+       CLASSPATH before the <CODE>iaik_cms_demo.jar</code>  file to avoid versioning
+       conflicts (or remove <code>iaik_cms_demo.jar </code>from the classpath if not required at all).
+   </li>
+   <li>
+       For the S/MIME part of the IAIK-CMS library (<code>iaik.smime.*</code>) you need the JavaBeans<sup>TM</sup> Activation Framework
+       (JAF) and the Java<sup>TM</sup> Mail API. You can get the JavaBeans<sup>TM</sup> Activation Framework
+       (<code>activation.jar</code>) from <a href ="http://www.oracle.com/technetwork/java/javase/downloads/index-135046.html" 
+       target="_blank">http://www.oracle.com/technetwork/java/javase/downloads/index-135046.html</a>, and the JavaMail<sup>TM</sup> API
+       (<code>mail.jar</code>) from <a href = "http://www.oracle.com/technetwork/java/javamail/index.html" target="_blank">http://www.oracle.com/technetwork/java/javamail/index.html</a>.
+       Note that, if you are using JDK 6 or later, the JavaBeans<sup>TM</sup> Activation Framework is already included in
+       the JDK; therefore in this case you do not need to put <code>activation.jar</code> into your classpath. 
+       You also should not use version 1.3.3 of the JavaMail<sup>TM</sup> API because of a bug in its Base64 decoding routine.
+       Version 1.4 of the JavaMail<sup>TM</sup> API and version 1.1 of the JavaBeans<sup>TM</sup> Activation Framework can be only used with JDK 1.4 or later.
+    </li>
+</ul>
+
+<p>
+The following list gives some typical classpath examples for different JDK versions you may using. We assume
+that the required jar files are located in a <code>lib</code> sub-folder of your current working directory.
+The examples are given for a Windows environment but can be easily adapted for Linux or other operating
+sytems.
+</p>
+
+<h3>Typical JDK 1.2, JDK 1.3 CLASSPATH Setup</h3>
+
+To set up a typical CLASSPATH for JDK 1.2 or JDK 1.3 under Windows use
+
+<ul>
+   <li>CMS:
+       <pre>
+         set CLASSPATH=.;lib/iaik_cms.jar;lib/iaik_jce.jar;%CLASSPATH%
+       </pre>
+   </li>
+   <li>S/MIME:
+       <pre>
+         set CLASSPATH=.;lib/iaik_cms.jar;lib/iaik_jce.jar;lib/activation.jar;lib/mail.jar;%CLASSPATH%
+       </pre>
+   </li>    
+</ul>
+
+<h3>Typical JDK 1.4, JDK 1.5, JDK  CLASSPATH Setup</h3>
+
+To set up a typical CLASSPATH for JDK 1.4 or JDK 1.5 under Windows use
+
+<ul>
+   <li>CMS:
+       <pre>
+         set CLASSPATH=.;lib/iaik_cms.jar;lib/signed/iaik_jce.jar;%CLASSPATH%
+       </pre>
+    </li>
+    <li>S/MIME:
+       <pre>
+         set CLASSPATH=.;lib/iaik_cms.jar;lib/signed/iaik_jce.jar;lib/activation.jar;lib/mail.jar;%CLASSPATH%
+       </pre>
+    </li>
+</ul>      
+The difference between JDK versions prior JDK 1.4 and JDK versions equal or later than 1.4
+is that you must have a signed version of <CODE>iaik_jce(_full).jar</CODE> in your
+classpath (please see installation notes of IAIK-JCE for more information).
+
+
+<h3>Typical JDK 1.6, JDK 1.7 or later CLASSPATH Setup</h3>
+
+To set up a typical CLASSPATH for JDK 1.6 under Windows use
+
+<ul>
+   <li>CMS:
+       <pre>
+         set CLASSPATH=.;lib/iaik_cms.jar;lib/signed/iaik_jce.jar;%CLASSPATH%
+       </pre>
+    </li>
+    <li>S/MIME:
+       <pre>
+         set CLASSPATH=.;lib/iaik_cms.jar;lib/signed/iaik_jce.jar;lib/mail.jar;%CLASSPATH%
+       </pre>
+    </li>
+</ul>      
+The difference between JDK 1.4, 1.5 and JDK versions equal or later than 1.6
+is that you do NOT have to put <CODE>activation.jar</CODE> into your
+S/MIME classpath anymore since the JAF is already included in the JDK.
+
+
+<h3>Including the demos</h3>
+<p>If you want to run the demos you additionally will have to put <code>iaik_cms_demo.jar</code>
+into the classpath:
+</p>
+
+<PRE>  set CLASSPATH=.;lib/iaik_cms_demo.jar;%CLASSPATH%</PRE>
+
+<h3>Elliptic Curve Cryptography</h3>
+<p>If you want to use Elliptic Curve Cryptography (ECDSA, ECDH) you will have to put the 
+IAIK <a href="http://jce.iaik.tugraz.at/sic/Products/Core-Crypto-Toolkits/ECCelerate" target="_blank">ECCelerate<sup><font size="-2">TM</font></sup></a> 
+library into your classpath. By default it is not included in the IAIK-CMS distribution; 
+you can download <code>iaik_eccelerate.jar</code> from <a href = "http://jce.iaik.tugraz.at/download/" target="_blank">http://jce.iaik.tugraz.at/download/</a>.
+If you want to use arithmetic speedups you also may put the <code>iaik_eccelerate_addon.jar</code> file into the classpath.
+Using Elliptic Curve Cryptography with IAIK-CMS requires a special IAIK-CMS <a href="SecurityProvider.html"><code>SecurityProvider</code></a>
+implementation contained in the <code>iaik_eccelerate_cms.jar</code> file of the ECCelerate<sup><font size="-2">TM</font></sup> distribution: 
+
+<PRE>  set CLASSPATH=.;lib/signed/iaik_eccelerate.jar;.;lib/signed/iaik_eccelerate_cms.jar;%CLASSPATH%</PRE>
+
+Note that IAIK ECCelerate<sup><font size="-2">TM</font></sup> requires JDK 1.5 or later. If you want to use ECC cipher suites with
+JDK versions prior 1.5 please <a href="mailto:jce-support@iaik.tugraz.at">contact</a> us to get our old IAIK-ECC library.
+
+<h3>Unlimited Strengh Cryptography</h3> 
+
+Due to import restrictions of some countries JDK versions &gt;= 1.4 contain so-called 
+jurisdiction policy files only allowing strong but not unlimited cryptography. Trying to
+use encryption keys that exceed the restricted key size limit may cause errors mentioning
+unsupported key sizes. However, since most countries do not have any crypto restrictions,
+unlimited versions of the jurisdiction policy files are available to may be installed
+for allowing unlimited key sizes and algorithm parameters. Usually, you can download
+them from the same web page as the Java runtime or JDK. Usually these files have to be
+put into the lib/security subdirectory of your JRE; however some VMs (e.g. IBM) may
+require to put them into another directory (e.g. lib/ext). Please read the installation
+instructions that come with these policy files. 
+<br>
+IAIK-JCE (version 3.17 or later) provides special versions of iaik_jce.jar and 
+iaik_jce_full.jar allowing to use unlimited strength cryptography also if only the 
+default jurisdiction policy files are installed. These special versions of iaik_jce.jar
+and iaik_jce_full.jar are contained in the lib-signed/unltd sub-directory of the
+IAIK-JCE distribution. When using IAIK-CMS with these IAIK-JCE jar files you can
+run unlimited cipher suites without having to take care about jurisdiction policy files.
+
+
+<p>&nbsp;</p>
+
+<hr>
+<h2>Mailcap Registration</h2>
+
+<p>The JAF assignment between <i>MIME-types</i> and <i>content handlers</i> is done by
+means of a RFC&nbsp;1524 <em>mailcap</em> file which is included in the <em>IAIK-CMS</em>
+distribution. It defines the following classes as content handlers for the
+corresponding MIME types:
+</p>
+<table cellPadding="2" border="1">
+  <tr>
+    <td>
+      <p align="center"><strong>MIME Type</strong></p>
+    </td>
+    <td>
+      <p align="center"><strong>Content Handler</strong></p>
+    </td>
+  </tr>
+  <tr>
+    <td>multipart/signed</td>
+    <td>iaik.smime.signed_content</td>
+  </tr>
+  <tr>
+    <td>application/x-pkcs7-signature</td>
+    <td>iaik.smime.signed_content</td>
+  </tr>
+  <tr>
+    <td>application/x-pkcs7-mime</td>
+    <td>iaik.smime.encrypted_content</td>
+  </tr>
+  <tr>
+    <td>application/x-pkcs10</td>
+    <td>iaik.smime.pkcs10_content</td>
+  </tr>
+  <tr>
+    <td>application/pkcs7-signature</td>
+    <td>iaik.smime.signed_content</td>
+  </tr>
+  <tr>
+    <td>application/pkcs7-mime</td>
+    <td>iaik.smime.encrypted_content</td>
+  </tr>
+  <tr>
+    <td>application/pkcs10</td>
+    <td>iaik.smime.pkcs10_content</td>
+  </tr>
+</table>
+
+
+
+<p>The relevant entries into the mailcap-file should look like</p>
+<pre>
+#
+# IAIK 'mailcap' file
+#
+multipart/signed;;                  x-java-content-handler=iaik.smime.signed_content
+application/x-pkcs7-signature;;     x-java-content-handler=iaik.smime.signed_content
+application/x-pkcs7-mime;;          x-java-content-handler=iaik.smime.encrypted_content
+application/pkcs7-signature;;       x-java-content-handler=iaik.smime.signed_content
+application/pkcs7-mime;;            x-java-content-handler=iaik.smime.encrypted_content
+application/x-pkcs10;;              x-java-content-handler=iaik.smime.pkcs10_content
+application/pkcs10;;                x-java-content-handler=iaik.smime.pkcs10_content
+</pre>
+
+<p>
+The content handlers are registered by copying the mailcap file into the lib directory of your
+JavaHome (e.g.  C:/Java/j2re1.4.2/lib).
+</p>
+<p>
+Alternatively you may register the IAIK-S/MIME mailcap
+file dynamically by using the default command map:
+</p>
+<pre>
+String mailcapFileName = ...;
+MailcapCommandMap mc = new MailcapCommandMap(mailcapFileName);
+CommandMap.setDefaultCommandMap(mc);
+</pre>
+
+<p>
+Or you may add the IAIK mailcap entries immediately to the default mailcap command map, e.g.:
+</p>
+
+<pre>
+MailcapCommandMap mc = (MailcapCommandMap)CommandMap.getDefaultCommandMap();
+
+mc.addMailcap("multipart/signed;; x-java-content-handler=iaik.smime.signed_content");
+mc.addMailcap("application/x-pkcs7-signature;; x-java-content-handler=iaik.smime.signed_content");
+mc.addMailcap("application/x-pkcs7-mime;; x-java-content-handler=iaik.smime.encrypted_content");
+mc.addMailcap("application/pkcs7-signature;; x-java-content-handler=iaik.smime.signed_content");
+mc.addMailcap("application/pkcs7-mime;; x-java-content-handler=iaik.smime.encrypted_content");
+mc.addMailcap("application/x-pkcs10;; x-java-content-handler=iaik.smime.pkcs10_content");
+mc.addMailcap("application/pkcs10;; x-java-content-handler=iaik.smime.pkcs10_content");
+
+CommandMap.setDefaultCommandMap(mc);
+</pre>
+
+<p>
+For a more detailed description of mailcap handling consult the Javadoc of the Activation Framework.
+</p>
+
+<p>
+If there are still problems please send an email to <a href="mailto:jce-support@iaik.tugraz.at">&lt;jce-support@iaik.tugraz.at&gt;</a>
+</p>
+
+<DIV align=center>
+  <CENTER>
+   <TABLE cellPadding=2 border=0>
+    <TR>
+     <TD><IMG src="images/arrow.gif" width=55></TD>
+     <TD>Back to <A href="Readme.html">Readme</A></TD>
+    </TR>
+   </TABLE>
+  </CENTER>
+</DIV>
+    
+
+<HR>
+
+<P align=center>Copyright (c) 2002 by&nbsp;IAIK. Copyright (C) 2003 - 2016 Stiftung SIC. All rights reserved.</P>
+<P align=center>&nbsp;</P>
+</BODY>
+</HTML>

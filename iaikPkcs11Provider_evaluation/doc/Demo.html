@@ -1,0 +1,244 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+  <HEAD>
+    <TITLE>IAIK JCE Provider for PKCS#11</TITLE>
+    <META NAME="Keywords" CONTENT="IAIK, Java, Security, Hardware, JCA, JCE, PKCS#11, Cryptoki, Signature, Encrpytion, Decryption, Cryptography">
+    <META NAME="Description" CONTENT="A Java JCA/JCE Provider that uses PKCS#11 compatible Cryptographic Tokens">
+  </HEAD>
+  <BODY>
+    <TABLE BORDER=0>
+      <TR>
+        <TD><IMG SRC="images/siclogo.jpg" ALT="SIC Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD><IMG SRC="images/iaik_logo.gif" ALT="IAIK Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD>
+          <H2>IAIK JCE Provider for PKCS#11: Demos</H2>
+        </TD>
+      </TR>
+    </TABLE>
+
+    <P>The <code>examples</code> directory contains several samples that show how to 
+    use this library. The following demos are included. Keep in mind that your PKCS#11 
+    token must support the required cryptographic mechanism to run; for example, 
+    the RSA demos will not run with a token that does not support the required 
+    RSA mechanism. Beside the demos in the <code>demo</code> directory, there 
+    are several other demos included. The <code>applet-demo</code> directory 
+    includes a demo that shows how to use sign with a PKCS#11 token, for example 
+    a smart card, inside an applet. The <code>iaik-jce-demos</code> directory 
+    contains demos that show how to use this provider to create PKCS#7 signatures, 
+    to sign a certificate request, to sign public key and attribute 
+    certificates, to sign CRLs, and to sign OCSP requests and OCSP responses; 
+    these demos are based on the 
+    <a href="http://jce.iaik.tugraz.at/products/01_jce/">IAIK-JCE</a> toolkit 
+    which is part of the PKCS#11 provider library.
+    These demo suites include samples for all important step in a typical life 
+    cycle of a key; i.e. there are demos for key-pair generation with export of 
+    the public key, a demo which constructs and signs a PKCS#10 certificate 
+    request, the import of a certificate chain. In addition, there are demos 
+    that show how to use a PKCS#11 token, for instance a smart card, to do SSL 
+    and TLS client authentication. Client authentication is done with a 
+    certificate from the token and signing with the token. There are two 
+    different SSL client authentication demos - first, for use with 
+    <a href="http://jce.iaik.tugraz.at/products/02_isasilk/">IAIK-SSL</a> 
+    (iSaSiLk) which works with any JDK (in the <code>isasilk-demo</code> 
+    directory); second, for use with JDK 1.4 or higher and the included 
+    <a href="http://download.oracle.com/javase/7/docs/technotes/guides/security/jsse/JSSERefGuide.html">JSSE</a> implementation 
+    which does only work with JDK 1.4 (in the 
+    <code>jsse_jdk14-demo</code> directory). The <code>xsect-demo</code> 
+    contains examples which show how to use the PKCS#11 provider to create and 
+    verify XML signatures using the 
+    <a href="http://jce.iaik.tugraz.at/sic/products/xml_security/xsect/">IAIK XSECT</a> 
+    library. In the <code>iaik-cms-demo</code> directory there are samples for 
+    using the PKCS#11 provider in combination with the 
+    <a href="http://jce.iaik.tugraz.at/products/03_cms/">IAIK-CMS</a> 
+    library to create and verify CMS signatures, to encrypt and decrypt CMS 
+    data and to handle S/MIME messages.
+
+    <P>The demos read their PKCS#11 module configuration from properties files. 
+    These properties files reside under the <code>resources</code> directory. 
+    You must ensure that the <code>resources</code> directory is included in the CLASSPATH. 
+    Otherwise, the demo will throw an exception saying something like 
+    <code>iaik.pkcs.pkcs11.provider.IAIKPkcs11Exception: Required PKCS11_NATIVE_MODULE property has not been configured; 
+     e.g. check if properties files are in the CLASSPATH.</code> In addition, you should not forget to edit the 
+    <code>resources/iaik/pkcs/pkcs11/provider/IAIKPkcs11.properties</code> file 
+    and enable the appropriate <code>PKCS11_NATIVE_MODULE</code> entry for your 
+    PKCS#11 module.
+    
+    <P>Please note that most of the demo use dynamic provider registration. 
+    If you want to use the demos with static provider registration (i.e. 
+    through the <code>java.security</code> file), you will have to adapt the
+    demo code.
+    
+    <P>There is a <code>Readme.txt</code> file in each demo directory. It provides some basic information about the examples.
+    <P>The demos in the <code>demo</code> directory are grouped in the following categories:
+    <UL>
+      <LI><b>ciphers</b></LI>
+        <br>Shows how to encrypt data using symmetric (AES, DES, Triple-DES) and asymmetric (RSA) algorithms.
+        <br><br>
+      <LI><b>hashes</b></LI>
+        <br>Shows how to hash data using hashing algorithms like MD5 or SHA256.
+        <br><br>
+      <LI><b>keyagreement</b></LI>
+        <br>Shows how to perform a keyagreement to agree on a common secret key between two parties using Diffie-Hellman.
+        <br><br>
+      <LI><b>keyfactory</b></LI>
+        <br>Shows how to encode, decode or generate keys using a keyfactory.
+        <br><br>
+      <LI><b>keygeneration</b></LI>
+        <br>Shows how to generate secret keys or key pairs, and how to derive new keys from existing keys.
+        <br><br>
+      <LI><b>keystore</b></LI>
+        <br>Shows how to use the PKCS#11 module as JCE/JCA keystore, how to read and add key or certificate entries to the keystore
+            and how to import keys and certificates from a PKCS#12 file.
+        <br><br>
+      <LI><b>macs</b></LI>
+        <br>Shows how to calculate message authentication codes.
+        <br><br>
+      <LI><b>random</b></LI>
+        <br>Shows how to create random data.
+        <br><br>
+      <LI><b>signatures</b></LI>
+        <br>Shows how to sign data using RSA or ECDSA.
+        <br><br>
+      <LI><b>utils</b></LI>
+        <br>This folder includes methods frequently used in the demos and other helpful demos. The PatchToUTF8 demos show
+        					how to update the character encoding of labels and pins to UTF8 encoding.
+        <br><br>
+      <LI><b>wrapper</b></LI>
+        <br>Prints general information about the PKCS#11 token for debugging purposes.
+        <br><br>
+      <LI>and additionally includes three demos, how to change the PIN of a token, how to select
+        a specific slot and how to use two different modules in one application.
+        <br><br>
+    </UL>
+    <P>The demos in the <code>iaik-jce-demos</code> directory are:
+    <UL>
+      <LI><b>DemoCa</b></LI>
+        <br>Shows how to use a PKCS#11 token to sign certificates for a basic CA.
+        <br><br>
+      <LI><b>PKCS7DecryptionDemoWithRSACipherProvider</b></LI>
+        <br>Shows how to decrypt a PKCS#7 enveloped data using the 
+        RSACipherProvider feature of the PKCS#7 implementation of the IAIK-JCE.
+        <br><br>
+      <LI><b>PKCS7DecryptionDemoWithUnwrapRSACipherProvider</b></LI>
+        <br>Shows how to decrypt a PKCS#7 enveloped data using the 
+        RSACipherProvider feature of the PKCS#7 implementation of the IAIK-JCE. 
+        In contrast to the previous example, this example uses the key unwrap 
+        function of the PKCS#11 module rather than the normal decrypt function.
+        <br><br>
+      <LI><b>PKCS7SigningDemo</b></LI>
+        <br>Shows how to create a PKCS#7 signature.
+        <br><br>
+      <LI><b>PKCS7SigningDemoWithRSACipherProvider</b></LI>
+        <br>Shows how to create a PKCS#7 signature using the RSACipherProvider feature of the PKCS#7 implementation of the IAIK-JCE.
+        <br><br>
+      <LI><b>SelfSignedCertificate</b></LI>
+        <br>Shows how to generate a key-pair and create a self-signed certificate.
+        <br><br>
+      <LI><b>SignAttributeCertificate</b></LI>
+        <br>Shows how to sign an X.509 attribute certificate.
+        <br><br>
+      <LI><b>SignCertificate</b></LI>
+        <br>Shows how to sign an X.509 public key certificate.
+        <br><br>
+      <LI><b>SignCertificateRequest</b></LI>
+        <br>Shows how to sign a PKCS#10 certificate request.
+        <br><br>
+      <LI><b>SignCRL</b></LI>
+        <br>Shows how to sign a CRL.
+        <br><br>
+      <LI><b>SignOCSPRequest</b></LI>
+        <br>Shows how to sign an OCSP request.
+        <br><br>
+      <LI><b>SignOCSPResponse</b></LI>
+        <br>Shows how to sign an OCSP response.
+        <br><br>
+    </UL>
+    <P>The demos in the <code>iaik-cms-demos</code> directory are:
+    <UL>
+      <LI><b>CreateEnvelopedData</b></LI>
+        <br>Creates an <code>EnvelopedData</code> structure using a given 
+        recipient certificate. This demo does not use the PKCS#11 provider, it 
+        is for convenience. Its output can be used as input to the 
+        <code>EnvelopedDataStreamDemo</code>.
+        <br><br>
+      <LI><b>EnvelopedDataStreamDemo</b></LI>
+        <br>This class shows how to decrypt data according to CMS using the 
+        PKCS#11 provider. This implementation uses the 
+        <code>SecurityProvider</code> feature of the CMS implementation of the 
+        IAIK-CMS toolkit.
+        <br><br>
+      <LI><b>SignedDataStreamDemo</b></LI>
+        <br>This class shows how to create explicitly or implicitly signed data according to CMS 
+        using the PKCS#11 provider. This implementation uses the 
+        <code>SecurityProvider</code> feature of the CMS implementation of the 
+        IAIK-CMS toolkit.
+        <br><br>
+      <LI><b>IaikPkcs11SecurityProvider</b></LI>
+        <br>This class implements a <code>SecurityProvider</code> for the IAIK-
+        CMS toolkit. This <code>SecurityProvider</code> can handle 
+        <code>IAIKPKCS11Key</code> objects and is thus suitable for use with the 
+        PKCS#11 provider. The demos in this package use this class to get the 
+        IAIK-CMS library to use a PKCS#11 module instead of pure software 
+        crypto.
+        <br><br>
+      <LI><b>SMimeSignedDemo</b></LI>
+        <br>This example demonstrates how to create a signed S/MIME message and 
+        send it. It uses a PKCS#11 module (e.g. a smart card) to create the 
+        signature. This implementation uses the <code>SecurityProvider</code> 
+        feature of the CMS implementation of the IAIK-CMS toolkit.
+        <br><br>
+    </UL>
+    <P>The demos in the <code>xsect-demos</code> directory are:
+    <UL>
+      <LI><b>SignandVerifyXmlSig</b></LI>
+        <br>This class shows how to generate a XML-Signature with XSECT and the 
+        PKCS#11 provider. It is a slight modification of the sample that comes 
+        with XSECT. The signature value will be calculated in the PKCS#11 token.
+        Verification is carried out without the PKCS#11 provider.
+        <br><br>
+    </UL>
+    <P>The demos in the <code>applet-demo</code> directory are (please read the <code>Readme.txt</code> file):
+    <UL>
+      <LI><b>RSASigningApplet</b></LI>
+        <br>This demo shows how to use the PKCS#11 Provider in an Java applet. It creates an RSA signature using a PKCS#11 token.
+        <br><br>
+    </UL>
+    <P>The demos in the <code>servlet-demo</code> directory are (please read the <code>Readme.txt</code> file):
+    <UL>
+      <LI><b>AddKeyEntryServlet</b></LI>
+        <br>This demo shows how to use the PKCS#11 Provider in a servlet. It generates a key-pair, creates a certificate
+        corresponding to the key-pair, and adds the private key and the certificate as key entry to the keystore.
+        The generated key entry is used for signing and verifying.
+        <br><br>
+    </UL>
+    <P>The demos in the <code>isasilk-demo</code> directory are:
+    <UL>
+      <LI><b>ClientAuthenticationSocketDemoIsasilk</b></LI>
+        <br>This class shows how to use a keystore of the PKCS#11 provider to 
+        authenticate a client to a server using RSA certificate and signature. 
+        The certificate will be read from the smart card and the signature for 
+        client authentication is done on the card.
+        <br><br>
+      <LI><b>IaikPkcs11SecurityProviderIsasilk</b></LI>
+        <br>This class implements the <code>SecurityProvider</code> interface of 
+        IAIK-SSL. It overrides the default behavior of the 
+        <code>IaikProvider</code> in a way that enables the use of PKCS#11 keys 
+        and the PKCS#11 provider.
+        <br><br>
+    </UL>
+    <P>The demos in the <code>jsse_jdk14-demo</code> directory are:
+    <UL>
+      <LI><b>ClientAuthenticationSocketDemoJsse14</b></LI>
+        <br>This class shows how to use a keystore of the PKCS#11 provider to 
+        authenticate a client to a server using RSA certificate and signature. 
+        The certificate will be read from the smart card and the signature for 
+        client authentication is done on the card.
+        <br><br>
+    </UL>
+
+    <HR>
+    <CENTER>Copyright (c) 1997 - 2003 IAIK. Copyright (c) 2003 - 2015 Stiftung SIC. All rights reserved.</CENTER>
+  </BODY>
+</HTML>

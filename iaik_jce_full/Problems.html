@@ -1,0 +1,625 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Linux (vers 25 March 2009), see www.w3.org">
+  <meta name="generator" content="Bluefish 2.0.2">
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii">
+  <meta name="generator" content="Bluefish 2.0.2">
+
+  <title>Problems.html</title>
+  <style type="text/css">
+p.c12 {font-family: Trebuchet MS; text-align: center}
+  div.c11 {text-align: center}
+  span.c10 {font-family: Trebuchet MS}
+  p.c9 {font-family: Trebuchet MS}
+  p.c8 {font-family: Courier New, Courier, mono}
+  p.c7 {color: #006600; font-family: Georgia, Times New Roman, Times, serif; font-style: italic}
+  p.c6 {font-style: italic}
+  span.c5 {color: #006600; font-family: Georgia, Times New Roman, Times, serif}
+  span.c4 {font-family: Courier New, Courier, mono}
+  li.c3 {list-style: none; display: inline}
+  div.c2 {margin-left: 2em}
+  span.c1 {font-family: Courier New; font-size: 80%}
+  </style>
+</head>
+
+<body>
+  <table border="0" width="100%">
+    <tr>
+      <td width="9%"><a href="http://jce.iaik.tugraz.at/"><img src=
+      "images/siclogo.jpg" border="0"></a></td>
+
+      <td width="82%" align="center">
+        <h1>Trouble Shooting</h1>
+      </td>
+
+      <td width="9%"><a href="http://jce.iaik.tugraz.at/"><img src=
+      "images/iaik_logo.gif" alt="IAIK Logo" border="0"></a></td>
+    </tr>
+  </table>
+
+  <p>If you have any problems with IAIK-JCE then please take the
+  following steps:<br></p>
+
+  <ol>
+    <li>Have a look at the following list os frequently askes
+    questions.</li>
+
+    <li>Search our newsgroup at <a href=
+    "news://news.iaik.at/jce.general">news://news.iaik.at/jce.general</a>;
+    and use it for posting questions/comments.</li>
+
+    <li>Search the IAIK-JCE Mailing List <a href=
+    "http://jce.iaik.tugraz.at/mailarchive/iaik-jce/maillist.html">Archive</a>.</li>
+
+    <li>Report the problem to <a href=
+    "mailto:jce-support@iaik.tugraz.at">jce-support@iaik.tugraz.at</a>.
+    Please include information about the version of the IAIK
+    library, JDK version, operating system, etc. if
+    applicable.</li>
+  </ol>
+
+  <p>Here is a list of some frequently asked questions regarding
+  IAIK-JCE:</p>
+
+  <ul>
+    <li><a href=
+    "#ExceptionInInitializerError">ExceptionInInitializerError:
+    "Cannot set up certs for trusted CAs".</a></li>
+
+    <li><a href="#Jurisdictionpolicyfiles">Jurisdiction policy
+    files</a></li>
+
+    <li><a href="#getExtensionValue">Retrun value of method
+    getExtensionValue() of class iaik.x509.X509Certificate</a></li>
+
+    <li><a href="#UTF8String">UTF-8 encoding and Netscape
+    4.x</a></li>
+
+    <li><a href="#SignedData-ContentInfo">PKCS#7, SignedData:
+    ContentInfo wrapping</a></li>
+
+    <li><a href="#SignedData-Capicom">PKCS#7, SignedData: Verifying
+    signatures created with Microsoft Capicom</a></li>
+
+    <li><a href="#EnvelopedData-OAEP">PKCS#7, EnvelopedData: Using
+    OAEP padding for RSA encrypting the secret content encryption
+    key</a></li>
+  </ul>
+
+  <div>
+    <table border="0">
+      <tr>
+        <td width="100%" valign="top">
+          <ul>
+            <li>
+              <i>Problem:</i> <a name="ExceptionInInitializerError"
+              id="ExceptionInInitializerError"></a> When using
+              IAIK-JCE and trying to get an JCE engine an
+              ExceptionInInitializerError is thrown saying "Cannot
+              set up certs for trusted CAs". I am using JDK 1.4.
+
+              <p><i>Solution:</i> With JDK1.4 the JCE framework
+              (JAVAX CRYPTO) has been incorporated into the
+              standard JDK. Because of export regulations a JCE
+              provider only maybe used with JDK1.4 (or JCE 1.2.1)
+              if it is signed. IAIK-JCE provides signed and
+              unsigned versions of its jar file (iaik_jce.jar).
+              Using the unsigned version with JDK 1.4 will cause
+              the ExceptionInInitializerError "Cannot set up certs
+              for trusted CAs". Please use the signed jar file. You
+              also may ensure that the right JCE policy files are
+              installed in the lib/security directory.</p>
+            </li>
+          </ul>
+        </td>
+      </tr>
+
+      <tr>
+        <td width="100%">
+          <ul>
+            <li>
+              <i>Problem:</i> <a name="Jurisdictionpolicyfiles" id=
+              "Jurisdictionpolicyfiles"></a>Using IAIK-JCE (signed
+              version) and trying to perfrom a TripleDES encryption
+              gives a InvalidKeyException. It works with JDK 1.3,
+              but not with JDK1.4 or later. (This exception may
+              occur wrapped into an InternalErrorException when,
+              for instance, trying to de/encrypt PKCS#8 or PKCS#12
+              files).
+
+              <p><i>Solution:</i> Due to import control
+              restrictions of some countries, JDK versions &gt;=1.4
+              per default come with jurisdiction policy files
+              allowing "strong" but limited cryptography; so keys
+              that exeed the allowed strength are not allowed to be
+              used by this policy. If you are entitled to do so,
+              you may download and install an "unlimited strengh"
+              version of these files (e.g. <a href=
+              "http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html"
+              target=
+              "_blank">http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html</a>).</p>
+
+              <p>You also may use the unltd version of IAIK-JCE,
+              see <a href="Install.html">Installation
+              Giude</a>.</p>
+            </li>
+          </ul>
+        </td>
+      </tr>
+
+      <tr>
+        <td width="100%">
+          <ul>
+            <li><i>Problem:<a name="getExtensionValue" id=
+            "getExtensionValue"></a></i> With former versions of
+            IAIK-JCE I have has used method <span class=
+            "c1">getExtensionValue</span> of class <span class=
+            "c1">X509Certificate</span> to get the extension value
+            of some specific extension. When, for instance, quering
+            for a BasicConstraints extension I got the DER encoding
+            of the SEQUENCE representing the ASN.1 representation
+            of a BasicContraints extension. Now I get the DER
+            encoding of an OCTET STRING.</li>
+          </ul>
+
+          <div class="c2">
+            <p><i>Solution:</i> To be compatible with the standard
+            JDK certificate API we had to change method
+            <span class="c1">getExtensionValue</span> to return the
+            encoding of the OCTET STRING extnValue:</p>
+            <pre>
+  Extension ::= SEQUENCE { 
+    extnID OBJECT IDENTIFIER, 
+    critical BOOLEAN DEFAULT FALSE, 
+    extnValue OCTET STRING }
+</pre>The value of the extnValue OCTET_STRING represents the DER
+encoding of the Extension in mind itself; so you may have to add a
+second decoding step, e.g.:
+            <pre>
+<span>  byte[] extnValueEnc = cert.getExtensionValue();
+  OCTET_STRING extnValue = DerCoder.decode(extnValueEnc);
+  ASN1Object asn1Extension = DerCoder.decode(extnValue.getValue());</span>
+</pre>
+
+            <p>However, generally it might be more appropriate to
+            call method getExtension immediately (except when
+            forced to produce provider independent code):</p>
+            <pre>
+<span>  BasicConstraints bc = (BasicConstraints)cert.getExtension(BasicConstraints.oid);</span>
+</pre>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td width="100%">
+          <ul>
+            <li><i>Problem:<a name="UTF8String" id=
+            "UTF8String"></a></i> A certificate generated with
+            IAIK-JCE causes Netscape 4.7 to crash. The certificate
+            contains non printable characters in its subjectDN
+            common name.</li>
+
+            <li class="c3">
+              <p><i>Solution:</i> RFC2459 recommends to use
+              UTF8String as default encoding. Where the character
+              set is sufficient, PrintableString maybe used. For
+              that reason IAIK-JCE uses PrintableString as default
+              encoding for AVA string attribute values, but
+              switches to UTF8String if the string value does
+              contain non printable characters. UTF8String,
+              however, may not be handled by older versions of
+              certificate processing applications like Netscape
+              4.7. You either may switch do a more recent version
+              of Netscape or use static method <span class=
+              "c1">setNonPrintableDefaultEncoding</span> of class
+              AVA to change the deafult secondary encoding to be
+              used for string values containing non printable
+              characters, e.g.:</p>
+
+              <p>AVA.<span class=
+              "c1">setNonPrintableDefaultEncoding(ASN.BMPString);</span></p>
+            </li>
+          </ul>
+        </td>
+      </tr>
+
+      <tr>
+        <td width="100%">
+          <ul>
+            <li><i>Problem:<a name="SignedData-ContentInfo" id=
+            "SignedData-ContentInfo"></a></i> When trying to parse
+            a PKCS#7 SignedData object I get an decoding error
+            saying "Next ASN.1 object is no INTEGER!"</li>
+
+            <li class="c3">
+              <p><i>Solution:</i> In praxis PKCS#7 objects like
+              SignedData or EnvelopedData are wrapped into a
+              ContentInfo before transmission to tell the recipient
+              the PKCS#7 content type (s)he has to deal with. When
+              parsing your SignedData object you first have to
+              unwrap the ContentInfo as shown in
+              demo.pkcs.TestContentInfo, e.g.:</p>
+              <pre>
+<span class="c4">// the stream from which to read the PKCS#7 object
+InputStream is = ...;
+// the stream from which to read the content in explicit mode
+InputStream message = ...;
+// create the ContentInfo object
+ContentInfoStream cis = new ContentInfoStream(is);
+System.out.println("This ContentInfo holds content of type " + cis.getContentType().getName());
+SignedDataStream signed_data = null;</span> 
+if (message == null) {
+  // implicitly signed; get the content
+  signed_data = (SignedDataStream)cis.getContent();
+} else {
+  // explicitly signed; set the data stream for digesting the message; 
+  // we assume here that SHA-1 and MD5 have been used for digesting
+  AlgorithmID[] algIDs = { AlgorithmID.sha1, AlgorithmID.md5 };
+  signed_data = new SignedDataStream(message, algIDs);
+}
+
+// get an InputStream for reading the signed content
+InputStream data = signed_data.getInputStream();
+OutputStream os = ...;
+StreamCopier sc = new StreamCopier(data, os);
+sc.copyStream();
+
+if (message != null) {
+  // if explicitly signed now decode the SignedData
+  signed_data.decode(cis.getContentInputStream());
+}
+
+
+// now you may verify the signature(s)
+System.out.println("SignedData contains the following signer information:");
+SignerInfo[] signer_infos = signed_data.getSignerInfos();
+for (int i=0; i&lt;signer_infos.length; i++) {
+  try {
+    // verify the signed data using the SignerInfo at index i
+    X509Certificate signer_cert = signed_data.verify(i);
+    // if the signature is OK the certificate of the signer is returned
+    System.out.println("Signature OK from signer: "+signer_cert.getSubjectDN());
+  } catch (SignatureException ex) {
+    // if the signature is not OK a SignatureException is thrown
+    System.out.println("Signature ERROR from signer: "+
+      signed_data.getCertificate(signer_infos[i].getIssuerAndSerialNumber()).getSubjectDN());   
+    ex.printStackTrace();
+  }
+}
+</pre>
+            </li>
+          </ul>
+        </td>
+      </tr>
+
+      <tr>
+        <td width="100%">
+          <ul>
+            <li><i>Problem:<a name="SignedData-Capicom" id=
+            "SignedData-Capicom"></a></i> I have created a PKCS#7
+            signature using Microsoft CAPICOM. If the content is
+            included in the SignedData object (implicit mode) I
+            have no problems to verify the signature with the
+            PKCS#7 library of IAIK-JCE. However, if the content is
+            not included (explicit mode) I get a SignatureException
+            saying that the message hash is incorrect: "Signature
+            verification error: message hash!".</li>
+
+            <li class="c3">
+              <p><i>Solution:</i> In explicit mode (where the
+              content data is not included in the signature) we
+              have observed that it might be necessary to apply
+              "UnicodeLittleUnmarked" encoding to the data before
+              verifiying the Capicom signature, or to avoid using
+              this encoding format right at the sender side as
+              suggeted in a former <a href=
+              "http://jce.iaik.tugraz.at/support/newsgroups/article.php?id=102&amp;group=jce.general">
+              posting</a> to this Newsgroup:</p>
+
+              <table border="0" width="610">
+                <tr>
+                  <td width="52"></td>
+
+                  <td width="548">
+                    <p class="c6"><span class="c5">From the signing
+                    side (Capicom), the following code was used to
+                    read the file<br>
+                    and avoid Unicode formatting:</span></p>
+
+                    <p class="c7">-------------------<br>
+                    Dim objUtilities As New CAPICOM.Utilities<br>
+                    Open strPathDocToBeSigned For Binary Access
+                    Read As #1</p>
+
+                    <p class="c7">' Removing EOF<br>
+                    ReDim abytFile(LOF(1) - 1)<br>
+                    Get #1, , abytFile<br>
+                    Close #1</p>
+
+                    <p class="c7">strFileContents =
+                    objUtilities.ByteArrayToBinaryString(abytFile)<br>
+
+                    -------------------</p>
+
+                    <p class="c7">and after this the normal signing
+                    process of strFileContents.</p>
+                  </td>
+                </tr>
+              </table>
+
+              <p>However, with the following sample code you should
+              be able to verify both, explicit and implicit
+              signatures (use the stream based classes if you have
+              to deal with big amounts of data):</p>
+              <pre>
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.io.FileInputStream;
+ import java.security.NoSuchAlgorithmException;
+ import java.security.SignatureException;
+                                          
+ import iaik.asn1.CodingException;
+ import iaik.asn1.ObjectID;
+ import iaik.asn1.structures.AlgorithmID;
+ import iaik.asn1.structures.Attribute;
+ import iaik.asn1.structures.ChoiceOfTime;
+ import iaik.pkcs.PKCSException;
+ import iaik.pkcs.pkcs7.ContentInfo;
+ import iaik.pkcs.pkcs7.SignedData;
+ import iaik.pkcs.pkcs7.SignerInfo;
+ import iaik.security.provider.IAIK;
+ import iaik.utils.ASN1InputStream;
+ import iaik.x509.X509Certificate;
+                                          
+ public class SignedDataParse {
+  
+   public static void main(String[] args) {
+                                          
+          InputStream is = null;
+          try {
+            byte[] data = null;
+            IAIK.addAsJDK14Provider();
+                // read in the PKCS#7 SignedData encoding
+            is = new FileInputStream("...");
+ /*
+            uncomment the follwing line to supply the data in explicit mode;
+ */
+        //    data = "...".getBytes("UnicodeLittleUnmarked");
+            ASN1InputStream asn1In = new ASN1InputStream(is);
+            byte[] content = getSignedData(asn1In, data);
+ /*
+            uncomment the follwing if the data represents an (UnicodeLittleUnmarked) encoded string
+ */             
+       //String s1 = new String(content, "UnicodeLittleUnmarked");
+       //System.out.println(s1);
+                            
+       System.out.println("Ready");
+     } catch (Exception ex)  {
+            ex.printStackTrace();
+     } finally {
+       if (is != null) {
+         try {
+                is.close();
+              } catch (IOException ex) {
+              }
+       }
+     }
+   }
+                                            
+   /**
+    * Parses a PKCS#7 SignedData object and verifies the signature.
+    *
+    * @param is the input stream supplying the BER encoded PKCS#7 SignedData object.
+    * @param message the content data supplied by other means (only required in explicit mode)
+    *
+    * @return the content data
+    *
+    * @exception PKCSException if an error occurs when parsing the SignedData
+    * @exception IOException if an error occurs when reading from the stream
+    */
+   static byte[] getSignedData(InputStream is, byte[] message) throws PKCSException, IOException {
+                                          
+     // create a content info from the encoding
+          ContentInfo ci = new ContentInfo(is);
+          System.out.println("This ContentInfo holds content of type " + ci.getContentType().getName());
+                                          
+          SignedData signed_data = null;
+          if (message == null) {
+            //in implicit mode we simply can get the content:
+            signed_data = (SignedData)ci.getContent();
+          } else {
+            // explicitly signed; set the data for digesting the message; we assume SHA-1 and MD5
+            AlgorithmID[] algIDs = { AlgorithmID.sha1, AlgorithmID.md5 };
+            try {
+              signed_data = new SignedData(message, algIDs);
+              // now explicit decode the DER encoded signedData obtained from the contentInfo:
+              signed_data.decode(ci.getContentInputStream());
+            } catch (NoSuchAlgorithmException ex) {
+              throw new PKCSException(ex.getMessage());
+            }
+          }
+                                          
+          System.out.println("SignedData contains the following signer information:");
+          SignerInfo[] signer_infos = signed_data.getSignerInfos();
+                                          
+          for (int i=0; i&lt;signer_infos.length; i++) {
+            try {
+              // verify the signed data using the SignerInfo at index i
+              X509Certificate signer_cert = signed_data.verify(i);
+              // if the signature is OK the certificate of the signer is returned
+              System.out.println("Signature OK from signer: "+signer_cert.getSubjectDN());
+              Attribute signingTime = signer_infos[i].getAuthenticatedAttribute(ObjectID.signingTime);
+              if (signingTime != null) {
+                ChoiceOfTime cot = new ChoiceOfTime(signingTime.getValue()[0]);
+                System.out.println("This message has been signed at " + cot.getDate());
+              }
+              Attribute contentType = signer_infos[i].getAuthenticatedAttribute(ObjectID.contentType);
+              if (contentType != null) {
+                System.out.println("The content has PKCS#7 content type " + contentType.getValue()[0]);
+              }
+            } catch (SignatureException ex) {
+              // if the signature is not OK a SignatureException is thrown
+              System.out.println("Signature ERROR from signer: "+ 
+                signed_data.getCertificate(signer_infos[i].getIssuerAndSerialNumber()).getSubjectDN());
+         ex.printStackTrace();
+            } catch (CodingException ex) {
+              System.out.println("Attribute decoding error: " + ex.getMessage());
+            }
+          }
+          return signed_data.getContent();
+   }
+ }
+</pre>
+            </li>
+          </ul>
+        </td>
+      </tr>
+
+      <tr>
+        <td width="100%"></td>
+      </tr>
+    </table>
+
+    <ul>
+      <li><i>Problem:<a name="EnvelopedData-OAEP" id=
+      "EnvelopedData-OAEP"></a></i> When creating a PKCS#7
+      EnvelopedData, is it possible to use OAEP padding when RSA
+      encrypting the secret content encryption key with the
+      recipient&Atilde;&macr;&Acirc;&iquest;&Acirc;&frac12;s public
+      key?</li>
+
+      <li class="c3">
+        <p><i>Solution:</i> There are serveral ways for using OAEP
+        padding (for instance you may encrypt the content
+        encryption key outside with OAEP and then use the<br></p>
+
+        <p class="c8">RecipientInfo(IssuerAndSerialNumber issuer,
+        AlgorithmID keyEA, byte[] encryptedKey)</p>
+
+        <p>constructor to supply the already encrypted key), but
+        the most simple way might be to override the <span class=
+        "c4">RSACipherProvider</span> to use RSA with OEAP padding
+        and set it for the RecipientInfos for which you want to use
+        OEAP (note that you will have to specify a proper
+        ALgorithmID for RSAEncryptionOAEP), e.g.:</p>
+        <pre>
+public class RSACipherProviderOAEP extends RSACipherProvider {
+ 
+  ...
+ 
+  /**
+   * En/deciphers the given data using RSA with OAEP padding.
+   * 
+   * @param mode the cipher mode, either ENCRYPT (1) or DECRYPT (2)
+   * @param key the key to be used
+   * @param data the data to be en/deciphered:
+   *        &lt;ul&gt;
+   *            &lt;li&gt;for RecipientInfo cek encryption: the raw content encryption key
+   *            &lt;li&gt;for RecipientInfo cek decryption: the encrypted content encryption key
+   *        &lt;/ul&gt;
+   * 
+   * @return the en/deciphered data:
+   *         &lt;ul&gt;
+   *            &lt;li&gt;for RecipientInfo cek encryption: the encrypted content encryption key
+   *            &lt;li&gt;for RecipientInfo cek decryption: the raw (decrypted) content encryption key
+   *        &lt;/ul&gt;
+   *
+   * @exception NoSuchProviderException if any of the crypto providers of this RSACipherProvider is not suitable
+   *                                    for requested operation
+   * @exception NoSuchAlgorithmException if RSA ciphering is not supported
+   * @exception InvalidKeyException if the supplied key is invalid
+   * @exception GeneralSecurityException if a general security problem occurs
+   */
+  protected byte[] cipher(int mode, Key key, byte[] data) 
+    throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException, GeneralSecurityException {
+    Cipher rsa = Cipher.getInstance("RSA/ECB/OAEP");
+    rsa.init(mode, key);
+    return rsa.doFinal(data);
+    
+  }  
+}  
+</pre>
+
+        <p><br>
+        On the sender side set your RSA cipher provider for each
+        RecipientInfo you which to use it:</p>
+        <pre>
+...
+// specify an AlgorithmID for RSA with OAEP padding
+AlgorithmID rsaEncryptionOAEP = new AlgorithmID("1.2.840.113549.1.1.6", "RSAEncryptionOAEP");
+// the recipient certificate
+X509Certificate recipientCert = ...;
+// create the RecipientInfo
+RecipientInfo recipient = new RecipientInfo(recipientCert, rsaEncryptionOAEP);
+// <span class=
+"c4">set the RSA cipher provider for using RSA with OAEP padding</span>
+recipients[0].setRSACipherProvider(new RSACipherProviderOAEP());
+...
+</pre>
+
+        <p>On the receiving side set yout RSA cipher provider
+        before decrypting the encrypted content encryption
+        key:<br></p>
+        <pre>
+<span class="c4">
+// the RSA OAEP provider to be used
+RSACipherProviderOAEP rsaCipherProviderOAEP = new RSACipherProviderOAEP();
+...
+// get the RecipientInfos  
+RecipientInfo[] recipients = enveloped_data.getRecipientInfos();
+for (int i=0; i&lt;recipients.length; i++) {
+  System.out.println("Recipient: "+(i+1));
+  System.out.print(recipients[i].getIssuerAndSerialNumber());
+  // set the RSA cipher provider for using RSA with OAEP padding
+  recipients[i].setRSACipherProvider(rsaCipherProviderOAEP);
+}
+// decrypt the message
+
+envelopedData.setupCipher(recipientPrivateKey, recipientInfoIndex);
+
+...
+</span>
+</pre>
+
+        <p class="c9"><br>
+        <br></p>
+
+        <div class="c11">
+          <table border="0" cellpadding="2">
+            <tr>
+              <td><img src="images/arrow.gif" alt=
+              "arrow.gif (1267 Byte)" width="55" height="42"></td>
+
+              <td><big><span class="c10">Back to <a href=
+              "Readme.html">Readme</a></span></big></td>
+            </tr>
+          </table>
+        </div>
+        <hr>
+
+        <p class="c12">Copyright (c) 2002 by IAIK. Copyright (C)
+        2003 - 2013 Stiftung SIC. All rights reserved.</p>
+
+        <table>
+          <tr>
+            <td width="100%"></td>
+          </tr>
+
+          <tr>
+            <td width="100%"></td>
+          </tr>
+
+          <tr>
+            <td width="100%"></td>
+          </tr>
+        </table>
+      </li>
+    </ul>
+  </div>
+</body>
+</html>

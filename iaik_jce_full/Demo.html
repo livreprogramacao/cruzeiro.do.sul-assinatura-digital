@@ -1,0 +1,681 @@
+<html>
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Linux (vers 25 March 2009), see www.w3.org">
+  <meta name="generator" content="Bluefish 2.0.2">
+  <meta name="generator" content="Bluefish 2.0.2">
+  <meta name="generator" content="Bluefish 2.0.2">
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii">
+  <meta name="generator" content="Bluefish 2.0.2">
+
+  <title>IAIK-JCE Demos</title>
+  <style type="text/css">
+p.c30 {font-family: Trebuchet MS; text-align: center}
+  span.c29 {font-size: 80%}
+  span.c28 {font-family: Trebuchet MS; font-size: 80%}
+  div.c27 {text-align: left}
+  div.c26 {text-align: center}
+  div.c25 {font-weight: bold; text-align: center}
+  p.c24 {font-family: Courier New}
+  p.c23 {font-family: Trebuchet MS}
+  span.c22 {font-family: Trebuchet MS}
+  </style>
+</head>
+
+<body bgproperties="fixed">
+  <table border="0" width="100%">
+    <tr>
+      <td width="8%"><a href="http://jce.iaik.tugraz.at/"><img src=
+      "images/siclogo.jpg" width="113" height="100" border=
+      "0"></a></td>
+
+      <td width="84%" align="center">
+        <h1>IAIK-JCE Demo Programs</h1>
+      </td>
+
+      <td width="8%"><a href="http://jce.iaik.tugraz.at/"><img src=
+      "images/iaik_logo.gif" alt="IAIK Logo" border="0"></a></td>
+    </tr>
+  </table>
+
+  <div class="c26">
+    <table border="0" cellpadding="2">
+      <tr>
+        <td>
+          <span class="c22">For providing examples on how to use
+          the <em>IAIK-JCE</em> toolkit, an extensive demo library
+          (collected in a separate jar-file
+          <i>iaik_jce_demo.jar</i>) is included into the
+          <em>IAIK-JCE</em> distribution. The demo package itself
+          is devided into a collection of sub-packages in a certain
+          way reflecting the original package hierarchy of
+          <em>IAIK-JCE</em> library. Note, that at this time the
+          demo library is not complete and contains the follwing
+          packages:</span>
+
+          <ul>
+            <li><span class="c22">demo.asn1: ASN.1
+            demos</span></li>
+
+            <li><span class="c22">demo.cipher: cipher
+            demos</span></li>
+
+            <li><span class="c22">demo.md: Message Digest and
+            Message Authentication Code demos</span></li>
+
+            <li><span class="c22">demo.pkcs: PKCS#7, PKCS#8,
+            PKCS#10, and PKCS#12 demos</span></li>
+
+            <li><span class="c22">demo.util: Base64 En/Decode
+            demos, Random number generation demos, Smtp-Mail
+            demos</span></li>
+
+            <li><span class="c22">demo.x509: X.509 certificate and
+            CRL demos</span></li>
+
+            <li><span class="c22">demo.x509.attr: X.509 attribute
+            certificate demo</span></li>
+
+            <li><span class="c22">demo.x509.net.ldap: Ldap
+            certificate/crl search demos</span></li>
+
+            <li><span class="c22">demo.x509.ocsp: OCSP
+            demos</span></li>
+
+            <li><span class="c22">demo.x509.qualified: Qualified
+            certificate demo</span></li>
+
+            <li><span class="c22">demo.x509.stream: Demos for
+            stream based parsing large CRLs</span></li>
+          </ul>
+
+          <p class="c23">The corresponding source files are located
+          in the <em>src.demo</em> directory of this
+          <em>IAIK-JCE</em> distribution.</p>
+
+          <p class="c23">Since many demo programs rely on keys
+          and/or certificates, and key/certificate generation may
+          be a time-consuming task, the demo library contains a
+          further package making it possible to generate
+          keys/certificate only once, save them to a file - based
+          on a IAIKKeyStore structure - and read them in from the
+          file (keystore) whenever there is need during some
+          certain test program execution:</p>
+
+          <ul>
+            <li><span class="c22">demo.keystore</span></li>
+          </ul>
+
+          <p class="c23">The <em>demo.keystore</em> package
+          contains the following files:</p>
+
+          <ul type="circle">
+            <li><span class=
+            "c22">KeyStoreConstants.java</span></li>
+
+            <li><span class="c22">SetupKeyStore.java</span></li>
+
+            <li><span class="c22">IaikKeyStore.java</span></li>
+          </ul>
+
+          <p class="c23">The <em>KeyStoreConstants</em> class
+          defines several parameters - filename where to save the
+          keystore, types and lengths for keys to be generated,
+          password for en/decryption - needed by the
+          <em>SetupKeyStore</em> class for generating the key store
+          and writing it to a file. The key store constants also
+          are required by the <em>IaikKeyStore</em> class which
+          itself can be seen as an "interface" between the KeyStore
+          and those demo programs that query for information from
+          the keystore. Therefore, the <em>IaikKeyStore</em> class
+          provides some static <em>getKey</em> and
+          <em>getCertificate</em> methods that may be called by a
+          specific demo program for reading a key/certificate from
+          the keystore. Of course, a key/certificate only can be
+          returned if the key store already exists. For that
+          reason, an application first has to run the
+          <em>SetupKeyStore</em> utility <em>before</em> actually
+          performing a demo trying to access the key store (An
+          already generated keystore file - <em>"jce.keystore"</em>
+          - is included in this distribution, located in your root
+          install directory. You may use this keystore instead of
+          generating a new one).</p>
+
+          <p class="c23">When starting the <em>SetupKeyStore</em>
+          program, you first will be asked for entering the
+          filename to which the keystore to be generated shall be
+          saved, e.g.:</p>
+
+          <p class="c24">Create new KeyStore in directory:
+          C:\IAIK-JCE\demo [y]</p>
+
+          <p class="c23">Note, that per default the
+          <em>SetupKeyStore</em> program tries to write the new key
+          store to a file named <em>"jce.keystore"</em> located in
+          your current user directory. Type "y" if you agree with
+          this option, or "n" if you want to specify another
+          directory.</p>
+
+          <p class="c23">Note that the execution of the
+          <em>SetupKeyStore</em> program will last some time
+          because several keys are generated. However, the program
+          prints progress messages and prompts when having finished
+          key store generation and saving:</p>
+          <pre>
+    KeyStore will be saved to: C:\IAIK-JCE\demo\jce.keystore<br>    generate RSA KeyPair for CA certificate [1024 bits]...
+    generate RSA KeyPair for a test certificate [512 bits]...
+    generate RSA KeyPair for a test certificate [1024 bits]...
+    generate RSA KeyPair for a test certificate [2048 bits]...
+    generate DSA KeyPair for CA certificate [1024 bits]...
+    generate DSA KeyPair for a test certificate [512 bits]...
+    generate DSA KeyPair for a server certificate [1024 bits]...
+    generate DSA KeyPair for a server certificate [2048 bits]...
+    generate DH KeyPair for a test certificate [512 bits]...
+    generate DH KeyPair for a server certificate [1024 bits]...
+    generate DH KeyPair for a server certificate [2048 bits]...
+    generate RSA KeyPair for AC issuer certificate [1024 bits]...
+    generate RSASSA-PSS KeyPair for CA certificate [1024 bits]...
+    generate RSASSA-PSS KeyPair for a test certificate [1024 bits]...
+    generate RSAES-OAEP KeyPair for a test certificate [1024 bits]...
+    create self signed RSA CA certificate...
+    create self signed DSA CA certificate...
+    create self signed RSA-PSS CA certificate...
+    create 512 bit RSA demo certificate...
+    create 1024 bit RSA demo certificate...
+    create 2048 bit RSA demo certificate...
+    create 1024 bit RSA-PSS demo certificate...
+    create 1024 bit RSA-OAEP demo certificate...
+    create 512 bit DSA demo certificate...
+    create 1024 bit DSA demo certificate...
+    create 2048 bit DSA demo certificate...
+    create 512 bit DH demo certificate...
+    create 1024 bit DH demo certificate...
+    create 2048 bit DH demo certificate...
+    create AC issuer demo certificate...
+    
+</pre><br>
+          Certificates created!
+
+          <p class="c23">After successfully having generated and
+          saved the key store, demos may be run by calling the Java
+          interpreter thereby specifying the particular demo
+          program in mind, e.g.:</p>
+
+          <p class="c24">java demo.x509.CRLExtensions</p>
+
+          <p class="c23">Before actually starting a demo, check if
+          you have properly updated your classpath! (see <a href=
+          "Install.html">installation</a>). It is important to know
+          that the <em>keystore</em> file has to be located in your
+          current user directory; so start demo programs always
+          from that directoy that contains your keystore file!</p>
+
+          <p class="c23">Note that the <em>demo</em> directory
+          contains a program <em>TestAll</em> which may be called
+          for performing all included demos within one single run.
+          When starting <em>TestAll,</em> the
+          <em>SetupKeyStore</em> program automatically will be
+          launched at the beginning of program execution, if the
+          keystore file yet does not exist.</p>
+
+          <h3>Ldap Search Demos</h3><span class="c22">The
+          LdapSearch demos in package
+          <code>demo.x509.net.ldap</code> (<a href=
+          "docs/demo/x509/net/ldap/LdapCertSearch.html">LdapCertSearch</a>,
+          <a href=
+          "docs/demo/x509/net/ldap/LdapAttributeCertSearch.html">LdapAttributeCertSearch</a>,
+          <a href=
+          "docs/demo/x509/net/ldap/LdapCrlSearch.html">LdapCrlSearch</a>)
+          can also be used as command line utilities (see
+          sub-directories <code>demo/cmd/ldapSearch</code>,
+          <code>demo/sh/ldapSearch</code> for Windows batch files
+          and Linux shell scripts, respectively) for searching an
+          LDAP directory for certificates, attribute certificates
+          and certificate revocation lists.</span>
+
+          <p class="c23">For instance, when running the <a href=
+          "docs/demo/x509/net/ldap/LdapCertSearch.html">LdapCertSearch</a>
+          demo you at least have to specify the url of the ldap
+          server you want to search for certificates:</p>
+          <pre>
+<span class="c22">  
+           LdapCertSearch &lt;ldapUrl&gt; [options] [&lt;type&gt;]
+           or
+           LdapCertSearch &lt;host[:port]&gt; [-b &lt;basedn&gt;] [options] [&lt;type&gt;]
+           </span>
+</pre><span class="c22">The ldap url has to follow the string
+format given in RFC 2255 (extensions are not supported and
+therefore ignored unless they contain a critical extension, in
+which case an exception is thrown):</span>
+          <pre>
+<span class=
+"c22">           ldapurl    = scheme "://" [hostport] ["/"
+                        [dn ["?" [attributes] ["?" [scope]
+                        ["?" [filter] ["?" extensions]]]]]]
+           </span>
+</pre><span class="c22">For instance:</span>
+          <pre>
+<span class=
+"c22">           LdapCertSearch ldap://ldapdemo.iaik.at/c=at?userCertificate;binary?sub?(cn=John%20Doe)
+           </span>
+</pre><span class="c22">Optionally you can specify a search type
+("all" to search for ca and end entity certificates (default), "ca"
+to search for ca certificates only, or "user" to search for end
+entity certificates only). The following table lists the options
+that can be specified when running the <code>LdapCertSearch</code>
+program:</span>
+
+          <table border="1">
+            <tr>
+              <td></td>
+
+              <td>
+                <div class="c25">
+                  Description
+                </div>
+              </td>
+
+              <td>
+                <div class="c25">
+                  Value/Example
+                </div>
+              </td>
+
+              <td>
+                <div class="c25">
+                  Default Value
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="c25" width="5">
+                  -b
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  base distinguished name
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  "c=at"
+                </div>
+              </td>
+
+              <td>
+                <div class="c26"></div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="c25" width="5">
+                  -s
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  search scope
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  "base" for base object search<br>
+                  "one" for one level search<br>
+                  "sub" for subtree search
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  "base"
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="c25" width="5">
+                  -f
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  search filter
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  "(mail=John.Doe@iaik.tugraz.at)"<br>
+                  "(cn=John Doe)"
+                </div>
+              </td>
+
+              <td>
+                <div class="c26"></div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="c25" width="5">
+                  -t
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  connect timeout (in seconds)
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  30
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  -1 (not specified)
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="c25" width="5">
+                  -l
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  search time limit (in seconds)
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  60
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  0 (no time limit)
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="c25" width="5">
+                  -z
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  size limit (maximum number of entries to be
+                  returned as search result )
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  2
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  0 (return all entries)
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="c25" width="5">
+                  -o
+                </div>
+              </td>
+
+              <td>
+                <div class="c27">
+                  output; either <code>"text"</code> to dump the
+                  certificate(s) to System.out, or the name of a
+                  directory in the file system to which the
+                  certificate(s) shall be saved
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  "text"<br>
+                  "d:/temp/ldapsearch/certs"
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  "text"
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="c25" width="5">
+                  -d
+                </div>
+              </td>
+
+              <td>
+                <div class="c27">
+                  output type if the certificate(s) shall be saved
+                  to file(s): "dir" (default) for using sub
+                  directories based on the cn, "flat" for saving
+                  all certificate(s) to the same output directory
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  "dir"<br>
+                  "flat"
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  "dir"
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="c25" width="5">
+                  -e
+                </div>
+              </td>
+
+              <td>
+                <div class="c27">
+                  encoding format (whether to save certificate(s)
+                  in DER (default) or PEM format)
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  "DER"<br>
+                  "PEM"
+                </div>
+              </td>
+
+              <td>
+                <div class="c26">
+                  "DER"
+                </div>
+              </td>
+            </tr>
+          </table><span class="c28">The number of certificate
+          objects actually returned by the search procedure must
+          not be equal to the requested size limit. Of course, it
+          may be lower than the size limit (since the size limit
+          specifies the maximum number of entries to be returned as
+          search result). However, the number of received
+          certificate objects even might be higher than the size
+          limit: for instance, if you have searched for
+          certificates and have set the size limit to 2, you may
+          get two entries as result of the search, and each of them
+          may hold any number of certificates (e.g. the first may
+          contain one certificate attribute and the second may
+          contain two certificate attributes giving totally three
+          certificates).</span>
+
+          <p class="c23"><span class="c29">By default (<b>-d</b>
+          option "dir") the certificates returned from the ldap
+          search are grouped by their common name (cn), if present.
+          For each different cn a new subdirectory is created in
+          the base directory that has been specified by using the
+          <b>-o</b> option. Each subdirectory will contain all
+          certificates with a cn in the subject name that is equal
+          to the name of the subdiretory. For instance, let us
+          assume that we have searched an ldap directory by using a
+          filer like "(cn=John )" for entries containing a cn
+          attribute that starts with "John" and have got three
+          certificate as response, two of them for "John Doe" and
+          one of them for "John TestUser". If we have specified
+          "d:/temp/ldapsearch/certs" as base output directory, it
+          now will contain two sub-directories named "John_Doe"
+          (which will contain the two certificates of John Doe) and
+          "John_TestUser" (which will contain the certificate of
+          John TestUser).<br>
+          However, if "flat" has been specified as argument for the
+          <b>-d</b> option, all certificates will be saved to the
+          base output directory. In this case the directory
+          "d:/temp/ldapsearch/certs" now will contain three
+          certificate files with names "cert1_John_Doe.cer",
+          "cert2_John_Doe.cer" and "cert3_John_TestUser.cer" (the
+          files are numbered continuously; any file for a
+          certificate that does not contain a cn in its subjectDN
+          will be simple named "cert_&lt;x&gt;.cer", where x is
+          total number of certificates loaded so far).<br></span>
+          <b>Attention! Any output directory is created
+          automatically without asking for user
+          confirmation!</b></p>
+
+          <p class="c23">Examples:</p>
+          <pre>
+<span class=
+"c22">           LdapCertSearch ldap://ldapdemo.iaik.at/c=at?userCertificate;binary?sub?(cn=John%20Doe) d:/temp/ldapsearch
+           
+           LdapCertSearch ldapdemo.iaik.at:389 -b "c=at" -s sub -f "(cn=John Doe)" -o d:/temp/ldapsearch user
+           </span>
+</pre><span class="c22">Both examples above will search an ldap
+server running at "ldapdemo.iaik.at", port 389, for user
+certificates belonging to entries with cn "John Doe". The search
+will cover the whole subtree under (and including) the base dn
+"c=at". The certificates will be saved to the file system into the
+directory "d:/temp/ldapsearch/John_Doe".</span>
+
+          <p class="c23">The <a href=
+          "docs/demo/x509/net/ldap/LdapAttributeCertSearch.html">LdapAttributeCertSearch</a>
+          and <a href=
+          "docs/demo/x509/net/ldap/LdapCrlSearch.html">LdapCrlSearch</a>
+          can be used in similar way for searching an ldap
+          directory for attribute certificates or revocation
+          lists.</p>
+
+          <p class="c23">All LDAP search demos use the IAIK
+          <a href="docs/iaik/x509/net/ldap/LdapURLConnection.html">LdapURLConnection</a>
+          implementation which is based on the Java Naming and
+          Directory Interface. For JDK versions &lt;1.3 you will
+          have to put <code>jndi.jar</code>, <code>ldap.jar</code>
+          and <code>providerutil.jar</code> into your classpath
+          which can be downloaded from the <a href=
+          "http://java.sun.com/products/jndi" target="_blank">JNDI
+          homepage</a> at SUN/ORACLE. JDK versions &gt;=1.3 already
+          have the JNDI included.</p>
+
+          <h3>OCSP Client Demo</h3><span class="c22">The OCSP
+          client demos in package <code>demo.x509.ocsp</code>
+          (<a href=
+          "docs/demo/x509/ocsp/HttpOCSPClient.html">HttpOCSPClient</a>,
+          <a href=
+          "docs/demo/x509/ocsp/OCSPClient.html">OCSPClient</a>) can
+          also be used as command line utilities (see
+          sub-directories <code>demo/cmd/ocspQuery</code>,
+          <code>demo/sh/ocspQuery</code> for Windows batch files
+          and Linux shell scripts, respectively) for posting an
+          OCSP request to an OCSP server, reading the response and
+          dumping it to System.out.<br>
+          When running the HttpOCSPClient program you have to
+          specify the URL of the OCSP server you want to connect to
+          and the certificate for which you want to request
+          revocation status info. Note that the issuer cert is also
+          required for building the OCSP request. For that reason
+          you either can specifiy a PKCS#7 file containing both
+          target and issuer cert, or two separate DER (or PEM)
+          files, the first containing the target certificate and
+          the second the issuer certificate:</span>
+          <pre>
+<span class="c22">  
+           LdapCertSearch &lt;ldapUrl&gt; [options] [&lt;type&gt;]
+           or
+           LdapCertSearch &lt;host[:port]&gt; [-b &lt;basedn&gt;] [options] [&lt;type&gt;]
+               </span>
+</pre>
+
+          <p class="c23">Requestor key and PKCS#12 password only
+          have to be specified if you want to sign your
+          request.</p>
+
+          <p class="c23">Examples:</p>
+          <pre>
+<span class="c22">  
+           HttpOCSPClient http://ocspdemo.iaik.at John_TestUser.p7c 
+
+           HttpOCSPClient http://ocspdemo.iaik.at John_TestUser.der TestCa.der 
+           </span>
+</pre><span class="c22">Both examples will connect to an OCSP
+server running at http://ocspdemo.iaik.at to request revocation
+state info for the certificate issued by "TestCa" to "John
+TestUser".</span>
+
+          <div class="c26">
+            <table border="0" cellpadding="2">
+              <tr>
+                <td><img src="images/arrow.gif" alt=
+                "arrow.gif (1267 Byte)" width="55" height=
+                "42"></td>
+
+                <td><big><span class="c22">Back to <a href=
+                "Readme.html">Readme</a></span></big></td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+
+  <p class="c30">Copyright (c) 2002 by IAIK. Copyright (C) 2003 -
+  2013 Stiftung SIC. All rights reserved.</p>
+</body>
+</html>

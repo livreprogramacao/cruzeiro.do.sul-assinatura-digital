@@ -1,0 +1,89 @@
+<!doctype html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+  <head>
+    <title>IAIK [CP]AdES toolkit</title>
+    <style type="text/css">
+     div.c7 {font-family: Trebuchet MS; text-align: center}
+     div.c6 {font-style: italic; text-align: center}
+     span.c5 {font-size: 100%}
+     span.c4 {font-family: Trebuchet MS; font-size: 100%}
+     p.c3 {font-family: Trebuchet MS}
+     span.c2 {font-family: Trebuchet MS}
+     p.c1 {font-family: Trebuchet MS; font-size: 100%}
+    </style>
+    <meta name="Keywords" content="IAIK, Java, Security, PDF, Signature, PAdES, Cryptography">
+    <meta name="Description" content="A Java toolkit for signing PDF files">
+  </head>
+  <body>
+    <table width="100%" border=0>
+      <tr>
+        <td><img src="images/siclogo.jpg" alt="SIC Logo"></td>
+        <td width="10"></td>
+        <td align="center">
+          <h2>IAIK [CP]AdES toolkit</h2>
+        </td>
+        <td width="10"></td>
+        <td align="right"><img src="images/iaik_logo.gif" alt="IAIK Logo"></td>
+      </tr>
+    </table>
+    <p><b>The IAIK [CP]AdES toolkit abstracts the creation and verification of signed PDF documents and CAdES signatures. The structure 
+    of the toolkit is highly similar to a typical signature engine in the JCA/JCE framework and allows you to easily create signatures 
+    compliant to the PAdES and CAdES specifications by using dedicated parameter classes. The official ETSI website providing these 
+    specifications can be found <a href="http://www.etsi.org/standards">here</a>.</b></p>
+    
+    <h3>Supported PAdES profiles</h3>
+    
+    <p>The PAdES specifications (ETSI TS 102 778 and ETSI EN 319 142-1 v1.1.1) define the format of an electronic signature, that shall be embedded in the PDF document 
+    as signature field. Aside from XML related profiles, all of the described PAdES profiles or signature levels are supported. To sign or verify a PDF document, 
+    create a PDFSignatureInstance. Via dedicated parameter classes the intended profile can be selected. If you need a PAdES basic signature, use PadesBasicParameters and 
+    choose whether a SHA1-hash of the original data shall be included in the signature (subfilter adbe.pkcs7.sha1) or not (subfilter adbe.pkcs7.detached). 
+    For a PAdES BES signature use the PadesBESParameters (subfilter ETSI.CAdES.detached). These parameter classes allow to set revocation 
+    information and a timestamp authority, in order to include CRLS, OCSP responses and a signature timestamp. In order to include 
+    certificates and revocation information (CRLS, OCSP responses) required for a complete signature validation as specified by the PAdES LTV 
+    profile, use PadesLTVParameters. Pass these parameters to the signature instance when protecting the document with a document timestamp 
+    (subfilter ETSI.RFC3161). 
+    </p>
+    
+    <h3>Supported CAdES formats</h3>
+    
+    <p>Similar to the PAdES profiles, several formats are defined for CAdES in the specifications ETSI TS 101 733 and ETSI EN 319 122-1 v1.1.1. 
+    This toolkit neither supports the legacy signatures CAdES-C and CAdES-X, nor any older versions of the archive timestamp than archive-time-stamp-v3. The classes 
+    CadesSignature and CadesSignatureStream provide methods to create or verify CAdES signatures. Use the appropriate parameter classes 
+    (CadesBESParameters, CadesTParameters, CadesLTAParameters) to create a signature compliant to the required format. </p>
+    
+    <h3>Signature validation</h3>
+    
+    <p>A complete signature validation is not implemented, but the toolkit rather provides various methods that can be used for such a validation. 
+    To verify PAdES signatures, they first have to be extracted by using a PDF signature instance. For parsing a CAdES signature it has to be 
+    processed by a CadesSignature or CadesSignatureStream. For each signature various checks can be made according to the signature type 
+    (e.g. standard signature or document timestamp). This includes digest and signature value verification, 
+    as well as extraction of revocation data and timestamps (if included).</p>
+    <p>
+    
+    <h3>PDF library and IAIK toolkits</h3>
+   
+    <p>The IAIK [CP]AdES toolkit uses either the <b>PDF library iText</b> (<a href="http://itextpdf.com/">http://itextpdf.com/</a>)
+    or <b>Apache PDFBox</b> (<a href="http://pdfbox.apache.org">http://pdfbox.apache.org</a>) for handling and modifying the PDF 
+    structure, i.e. for extracting and embedding signatures and related data. These PDF libraries will not be provided within the 
+    IAIK [CP]AdES toolkit package and have to be obtained from the respective websites. Please note that for using iText a correctly 
+    licensed version 5.3.4 or higher is required and version 1.8.0 or higher for using Apache PDFBox. The latest versions that had 
+    been tested with this toolkit were 1.8.11 for Apache PDFBox and 5.5.9 for the iText library.</p>
+    <p>Cryptographic data like signature and hash values, CMS signatures, OCSP responses and timestamps are created by IAIK toolkits. 
+    The [CP]AdES toolkit is therefore based on IAIK JCE, IAIK CMS and IAIK TSP. You may further need IAIK ECCelerate or the IAIK PKCS#11 
+    provider when using ECC keys or PKCS#11 token objects.  
+
+    <p>The current version of this package is available from <a href="http://jce.iaik.tugraz.at/download/">http://jce.iaik.tugraz.at/download/</a></p>
+
+    <p class="c1">For more information on the IAIK [CP]AdES toolkit see:</p>
+
+    <ul type="square">
+	<li><a href="usage.html"><span class="c4">Usage</span></a></li>
+	<li><a href="License.html"><span class="c4">License</span></a></li>
+	<li><a href="api/index.html"><span class="c4">API documentation</span></a></li>
+	<li><a href="Changes.html"><span class="c4">Change notes</span></a></li>
+    </ul><br>
+
+    <hr>
+    <center>Copyright (c) 2002 IAIK. Copyright (c) 2003 - 2016 Stiftung SIC. All rights reserved.</center>
+  </body>
+</html>

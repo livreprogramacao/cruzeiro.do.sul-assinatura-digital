@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Linux (vers 25 March 2009), see www.w3.org">
+  <meta name="generator" content="Bluefish 2.0.2">
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii">
+  <meta name="generator" content="Bluefish 2.0.2">
+
+  <title>Using.html</title>
+  <style type="text/css">
+p.c5 {font-family: Trebuchet MS; text-align: center}
+  div.c4 {text-align: center}
+  span.c3 {font-family: Trebuchet MS}
+  p.c2 {color: #000000; font-family: Trebuchet MS}
+  span.c1 {color: #000000; font-family: Trebuchet MS}
+  </style>
+</head>
+
+<body>
+  <table border="0" width="100%">
+    <tr>
+      <td width="9%"><a href="http://jce.iaik.tugraz.at/"><img src=
+      "images/siclogo.jpg" border="0"></a></td>
+
+      <td width="81%" align="center">
+        <h1>Using the IAIK-JCE</h1>
+      </td>
+
+      <td width="10%"><a href=
+      "http://jce.iaik.tugraz.at/"><img src="images/iaik_logo.gif"
+      alt="IAIK Logo" border="0"></a></td>
+    </tr>
+  </table><span class="c1">Before an application can access the
+  IAIK-JCE provider, it must configure the Java Runtime Environment
+  (JRE) accordingly. In general, there are two different
+  options.<br>
+  First, you can configure the IAIK-JCE provider statically in the
+  JRE. The documentation of the JRE or Java Development Kit (JDK)
+  normally describes how to do this. In most Java versions, you
+  have to add an entry in the
+  <code>jre/lib/security/java.security</code> file. This new entry
+  follows this pattern:</span>
+
+  <table border="0">
+    <tr>
+      <td>
+        <pre>
+  security.provider.<i>n</i>=iaik.security.provider.IAIK
+</pre>
+      </td>
+    </tr>
+  </table>
+
+  <p class="c2">where <i>n</i> is the position at which to insert
+  the IAIK-JCE provider. In principle, you can configure the
+  IAIK-JCE provider at first position; i.e.
+  <i>n</i><code>=1</code>. However, some Java version have a bug
+  which causes an exception to be thrown if a different provider
+  than the default provider is installed at the first position.<br>
+  Second, the application can configure the provider dynamically at
+  runtime. It can do this using the default methods of the
+  <code>java.security.Security</code> class. This can be</p>
+
+  <table border="0">
+    <tr>
+      <td>
+        <pre>
+  import java.security.Security;
+  import iaik.security.provider.IAIK;
+
+  ...
+
+  Security.addProvider(new IAIK());
+</pre>
+      </td>
+    </tr>
+  </table>
+
+  <p class="c2">to add the IAIK-JCE provider at the last position,
+  or</p>
+
+  <table border="0">
+    <tr>
+      <td>
+        <pre>
+  import java.security.Security;
+  import iaik.security.provider.IAIK;
+
+  ...
+
+  Security.insertProviderAt(new IAIK(), 1);
+</pre>
+      </td>
+    </tr>
+  </table>
+
+  <p class="c2">to add the IAIK-JCE provider at the first position.
+  However, registration of a new provider at the first position may
+  cause problems due to a bug in certain Java version. This
+  especially applies if you use the signed version of the provider.
+  The concerned Java versions include some 1.4.x versions from SUN
+  Microsystems and IBM 1.3.1 which includes the JCE framework
+  version 1.2.1. You may try to add the IAIK-JCE provider at a
+  different position; e.g. 2.<br>
+  The IAIK-JCE provider comes with a method which allows to
+  configure the IAIK-JCE provider at the first position by working
+  around this bug.</p>
+
+  <table border="0">
+    <tr>
+      <td>
+        <pre>
+  import iaik.security.provider.IAIK;
+
+  ...
+  
+  IAIK.addAsProvider();
+</pre>
+      </td>
+    </tr>
+  </table>
+
+  <p class="c2">This method for registering the IAIK-JCE provider
+  at the first position works with other Java versions as well;
+  i.e. those which do not have such a bug.<br>
+  (Note that due to an improved work around IAIK-JCE versions
+  &gt;=3.14 can be regsitered as first provider with any final JDK
+  version in the common way by calling
+  <code>Security.insertProviderAt(new IAIK(), 1);</code>.</p>
+
+  <p class="c2">Here is a simple code sample demonstrating the
+  usage.</p>
+
+  <table border="0">
+    <tr>
+      <td width="100%">
+        <table border="0">
+          <tr>
+            <td>
+              <pre>
+// This code sample shows how to use IAIK-JCE as a security provider.
+import javax.crypto.*;
+import iaik.security.provider.IAIK;
+
+public class TestInstallation {
+
+   /**
+    * A simple test for a correct installation.
+   */
+   public static void main(String arg[]) {
+
+     IAIK.addAsJDKProvider(true);
+
+     try { 
+       Cipher cipher = Cipher.getInstance("DES", "IAIK");
+     } catch (Exception ex) {
+       System.out.println("Exception: "+ex.getMessage());
+       System.out.println("\n\nIAIK-JCE installation error...");
+       System.exit(0);
+     }
+
+     System.out.println("IAIK-JCE installation OK!");
+   }
+}
+</pre>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <div class="c4">
+    <table border="0" cellpadding="2">
+      <tr>
+        <td><img src="images/arrow.gif" alt="arrow.gif (1267 Byte)"
+        width="55" height="42"></td>
+
+        <td><big><span class="c3">Back to <a href=
+        "Readme.html">Readme</a></span></big></td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+
+  <p class="c5">Copyright (c) 2002 by IAIK. Copyright (C) 2003 -
+  2013 Stiftung SIC. All rights reserved.</p>
+</body>
+</html>

@@ -1,0 +1,17 @@
+iaik.apps.util
+iaik.apps.util.passphrase
+iaik.pkcs.pkcs11.provider
+iaik.pkcs.pkcs11.provider.ciphers
+iaik.pkcs.pkcs11.provider.hashes
+iaik.pkcs.pkcs11.provider.keyagreements
+iaik.pkcs.pkcs11.provider.keyfactories
+iaik.pkcs.pkcs11.provider.keygenerators
+iaik.pkcs.pkcs11.provider.keypairgenerators
+iaik.pkcs.pkcs11.provider.keys
+iaik.pkcs.pkcs11.provider.macs
+iaik.pkcs.pkcs11.provider.random
+iaik.pkcs.pkcs11.provider.signatures
+iaik.pkcs.pkcs11.provider.signatures.dsa
+iaik.pkcs.pkcs11.provider.signatures.ecdsa
+iaik.pkcs.pkcs11.provider.signatures.rsa
+iaik.pkcs.pkcs11.provider.spec

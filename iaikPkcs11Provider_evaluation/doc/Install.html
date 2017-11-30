@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+  <HEAD>
+    <TITLE>IAIK JCE Provider for PKCS#11</TITLE>
+    <META NAME="Keywords" CONTENT="IAIK, Java, Security, Hardware, JCA, JCE, PKCS#11, Cryptoki, Signature, Encrpytion, Decryption, Cryptography">
+    <META NAME="Description" CONTENT="A Java JCA/JCE Provider that uses PKCS#11 compatible Cryptogrphic Tokens">
+  </HEAD>
+  <BODY>
+    <TABLE BORDER=0>
+      <TR>
+        <TD><IMG SRC="images/siclogo.jpg" ALT="SIC Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD><IMG SRC="images/iaik_logo.gif" ALT="IAIK Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD>
+          <H2>Installing the IAIK JCE Provider for PKCS#11</H2>
+        </TD>
+      </TR>
+    </TABLE>
+
+    <H2>Including the Jar Files</H2>
+
+    <br />This library requires Java 1.3 or higher. 	If you use JDK 1.3, you have to include the JCE framework. You can use the 
+      original JCE framework implementation from SUN (e.g. <CODE>jce1_2_1.jar</CODE>) or you can use the 
+      implementation from IAIK (<CODE>iaik_javax_crypto.jar</CODE>). <br />
+    <br />First, include the IAIK-JCE library. Include <CODE>iaik_jce.jar</CODE> or 
+      <CODE>iaik_jce_full.jar</CODE>. Don't forget that you must use the signed version
+      of this file for Java 1.4 or later (also for IBM JDK 1.3 or later). Second, include the IAIK PKCS#11 Wrapper, 
+      i.e. the file <CODE>iaikPkcs11Wrapper.jar</CODE>. <br /> 
+    <br />Next, you must include the IAIK JCE 
+      Provider for PKCS#11, i.e. the <CODE>iaikPkcs11Provider.jar</CODE> file in the
+      <code>bin</code> directory (or iaikPkcs11Provider_unsigned.jar for the unsigned version). 
+      If you are using JDK 1.4 or higher (or IBM JDK 1.3 or later), you must use the signed version.
+    <br />   <br />
+      Moreover, you should 
+      install the <i>JavaTM Cryptography Extension (JCE) Unlimited Strength 
+      Jurisdiction Policy Files</i>, if you are using JDK 1.4 or higher (or IBM JDK 1.3 or later); 
+      otherwise, you will not be able to use all algorithms with all key 
+      lengths. You can download these policy files for example from the JDK 
+      download page on SUN's web-site.  <br />
+    <br />In general, you have two options to include all these jar files. First, you 
+    can simply include it in the class path. For Java 1.4 or later, this may look something like this.
+<pre><code>
+set CLASSPATH=yourpath/iaikPkcs11Provider_demos.jar;yourpath/iaikPkcs11Provider.jar;yourpath/iaikPkcs11Wrapper.jar;yourpath/iaik_jce.jar
+java demo.pkcs.pkcs11.provider.signatures.SigningDemo
+</code></pre>
+    <br />Alternatively, you can place the jar files in the <code>lib/ext</code> directory 
+    of your Java runtime environment. Then, it is not required to include them 
+    in the class path. However, please note that you may need to place any 
+    configuration properties files into this directory as well. This is because
+    classes from this directory are usually loaded by the system classloader
+    which will not find resources which are in the application class path.
+
+    <H2>Configuring the path to the PKCS#11 Wrapper's native Library</H2>
+
+		<br />The IAIK JCE Provider for PKCS#11 is based on the IAIK PKCS#11 Wrapper. 
+    The wrapper requires its native library to operate. 
+    By default (if the path to the wrapper's native library is not configured) it will be loaded from
+		the iaikPkcs11Wrapper.jar. Since version 1.4 the PKCS#11 wrapper's jar file also includes the native 
+		libraries for Windows, Linux, MacOS and Solaris. If no path is configured, the PKCS#11 wrapper 
+		will try to copy the appropriate library for the used system
+		to the local temporary directory as used by Java and loaded from there.<br />   
+    <br />If you want to define the used library yourself, you have the below options. The library is called 
+    <code>pkcs11wrapper.dll</code> on Windows platforms, 
+    <code>libpkcs11wrapper.so</code> on Linux and Solaris platforms and 
+    <code>libpkcs11wrapper.jnilib</code> on MacOS. You can find these files in 
+    the <code>bin/&lt;platform&gt;</code> directory of the PKCS#11 wrapper package, where 
+    <code>&lt;platform&gt;</code> is the name of your platform. For the Java VM 
+    being able to load this library, it must be either in the system library 
+    search path or in the VM's own library search path.<br>
+    You can add the library using one of the following methods:
+    <UL>
+    	<LI> On Windows systems you can set the <code>PATH</code> environment variable and on UNIX systems you 
+    			 can set <code>LD_LIBRARY_PATH</code> environment variable to include the 
+    			 directory where the PKCS#11 wrapper library resides. </LI>
+    	<LI> You can set the VM system property called <code>java.library.path</code> like this: 
+    				<code>-Djava.library.path=bin/windows/win-x86_64/release</code>.
+    	</LI>
+    	<LI> If you prefer specifying the absolute path to the library in your program
+    			and not loading it with the Java VM you can use the property key 
+    			<code>PKCS11_WRAPPER_PATH</code>. More information to properties files can
+    			be found in the <a href="Using.html">Using</a> part of this 
+    			documentation.</LI>
+    </UL>
+    <br />Having finished the installation of the files of the provider, you need 
+    to configure the provider in your Java VM. You can do this statically or 
+    dynamically. Read the <a href="Using.html">Using</a> part of this 
+    documentation to see how to do this.
+
+    <HR>
+    <CENTER>Copyright (c) 1997 - 2003 IAIK. Copyright (c) 2003 - 2015 Stiftung SIC. All rights reserved.</CENTER>
+
+  </BODY>
+</HTML>

@@ -1,0 +1,1791 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+  <HEAD>
+    <TITLE>IAIK JCE Provider for PKCS#11</TITLE>
+    <META NAME="Keywords" CONTENT="IAIK, Java, Security, Hardware, JCA, JCE, PKCS#11, Cryptoki, Signature, Encrpytion, Decryption, Cryptography">
+    <META NAME="Description" CONTENT="A Java JCA/JCE Provider that uses PKCS#11 compatible Cryptographic Tokens">
+  </HEAD>
+  <BODY>
+    <TABLE BORDER=0>
+      <TR>
+        <TD><IMG SRC="images/siclogo.jpg" ALT="SIC Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD><IMG SRC="images/iaik_logo.gif" ALT="IAIK Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD>
+          <H2>IAIK JCE Provider for PKCS#11: Version History</H2>
+        </TD>
+      </TR>
+    </TABLE>
+
+    <ul>
+       <li>
+        <h3><a href="#1.5">Version 1.5</a></h3>
+        <p>Release Date: 06 March 2015</p>
+        <p>Fixes and enhancements, signed with new certificate.</p>
+      </li>
+      <li>
+        <h3><a href="#1.4">Version 1.4</a></h3>
+        <p>Release Date: 04 March 2013</p>
+        <p>Fixes and enhancements</p>
+      </li>
+      <li>
+        <h3><a href="#1.3">Version 1.3</a></h3>
+        <p>Release Date: 03 November 2011</p>
+        <p>Fixes, enhancements, meets v2.20 of the PKCS#11 Standard</p>
+      </li>
+      <li>
+        <h3><a href="#1.2.6">Version 1.2.6</a></h3>
+        <p>Release Date: 28 January 2009</p>
+        <p>Enhancements and signed with new certificate.</p>
+      </li>
+      <li>
+        <h3><a href="#1.2.5">Version 1.2.5</a></h3>
+        <p>Release Date: 21 July 2008</p>
+        <p>Fixes and enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.2.4">Version 1.2.4</a></h3>
+        <p>Release Date: 6 March 2007</p>
+        <p>Update of included IAIK-JCE.</p>
+      </li>
+      <li>
+        <h3><a href="#1.2.3">Version 1.2.3</a></h3>
+        <p>Release Date: 19 December 2006</p>
+        <p>Fixes and enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.2.2">Version 1.2.2</a></h3>
+        <p>Release Date: 19 April 2006</p>
+        <p>Fixes.</p>
+      </li>
+      <li>
+        <h3><a href="#1.2.1">Version 1.2.1</a></h3>
+        <p>Release Date: 22 February 2006</p>
+        <p>Fixes and minor enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.2">Version 1.2</a></h3>
+        <p>Release Date: 27 June 2005</p>
+        <p>Fixes and major enhancements; e.g. transparent and automatic key import.</p>
+      </li>
+      <li>
+        <h3><a href="#1.1.9">Version 1.1.9</a></h3>
+        <p>Release Date:  3 January 2005</p>
+        <p>Fixes and minor enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.1.8">Version 1.1.8</a></h3>
+        <p>Release Date:  5 October 2004</p>
+        <p>Fixes and minor enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.1.7">Version 1.1.7</a></h3>
+        <p>Release Date: 10 December 2003</p>
+        <p>Fixes and minor enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.1.6">Version 1.1.6</a></h3>
+        <p>Release Date: 3 September 2003</p>
+        <p>Fixes and minor enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.1.5">Version 1.1.5</a></h3>
+        <p>Release Date: 7 July 2003</p>
+        <p>Fixes and minor enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.1.4">Version 1.1.4</a></h3>
+        <p>Release Date: 6 June 2003</p>
+        <p>Fixed a bug in hash engine. Several other fixes and minor enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.1.3">Version 1.1.3</a></h3>
+        <p>Release Date: 4 June 2003</p>
+        <p>Keystore now uses sessions only during keystore operations. Several other fixes and minor enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.1.2">Version 1.1.2</a></h3>
+        <p>Release Date: 16 April 2003</p>
+        <p>Added support for PIN change. Several other fixes and minor enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.1.1">Version 1.1.1</a></h3>
+        <p>Release Date: 31 January 2003</p>
+        <p>Enhancements in PKCS#11 session handling and PIN handling via key store. Several other enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.1">Version 1.1</a></h3>
+        <p>Release Date: 18 December 2002</p>
+        <p>Several enhancements.</p>
+        <p>
+      </li>
+      <li>
+        <h3><a href="#1.0">Version 1.0</a></h3>
+        <p>Release Date: 23 September 2002</p>
+        <p>Fixes and minor enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.0Beta3">Version 1.0 Beta 3</a></h3>
+        <p>Release Date: 2 September 2002</p>
+        <p>Fixes and minor enhancements.</p>
+      </li>
+      <li>
+        <h3><a href="#1.0Beta2">Version 1.0 Beta 2</a></h3>
+        <p>Release Date: 1 August 2002</p>
+        <p>New features, more demos.</p>
+      </li>
+      <li>
+        <h3><a href="#">Version 1.0 Beta 1</a></h3>
+        <p>Release Date: 19 July 2002</p>
+        <p>First public release.</p>
+      </li>
+    </ul>
+
+    <p>&nbsp;
+    <p>
+      <h3>
+        <a name="1.0Beta2">Version 1.0 Beta 2</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>demo.pkcs.pkcs11.provider.RSASigningApplet</td>
+        <td align="center">NF</td>
+        <td>An applet demo shows how to sign with a smart card inside an applet.</td>
+      </tr>
+      <tr>
+        <td>demo.pkcs.pkcs11.provider.ClientAuthenticationSocketDemo</td>
+        <td align="center">NF</td>
+        <td>This demo in the <code>isasilk-demo</code> directory shows how to use smart cards for SSL an TLS client authentication using IAIK-SSL ( alias iSaSiLk).</td>
+      </tr>
+      <tr>
+        <td>demo.pkcs.pkcs11.provider.ClientAuthenticationSocketDemo</td>
+        <td align="center">NF</td>
+        <td>This demo in the <code>jsse_jdk14-demo</code> directory shows how to use smart cards for SSL an TLS client authentication using SUN's JSSE version of JDK 1.4.</td>
+      </tr>
+      <tr>
+        <td>demo.pkcs.pkcs11.provider.ClientAuthenticationSocketDemo</td>
+        <td align="center">NF</td>
+        <td>This demo in the jsse-demo directory shows how to use smart cards for SSL an TLS client authentication using SUN's JSSE version 1.0.3 (domestic) with the IAIK JSSE provider and IAIK-SSL with JDK 1.3.</td>
+      </tr>
+      <tr>
+        <td>demo.pkcs.pkcs11.provider.ImportPKCS12</td>
+        <td align="center">NF</td>
+        <td>This demo allows to import private keys and certificates easily from PKCS#12 (*.p12, *.pfx) files into smart cards and other PKCS#11 tokens.</td>
+      </tr>
+    </table>
+    <p>&nbsp;
+
+
+    <p>&nbsp;
+    <p>
+      <h3>
+        <a name="1.0Beta3">Version 1.0 Beta 3</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11</td>
+        <td align="center">NF</td>
+        <td>Added method <code>insertProviderAtForJDK14</code> that implements a workaround for a JDK 1.4.x
+        bug that prevents installing a JCE provider that implements SHA-1, MD5 or X.509 certificate
+        factories as first provider.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers.PKCS11Cipher</td>
+        <td align="center">B</td>
+        <td>Modified method <code>engineGetKeySize(Key)</code> to work with software keys also, not just with
+        keys of this PKCS#11 provider.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager</td>
+        <td align="center">B</td>
+        <td>Fixed token manager to be able to handle tokens with multiple logical slots. Now it is
+        possible to create two provider instances with the same properties file, if these properties
+        do not specify a slot explicitely and the library provides more than one slot.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11</td>
+        <td align="center">NF</td>
+        <td>Introduced a global property to enable and disable the software delegation feature.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11MultipleInstance.properties</td>
+        <td align="center">C</td>
+        <td>Changed the name to <code>iaik/pkcs/pkcs11/provider/IAIKPkcs11Global.properties</code> and introduced
+        the software delegate enable/disable flag.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.random.PKCS11RandomSpi</td>
+        <td align="center">C</td>
+        <td>Now uses a software delegate, if the current token does not support random number generation.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.random.PKCS11SeededRandomSpi</td>
+        <td align="center">NF</td>
+        <td>Introduced this new random implementation that only uses the token for seed operations but
+        uses the software delegation for generating random bytes. This will improve performance in many
+        cases.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11</td>
+        <td align="center">B</td>
+        <td>Fixed bug that caused property <code>LOGIN_KEYSTORE_SESSION_ON_DEMAND</code> to be read incorrectly.</td>
+      </tr>
+    </table>
+    <p>&nbsp;
+
+
+    <p>&nbsp;
+    <p>
+      <h3>
+        <a name="1.0">Version 1.0</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.apps.util.passphrase</td>
+        <td align="center">NF</td>
+        <td>Added an alternative implementation of a PIN-dialog - <code>PassphraseFrameDialog</code>.
+            This uses a <code>Frame</code> rather than a <code>Dialog</code>, thus it is also visible in the taskbar.</td>
+      </tr>
+      <tr>
+        <td>iaik.apps.util.passphrase.PassphraseDialog</td>
+        <td align="center">C</td>
+        <td>Modified <code>PassphraseDialog</code> to act as a pure <code>JDialog</code> without a frame. The dummy frame
+            caused trouble on some platforms.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11</td>
+        <td align="center">C</td>
+        <td>Changed default for property <code>LOGIN_KEYSTORE_SESSION_ON_DEMAND</code> to <code>false</code>.</td>
+      </tr>
+      <tr>
+        <td>iaik.apps.util.passphrase.PassphrasePrompt</td>
+        <td align="center">C</td>
+        <td>Added a new method <code>setProtectedResourceInfo()</code>. The current implementation passes
+            a <code>TokenInfo</code> to this method before prompting a PIN. This allows the dialog to
+            display detailed information about the token for which the user must enter a PIN.</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td align="center">B</td>
+        <td>Fixed several mistakes in the JavaDoc.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.signatures.ExternalSha1DsaSignature</td>
+        <td align="center">B</td>
+        <td>Fixed constructor.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.signatures.ExternalSha1EcdsaSignature</td>
+        <td align="center">B</td>
+        <td>Fixed constructor.</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td align="center">NF</td>
+        <td>Added a algorithm autodetect feature. If enabled, the provider will check, if a
+            certain requested algorithm is supported by the current token before reporting
+            it to the JCE.</td>
+      </tr>
+    </table>
+    <p>&nbsp;
+
+
+    <p>&nbsp;
+    <p>
+      <h3>
+        <a name="1.1">Version 1.1</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSpi</td>
+        <td align="center">C</td>
+        <td>Improved alias handling and key import.
+            Aliases now map to object labels one-to-one if possible.
+            Aliases provided when setting new key or certificate entries now use the provided alias as given.
+            The new objects get the alias as their PKCS#11 object label.
+            When setting new private key entries with a user certificate, the keystore checks the mechanisms
+            supported by the token and the key-usage flags in the user certificate. Using this information,
+            it sets the private key attributes appropriately.
+            Moreover, the key store now handles certificate chains for private key entries.
+            The key store tries to construct a certificate chain when reading the certificates from the token.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.hashes</td>
+        <td align="center">NF</td>
+        <td>Added software delegation support for all hashes.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.DelegateProvider<br>
+            iaik.pkcs.pkcs11.provider.IAIKPkcs11</td>
+        <td align="center">NF</td>
+        <td>Added an advanced software delegation system.
+            The application can set its own handler for getting software delegation engines.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.random.PKCS11RandomNoSetSeedSpi</td>
+        <td align="center">NF</td>
+        <td>Added random implementation that does not set any seed. Useful for tokens that do not support
+            external seeding, but can generate random data nevertheless.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11.properties</td>
+        <td align="center">C</td>
+        <td>Changed <code>SECONDARY_PROVIDER</code> to <code>KEY_STORE_SUPPORT_PROVIDER</code>, because it is just used in the keystore.
+            Other classes use the new advanced delegation provider mechanism.
+            Added <code>DELEGATE_PROVIDER</code> to configure a handler that provide software delegate implementations.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11.properties</td>
+        <td align="center">NF</td>
+        <td>Added <code>ALGORITHM_PROPERTIES</code> entry to allow a separate algorithm list for each provider instance.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keyfactories</td>
+        <td align="center">NF</td>
+        <td>Added software delegation support for all key factories.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11#insertProviderAtForJDK14(Provider, int)</td>
+        <td align="center">B</td>
+        <td>Improved implementation to work in more JDKs that have the provider registration bug.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers<br>
+            iaik.pkcs.pkcs11.provider.hashes<br>
+            iaik.pkcs.pkcs11.provider.signatures<br>
+            iaik.pkcs.pkcs11.provider.macs</td>
+        <td align="center">B</td>
+        <td>Fixed engine classes to be reusable after final-operation.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.apps.util.passphrase</td>
+        <td align="center">NF</td>
+        <td>Added the class <code>PassphraseHolder</code> that makes passing the user-PIN from the application easier.
+            Added the class <code>Passphrase</code>ConsoleDialog that prompts the PIN from the console.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11</td>
+        <td align="center">B</td>
+        <td>Fixed a problem with case-insensitivity of algorithm names.
+        </td>
+      </tr>
+     </table>
+    <p>&nbsp;
+    
+    <p>
+      <h3>
+        <a name="1.1.1">Version 1.1.1</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSpi</td>
+        <td align="center">C</td>
+        <td>Changed key-usage handling for import of new keys. Now the key-usage keyEncipherment
+            in the user certificate also sets the Decrypt flag in the new PKCS#11 key object.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.key.IAIKPKCS11Key</td>
+        <td align="center">NF</td>
+        <td>Added constants for key type names that can be used for the unwrapping functionality of the
+            <code>PKCS11Cipher</code> class (see other change).
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.cipher.PKCS11Cipher</td>
+        <td align="center">B</td>
+        <td>Improved the unwrapping functionality to handle the key type parameter correctly.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.cipher.RSACipher</td>
+        <td align="center">B</td>
+        <td>Fixed a bug in the initialization. This bug ocurred in some JSSE samples.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSpi</td>
+        <td align="center">NF</td>
+        <td>If the application provides a password (or PIN) when calling the <code>load(InputStream, char[])</code> method,
+            the keystore will use this to do a user-login; it will not prompt the password or PIN using an
+            own dialog.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager<br>
+            all engine classes</td>
+        <td align="center">NF</td>
+        <td>Improved handling of PKCS#11 sessions. Sessions are cached in the TokenManager. The engine classes give back sessions to the <code>TokenManager</code> if they do not use them currently. This can lower the number of open PKCS#11 sessions dramatically.
+        </td>
+      </tr>
+     </table>
+    <p>&nbsp;
+
+    <p>
+      <h3>
+        <a name="1.1.2">Version 1.1.2</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.key.IAIKPKCS11PublicKey<br>
+            iaik.pkcs.pkcs11.provider.key.IAIKPKCS11PrivateKey</td>
+        <td align="center">B</td>
+        <td>Fixed a type cast that may lead to an endless loop when compiled with certain compilers.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11</td>
+        <td align="center">B</td>
+        <td>Fixed a problem in the JDK 1.4 bug workaround method <code>insertProviderAtForJDK14()</code>.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keyfactories.DsaKeyFactory</td>
+        <td align="center">B</td>
+        <td>Fixed a bug in the method for private key generation.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keyfactories.EcDsaKeyFactory</td>
+        <td align="center">NF</td>
+        <td>New factory to create PKCS#11 ECDSA keys from X.509 encoded public key and
+            PKCS#8 encoded private keys, which use ANSI X9.62 encoding internally.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSpi</td>
+        <td align="center">NF</td>
+        <td>The store-method changes the user PIN of the token.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager<br>
+            all engine classes</td>
+        <td align="center">NF</td>
+        <td>Using the protected authentication path for PIN entry can now be disabled using 
+            the provider properties.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.apps.util.passphrase</td>
+        <td align="center">NF</td>
+        <td>Added interface <code>NewPassphrasePrompt</code>, class <code>NewPassphraseDialog</code> and class <code>NewPassphraseHolder</code> for changing the PIN.
+            Added the class <code>NewPassphraseConsoleDialog</code> that prompts the new PIN from the console.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.signatures.DsaSignature<br>
+            iaik.pkcs.pkcs11.provider.signatures.ExternalSha1DsaSignature<br>
+            iaik.pkcs.pkcs11.provider.signatures.InternalSha1DsaSignature<br>
+            iaik.pkcs.pkcs11.provider.signatures.EcDsaSignature<br>
+            iaik.pkcs.pkcs11.provider.signatures.ExternalSha1EcDsaSignature<br>
+            iaik.pkcs.pkcs11.provider.signatures.InternalSha1EcDsaSignature</td>
+        <td align="center">B</td>
+        <td>Fixed bug of wrong encoding of signature value.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs112<br>
+            iaik.pkcs.pkcs11.provider.IAIKPkcs113<br>
+            iaik.pkcs.pkcs11.provider.IAIKPkcs114</td>
+        <td align="center">NF</td>
+        <td>Added these subclasses of <code>IAIKPkcs11</code> provider. They can be used in situations where each provider must be of a different class name.
+            This can be used for a static configuration of providers with VM 1.4.x, which do not accept the same provider class to be registered more than once.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.LoginManager<br>
+            iaik.pkcs.pkcs11.provider.DefaultLoginManager<br>
+            iaik.pkcs.pkcs11.provider.IAIKPkcs11</td>
+        <td align="center">C/NF</td>
+        <td>Introduced new interface <code>LoginManager</code> to separate login, PIN change and logout from provider core. 
+            This allows users to easily implement own login and PIN management handlers.<br>
+            All user dialog related functionality has been moved to <code>DefaultLoginManager</code>. This includes configured PIN dialogs and prompt messages.
+            As a consequence, the provider itself does no longer include any language specific stuff. This is all in (the easily replaceable) login manager.
+            If you have used custom settings for login related stuff, you can use the same properties file entries in the new file called <code>iaik/pkcs/pkcs11/provider/DefaultLoginManager.properties</code>. If you used the API, you can find the same methods now in the <code>DefaultLoginManager</code> class as before in the provider itself.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11.properties</td>
+        <td align="center">NF</td>
+        <td>Added <code>MODULE_INITIALIZATION_PARAMETERS</code> entry to allow passing parameters to the PKCS#11 module during initialization.
+            This can be used to access the crypto module of Mozilla and Netscape and use the private keys and certificates.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keyfactories.RSAKeyFactory<br>
+            iaik.pkcs.pkcs11.provider.keyfactories.DSAKeyFactory<br>
+            iaik.pkcs.pkcs11.provider.keyfactories.ECDSAKeyFactory<br>
+            iaik.pkcs.pkcs11.provider.keyfactories.DhKeyFactory</td>
+        <td align="center">NF</td>
+        <td>Added support for X.509 encoded of public keys and PKCS#8 encoded private keys.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11.properties</td>
+        <td align="center">NF</td>
+        <td>Added <code>USER_PIN</code> entry to allow configuration of a fixed user PIN to login to the PKCS#11 module.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.signatures.SignatureInputStream<br>
+            iaik.pkcs.pkcs11.provider.signatures.SignatureOutputStream</td>
+        <td align="center">NF</td>
+        <td>Added these classes which provide stream signing features for input and output stream respectively.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.apps.util.passphrase</td>
+        <td align="center">B/NF</td>
+        <td>Added <code>NewPassphraseFrameDialog</code>. Improved dialogs to work on several platforms.</td>
+      </tr>
+     </table>
+    <p>&nbsp;
+
+
+    <p>
+      <h3>
+        <a name="1.1.3">Version 1.1.3</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSpi</td>
+        <td align="center">NF</td>
+        <td>Now, the keystore uses sessions only during keystore operations. 
+            This enables use of the provider for module implementation which 
+            support only a single session.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager</td>
+        <td align="center">B/C</td>
+        <td>The token manager now sets the <code>CKF_OS_LOCKING_OK</code> flag when initializing 
+            the PKCS#11 module. This ensures that modules which do not allow
+            multi-threaded access otherwise work correctly.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.*.properties</td>
+        <td align="center">NF/C</td>
+        <td>Moved all default properties from the package <code>iaik.pkcs.pkcs11.provider</code>
+            to the package <code>iaik.pkcs.pkcs11.provider.default</code>. This only applies
+            to the default properties which are included in the provider's jar file. The
+            properties files that an application developer provides still have the same names;
+            e.g. <code>iaik.pkcs.pkcs11.provider.IAIKPkcs11.properties</code>. There is no need
+            to change anything in an existing application. The advantage is, that it does not 
+            matter in which position the application's properties are in the classpath.
+        </td>
+      </tr>
+     </table>
+
+
+    <p>
+      <h3>
+        <a name="1.1.4">Version 1.1.4</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.hashes</td>
+        <td align="center">B</td>
+        <td>Fixed a bug that can cause an exception containing error code <code>CKR_OPERATION_ACTIVE</code> 
+            if the application calls <code>reset()</code> as first operation of a hash engine.
+        </td>
+      </tr>
+     </table>
+
+    <p>
+      <h3>
+        <a name="1.1.5">Version 1.1.5</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.hashes</td>
+        <td align="center">NF</td>
+        <td>Added property <code>MULTI_THREAD_INIT</code> which tells the provider how to
+				    initialize the PKCS#11 module; with flag <code>CKF_OS_LOCKING_OK</code> or without
+					  initialization arguments (<code>NULL_PTR</code>).
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keys</td>
+        <td align="center">NF</td>
+        <td>Improved session handling for session key objects. Now the sessions of session keys
+            are reused. This reduces the number of sessions required during runtime even if 
+            there are several session keys.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.signatures.SignatureUtil</td>
+        <td align="center">B</td>
+        <td>Fixed a bug that may cause certain DSA and ECDSA signature values to be encoded
+            incorrectly. As a result a PKCS#11 module would be unable to verify the signature
+            value.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers.PKCS11Cipher<br>
+            iaik.pkcs.pkcs11.provider.ciphers.RSACipher</td>
+        <td align="center">B</td>
+        <td>Fixed a bug that may cause an error with block ciphers under certain 
+            circumstances.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers.RSACipher</td>
+        <td align="center">NF</td>
+        <td>The RSA cipher also supports JCE update methods. 
+            Now, the JCE update methods buffer the incoming data and delay the processing
+            until the doFinal method is called. This cipher does no longer use any PKCS#11
+            update functions, because most PKCS#11 modules do not support these functions
+            in this context.
+        </td>
+      </tr>
+     </table>
+
+    <p>
+      <h3>
+        <a name="1.1.6">Version 1.1.6</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSPI</td>
+        <td align="center">B</td>
+        <td>With certain modules, which use the same label for corresponding private key and
+            public key, the keystore used the label as alias for the public key, if the module
+            reported this key before the private key in the search operation.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSPI</td>
+        <td align="center">C</td>
+        <td>Changed some lines in the <code>setKeyEntry</code> method. These changes ensure that 
+            attributes of an existing private key are only set if really necessary. This situation
+            may occur when importing a certificate or a certificate chain to a previously generated
+            private key.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSPI</td>
+        <td align="center">B</td>
+        <td>If the application generates a key-pair on the token and imports a certificate chain
+            right after that, without calling any other keystore method in between, the private
+            key will appear twice on the token (a workaround would have been to call e.g. 
+            <code>tokenKeyStore.aliases()</code> before calling <code>setKeyEntry</code>).
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.cipher.PKCS11Cipher</td>
+        <td align="center">B</td>
+        <td>Changed <code>pkcs11Init(int, Key, AlgorithmParameters, SecureRandom)</code> to
+            accept null as <code>AlgorithmParameters</code> in general.
+        </td>
+      </tr>
+     </table>
+
+    <p>
+      <h3>
+        <a name="1.1.7">Version 1.1.7</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSPI</td>
+        <td align="center">B</td>
+        <td>Under certain circumstances deleting keystore entries might not delete 
+            the actual underlying PKCS#11 object; i.e. deleteEntry(String) did not
+            always work as expected. The session handling has also been improved to
+            ensure that an already closed session is never reused.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.apps.util.passphrase.PassphraseDialog<br>
+            iaik.apps.util.passphrase.PassphraseFrameDialog</td>
+        <td align="center">B</td>
+        <td>Moved the call to <code>hide()</code> to avoid an <code>IAIKPkcs11AuthenticationCanceledException</code>
+            in some cases even if the OK button has been pressed.</td>
+      </tr>
+     </table>
+
+    <p>
+      <h3>
+        <a name="1.1.8">Version 1.1.8</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSPI</td>
+        <td align="center">C</td>
+        <td>Changed exception handling to pass all runtime exceptions directly through
+            to the application.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager</td>
+        <td align="center">C</td>
+        <td>TokenManager now throws an exception with a more meaningful message text
+            if the required PKCS11_NATIVE_MODULE property has not been set.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11</td>
+        <td align="center">C</td>
+        <td>Changed handling of entries in the underlying Hashtable of the provider.
+            This was neccessary to work around a bug in Java 5 RC (Bug ID 5097015).
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keyagreements.DhKeyAgreement</td>
+        <td align="center">B</td>
+        <td>Fixed a bug which caused an exception claiming an incorrect key even
+            if the provided key is correct.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keys.IAIKPKCS11Key</td>
+        <td align="center">NF</td>
+        <td>Added a <code>destroy</code> method to allow simple destruction of no longer
+            used keys. This is especially useful for session keys to save resources.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keypairgenerators.X942DhKeyPairGenerator</td>
+        <td align="center">B</td>
+        <td>Fixed a bug which can cause an exception indicating CKR_TEMPLATE_INCONSISTENT.
+        </td>
+      </tr>
+     </table>
+
+    <p>
+      <h3>
+        <a name="1.1.9">Version 1.1.9</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>pkcs11wrapper shared library</td>
+        <td align="center">B</td>
+        <td>Fixed a bug which may cause the Java VM to halt or crash if the application
+            tries to use several PKCS#11 modules which do not exist.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager</td>
+        <td align="center">NF</td>
+        <td><code>logout(null)</code> is now allowed and will just logout the user from the token
+            using any session.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.DefaultLoginManager</td>
+        <td align="center">C</td>
+        <td><code>logout(TokenManager, null)</code> will only use a read-only session as dummy session
+            for the logout operation.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStore<br>
+            iaik.pkcs.pkcs11.provider.TokenKeyStoreSPI</td>
+        <td align="center">C</td>
+        <td>Since the session management of the key store has been improved, the key store
+            object does not cache an own session after the return of public methods.
+            Thus, the <code>TokenKeyStore.logout()</code> and <code>TokenKeyStoreSPI.logoutSession()</code>
+            methods have been adapted to always force a logout. This ensures the expected behavior;
+            i.e. that a logout is actually performed in all cases.
+        </td>
+      </tr>
+      <tr>
+        <td>demos</td>
+        <td align="center">NF</td>
+        <td>Added a <code>GetInfo</code> demo which provides information about a module.
+            This makes it easier to configure a PKCS#11 Provider instance and to track problems.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers.BlockCipher<br>
+            iaik.pkcs.pkcs11.provider.ciphers.RsaCipher</td>
+        <td align="center">C</td>
+        <td>Changed default mode and padding from lower case writing to default names as listed 
+            in the JCE spcifications; e.g. "ECB" instead of "ecb", and "PKCS1Padding" instead of
+            "pkcs1padding". This may cause problems with delegate software providers otherwise.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStore<br>
+            iaik.pkcs.pkcs11.provider.TokenKeyStoreSPI</td>
+        <td align="center">C</td>
+        <td>Changed method <code>setKeyEntry</code> to use different <code>KeySpec</code>s
+            for DESede and DES keys to get better compatibility with other secret key factories.
+            With factories of some JCE providers, the application may get a 
+            <code>java.security.spec.InvalidKeySpecException: Inappropriate key specification</code>
+            exception without this change. As a work around, the application may configure an alternative
+            provider using the <code>KEY_STORE_SUPPORT_PROVIDER</code> option.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSPI</td>
+        <td align="center">B</td>
+        <td>If the application queries a PKCS#11 keystore when there is no token present in the
+            associated slot, the keystore can throw an <code>IAIKPkcs11TokenUnavailableException</code>.
+            According to the documentation, it should simply show an empty keystore.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers.BlockCipher</td>
+        <td align="center">NF</td>
+        <td>If the application uses a block cipher for encryption but does not provide an IV,
+            the implmenentation will generate one automatically and return it on request to
+            the application; e.g. using <code>Cipher.getIV()</code> or via 
+            <code>Cipher.getParameters()</code>.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager<br>
+            iaik.pkcs.pkcs11.provider.TokenKeyStoreSPI</td>
+        <td align="center">NF</td>
+        <td>If login/logout operations are performed using the <code>loginUser</code> or 
+            <code>logout</code> methods of the TokenManager, it notifies the key stores
+            that their contents may be no longer valid.
+        </td>
+      </tr>
+      <tr>
+        <td>N/A</td>
+        <td align="center">C</td>
+        <td>Added a <code>lib-signed</code> directory containing the signed provider
+            JAR files. Moreover, the signed and unsigned version of the provider have
+            the same file name now. There is 
+            <code>lib/iaikPkcs11Provider.jar</code> and <code>lib/iaik_jce.jar</code> 
+            , which are the unsigned versions, and there are 
+            <code>lib-signed/iaikPkcs11Provider.jar</code> and <code>lib-signed/iaik_jce.jar</code> 
+            , which are the signed versions. This should make deployment easier.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.hashes.Sha256<br>
+            iaik.pkcs.pkcs11.provider.hashes.Sha384<br>
+            iaik.pkcs.pkcs11.provider.hashes.Sha512</td>
+        <td align="center">NF</td>
+        <td>Added SHA-256/384/512 hash (FIPS PUB 180-2) algorithms from PKCS#11 v 2.20.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.macs.Sha256HMac<br>
+            iaik.pkcs.pkcs11.provider.macs.Sha384HMac<br>
+            iaik.pkcs.pkcs11.provider.macs.Sha512HMac</td>
+        <td align="center">NF</td>
+        <td>Added HMACs based on SHA-256/384/512 hash (FIPS PUB 180-2) algorithms.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keygenerators.Sha256KeyDerivation<br>
+            iaik.pkcs.pkcs11.provider.keygenerators.Sha384KeyDerivation<br>
+            iaik.pkcs.pkcs11.provider.keygenerators.Sha512KeyDerivation</td>
+        <td align="center">NF</td>
+        <td>Added key derivation functions based on SHA-256/384/512 hash (FIPS PUB 180-2) algorithms.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.signatures</td>
+        <td align="center">NF</td>
+        <td>Added RSA PKCS#1 v1.5 and v2.1 PSS signature schemes based on SHA-256/384/512 hash 
+            (FIPS PUB 180-2) algorithms, external and internal hashing versions.
+        </td>
+      </tr>
+    </table>
+
+    <p>
+      <h3>
+        <a name="1.2">Version 1.2</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11<br>
+            iaik.pkcs.pkcs11.provider.TokenManager</td>
+        <td align="center">NF</td>
+        <td>We introduced a new configuration property which tells the provider
+            what to do if a CKR_CRYPTOKI_ALREADY_INITIALIZED error occurs upon 
+            initialization of the PKCS#11 module.
+            The new property is called MODULE_ALREADY_INITIALIZED.
+            Per default, it is set to <code>ignore</code> which tells the provider
+            to ignore this error an go ahead as if no error happened. This is 
+            especially useful for applets.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keys.IAIKPKCS11Key</td>
+        <td align="center">B</td>
+        <td>Unwrapping of an AES key may cause a CKR_TEMPLATE_INCOMPLETE error
+            due to a missing key-type attribute for this algorithm. 
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keys.IAIKPKCS11Key</td>
+        <td align="center">B</td>
+        <td>Calling <code>destroy()</code> may only work correctly for session objects
+            but may throw an exception for token objects. 
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">NF</td>
+        <td>The new interface <code>KeyHandler</code> is used by crypto engine
+            implementations of this provider to allow automatic key convserion.
+            By calling the <code>setAutoConversion(boolean)</code> method of the
+            <code>DefaultKeyHandler</code>, such automatic key conversion can be
+            enabled easily.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers</td>
+        <td align="center">NF</td>
+        <td>Applications can feed pure software keys to a PKCS#11 cipher. 
+            The cipher will convert the keys automatically to PKCS#11 keys.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keyagreements</td>
+        <td align="center">NF</td>
+        <td>Applications can feed pure software keys to a PKCS#11 key agreement. 
+            The PKCS#11 provider will convert the keys automatically to PKCS#11 keys.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keygenerators</td>
+        <td align="center">NF</td>
+        <td>Applications can use PKCS#11 key generators without special 
+            <code>AlgorithmParameterSpec</code> objects, just in the same way
+            as a software provider. 
+            The PKCS#11 provider will use default values for the operation.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keypairgenerators</td>
+        <td align="center">NF</td>
+        <td>Applications can use PKCS#11 key-pair generators without special 
+            <code>AlgorithmParameterSpec</code> objects, just in the same way
+            as a software provider. 
+            The PKCS#11 provider will use default values for the operation.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.macs</td>
+        <td align="center">NF</td>
+        <td>Applications can feed pure software keys to a PKCS#11 MACs. 
+            The MAC will convert the keys automatically to PKCS#11 keys.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.signatures</td>
+        <td align="center">NF</td>
+        <td>Applications can feed pure software keys to a PKCS#11 signature object. 
+            The PKCS#11 provider will convert the keys automatically to PKCS#11 keys.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager</td>
+        <td align="center">NF</td>
+        <td>Added method <code>isRemovable()</code> to check if the token in the
+            slot is a fixed or a removable token; e.g. HSM or smart card.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11</td>
+        <td align="center">NF</td>
+        <td>Added a <code>KeyHandler</code> which allows the application to control the handling
+            of keys which are passed to cipher, MAC, signature and key agreement
+            objects. The <code>DefaultKeyHandler</code> allows automatic conversion of software
+            keys to PKCS#11 keys.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keyfactories</td>
+        <td align="center">NF</td>
+        <td>The key factories support automatic conversion of software keys to
+            PKCS#11 keys. This is achieved through the new <code>KeyHandler</code> 
+            feature.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keys.IAIKPKCS11Key</td>
+        <td align="center">NF</td>
+        <td>New auto destroy feature which allows to mark such key objects. 
+            This is controlled through <code>setAutoDestroy(boolean)</code> and
+            <code>getAutoDestroy()</code>. If this flag is <code>true</code>,
+            the <code>finalize()</code> method of this object will destroy the 
+            underlying PKCS#11 object.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers.RsaCipher</td>
+        <td align="center">NF</td>
+        <td>Added support for decryption with public key. This feature uses signature 
+            verification with message recovery of PKCS#11.
+        </td>
+      </tr>
+    </table>
+
+    <p>
+      <h3>
+        <a name="1.2.1">Version 1.2.1</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.DefaultKeyHandler</td>
+        <td align="center">B</td>
+        <td>Fixed a bug in the constructor which may cause incorrect handling of 
+            autoconversion configuration property.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11.properties</td>
+        <td align="center">NF</td>
+        <td>As alternative format for SLOT_ID, added means to specify 
+        	the configured slot via its index in the list of all available slots.
+        </td>
+      </tr>
+      <tr>
+        <td>demo.pkcs.pkcs11.provider.GetSlotList</td>
+        <td align="center">NF</td>
+        <td>Added this helper program which displays information about all available
+        	slots. The output helps developers to configure the slot for the provider.
+        </td>
+      </tr>
+      <tr>
+        <td>demo.pkcs.pkcs11.provider.TokenManager</td>
+        <td align="center">B</td>
+        <td>Improved finalize method to work correctly even if called concurrently from
+        	several threads.
+        </td>
+      </tr>
+      <tr>
+        <td>demo.pkcs.pkcs11.provider.TokenKeyStoreSpi</td>
+        <td align="center">B</td>
+        <td>The operation which searches for a key which corresponds to a given key
+        	now finishes the find operation as cleanly.
+        </td>
+      </tr>
+    </table>
+    
+    <p>
+      <h3>
+        <a name="1.2.2">Version 1.2.2</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers<br>
+            iaik.pkcs.pkcs11.provider.hashes<br>
+            iaik.pkcs.pkcs11.provider.keyagreements<br>
+            iaik.pkcs.pkcs11.provider.macs<br>
+            iaik.pkcs.pkcs11.provider.sigantures</td>
+        <td align="center">B</td>
+        <td>Fixed a bug in the finalize method that may lead to active sessions in
+            the session pool if the application drops engine objects without
+            finishing the active crypto operation.
+        </td>
+      </tr>
+    </table>
+    
+    <p>
+      <h3>
+        <a name="1.2.3">Version 1.2.3</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.DefaultKeyHandler</td>
+        <td align="center">B</td>
+        <td>For the automatic conversion of public keys that are used for encryption,
+            the conversion method has set the sensitiv-flag in the key creation
+            template. Public keys do not have this attribute. This flag was removed
+            from the template.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStore<br>
+            iaik.pkcs.pkcs11.provider.TokenKeyStoreSpi</td>
+        <td align="center">C</td>
+        <td>Improved the method that reads the keys and certificates from the token.
+            The old implementation used two find operations, whereas the new one
+            only uses a single one without template. This speeds up reading the
+            keystore contents from the token.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers.PKCS11Cipher<br>
+            iaik.pkcs.pkcs11.provider.keygenerators.PKCS11KeyGenerators<br>
+            iaik.pkcs.pkcs11.provider.keypairgenerators.PKCS11KeyPairGenerators<br>
+            iaik.pkcs.pkcs11.provider.signature.PKCS11Signature
+            </td>
+        <td align="center">B</td>
+        <td>If the provider is configured to check for supported token mechanisms
+            (i.e. CHECK_MECHANISM_SUPPORTED = true) and the used mechanism requires
+            special PKCS#11 parameters, the provider may report the mechanism as
+            unsupported though the token supports it. This can happen e.g.
+            with PSS sigantures if the hash is calculated in software.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers.PKCS11Cipher
+            </td>
+        <td align="center">NF</td>
+        <td>Improved exception handling for key unwrapping.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.IAIKPkcs11
+            </td>
+        <td align="center">NF</td>
+        <td>Added static method <code>getModule</code> which supports getting a list
+          of available slots and tokens. With this list, the application can
+          select the slot at runtime and instantiate the provider thereafter.
+          Have a look at the "Slot Selection" section in the usage documentation.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.DefaultKeyHandler
+            </td>
+        <td align="center">C</td>
+        <td>For automatically converting keys, 
+        	  the key handler now uses <code>javax.crypto.spec.DESKeySpec</code> for DES keys
+        	  and for DESede (Triple-DES) keys, is uses <code>javax.crypto.spec.DESedeKeySpec</code>
+        	  instead of <code>javax.crypto.spec.SecretKeySpec</code>. 
+        	  The <code>SecretKeyFactories</code> of SunJCE do not support
+        	  <code>javax.crypto.spec.SecretKeySpec</code> for DES and DESede keys.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSpi
+            </td>
+        <td align="center">B</td>
+        <td>If an existing key on a token was inserted again into the same token
+        	  using setKeyEntry(), but under a different alias, the resulting copy of 
+        	  the key may have had a different label/alias than the one specified.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers.PKCS11Cipher
+            </td>
+        <td align="center">C</td>
+        <td>If an application unwrapped a key and that unwrapped key was a session key, 
+        	  this key locked its session exclusively. This could lead to many open sessions.
+        	  We improved that to enable reusing such sessions.
+        </td>
+      </tr>
+    </table>
+    
+    <p>
+      <h3>
+        <a name="1.2.4">Version 1.2.4</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>n/a</td>
+        <td align="center">C</td>
+        <td>Updated included version of IAIK-JCE.
+        </td>
+      </tr>
+    </table>
+    
+     <p>
+      <h3>
+        <a name="1.2.5">Version 1.2.5</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.DefaultKeyHandler</td>
+        <td align="center">NF</td>
+        <td>Extended ECDSA key generator to take key length of 384 and 521 bit.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.signatures</td>
+        <td align="center">NF</td>
+        <td>Added signature algorithms SHA224/ECDSA, SHA256/ECDSA, SHA384/ECDSA, SHA512/ECDSA.
+            These algorithms calculate the hash in software and the signature on the token with
+            the provided hash using mechanism CKM_ECDSA.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.signatures.PKCS11BufferingSignature</td>
+        <td align="center">B</td>
+        <td>Reset data buffer after sign/verify-operation to enable correct 
+            reuse of signature engine without initialization.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager</td>
+        <td align="center">NF</td>
+        <td>Enable specification of absolute path to native IAIK PKCS#11 wrapper library with
+        property key PKCS11_WRAPPER_PATH.
+        </td>
+      </tr>
+    </table>
+    
+    <p>
+      <h3>
+        <a name="1.2.6">Version 1.2.6</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>*</td>
+        <td align="center">NF</td>
+        <td>jar files signed with new certificate.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.DefaultDelegateProvider</td>
+        <td align="center">C</td>
+        <td>SecureRandom no longer returns null with FallbackSoftwareProvider
+        if algorithmName is null
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStore</td>
+        <td align="center">NF</td>
+        <td>New method to manually update keystore, e.g. when using the FastPKCS11KeyStore and the card has been changed. 
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreFastSpi</td>
+        <td align="center">NF</td>
+        <td>New faster keystore implementation, that doesn't check if the token has been changed or removed
+            or if an external tool added, deleted or changed token entries.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSpi</td>
+        <td align="center">C</td>
+        <td>One key with two different related certificateChains is added to the keystore twice
+            (one entry for each certificateChain).
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager</td>
+        <td align="center">NF</td>
+        <td>New method getTokenKeystore(String name) for using the FastPKCS11KeyStore with the TokenManager. 
+        </td>
+      </tr>
+    </table>
+     <p>
+      <h3>
+        <a name="1.3">Version 1.3</a>
+      </h3>
+    
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers.RsaCipher</td>
+        <td align="center">NF</td>
+        <td>Add SSL mode with RSA which is needed for SSL cipher suites of IBM JDK, internally calls ECB
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers.PKCS11Cipher</td>
+        <td align="center">NF</td>
+        <td>Support key wrapping algorithm TlsRsaPremasterSecret
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keyagreements.PKCS11KeyAgreement</td>
+        <td align="center">C</td>
+        <td>Return InvalidKeyException instead of NullPointerException if provided key is not a PKCS#11 provider key
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.macs</td>
+        <td align="center">B</td>
+        <td>Fixed a bug where mac-engines open sessions but never close them again.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.signatures</td>
+        <td align="center">NF</td>
+        <td>Add mode RSAforSSL which is needed for SSL cipher suites of IBM JDK
+        </td>
+      </tr>      
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.signatures</td>
+        <td align="center">B</td>
+        <td>Return correct algorithm name if a software key is used with a delegation provider
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSpi</td>
+        <td align="center">B</td>
+        <td>removed endless loop that occured in case of an exception when reading all token objects  
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager</td>
+        <td align="center">B</td>
+        <td>correctly clear cached slots when finalizing
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">NF</td>
+        <td>Provider instances can now be discarded.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">NF</td>
+        <td>Multiple fallback-providers can be handled now. Necessary if a single provider is not capable of all cryptographic operations needed.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">NF</td>
+        <td>Added new engines which allow using the SSL mechanisms specified in PKCS#11 2.0 and newer.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">NF</td>
+        <td>Added new engines which allow using a bunch of PKCS#11 v2.20 mechanisms.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">NF</td>
+        <td>IAIK Eccelerate&trade; (if available) is used for JDK1.5 and newer, and provider then supports 
+            ECPrivateKey and ECPublicKey of java.security.interfaces and ECPublicKeySpec and ECPrivateKeySpec of 
+            java.security.spec package.
+        </td>
+      </tr>
+      <tr>
+        <td>demo.pkcs.pkcs11.provider</td>
+        <td align="center">C</td>
+        <td>Restructured and rewritten examples. They are easier to find as well as more readable and intuitive now.
+        </td>
+      </tr>
+     </table>
+
+     <p>
+      <h3>
+        <a name="1.4">Version 1.4</a>
+      </h3>
+
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">B</td>
+        <td>Character array objects (e.g. object labels and PINs) are now interpreted and saved using UTF8 encoding as given in the PKCS#11 specification.
+        					 Convert labels or PINs that contain special characters, e.g. by using the provided demos in the utils package of the examples. To continue
+        					using the old encoding, the property USE_UTF8_ENCODING (Constants.USE_UTF8_ENCODING) must be set to "false".
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">NF</td>
+        <td>The provider now offers Security Officer (SO) login for key creation engines.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">C</td>
+        <td>Key creation engine specs are now easier to use. Parameters which are invariant for common use cases got removed from the main interface. That are the tokenmanager, the session type, and the session r/w behaviour. Of course these can still be accessed through newly created methods</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">NF</td>
+        <td>The provider now propagates its dynamic initialization properties to the default login manager, the default delegate provider and the default key handler.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">B</td>
+        <td>Replaced incorrect imports of sun.security.pkcs11.wrapper.PKCS11Constants with iaik.pkcs.pkcs11.wrapper.PKCS11Constants.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager</td>
+        <td align="center">C</td>
+        <td>Login/logout methods are now more intuitive to use.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenManager</td>
+        <td align="center">B</td>
+        <td>Improved slot handling, to correctly count used slots.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers</td>
+        <td align="center">NF</td>
+        <td>A new spec <em>iaik.pkcs.pkcs11.provider.ciphers.PKCS11UnwrapKeySpec</em> is available for symmetric and asymmetric ciphers now. The new specs allow using the unwrap template offered by the C_UnwrapKey function of the PKCS11 standard.</td>
+      </tr>
+    </table>
+    
+    <p>
+      <h3>
+        <a name="1.5">Version 1.5</a>
+      </h3>
+
+    <table border="2" cellpadding="2">
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description and Examples
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">N</td>
+        <td>Support signature RipeMd160withECDSA, calculating the RipeMd160 hash externally.</td>
+      </tr>
+       <tr>
+        <td>iaik.pkcs.pkcs11.provider</td>
+        <td align="center">C</td>
+        <td>Added some missing algorithm aliases: NONEwithRSAPss, RawPSS, NONEwithDSA, NONEwithECDSA.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.ciphers.RsaCipher</td>
+        <td align="center">C</td>
+        <td>Also support SHA256, SHA384 and SHA512 for RSA cipher with OAEP padding (e.g. OAEPWithSHA512AndMGF1Padding).
+                 If given hash algorithm is ShaX, also uses this algorithm in the message generation function. Otherwise, defaults to SHA1 for the mgf1.
+                 Added PKCS11OAEPParameterSpec for more detailed settings.
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.keyagreements.EcDhKeyAgreement</td>
+        <td align="center">C</td>
+        <td>Allow ECDH key agreement also without specific ECDH parameters, which will result in CKD_NULL as default key derivation funtion.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.DefaultDelegateProvider</td>
+        <td align="center">C</td>
+        <td>Allow extraction of delegate provider properties.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.DefaultLoginManager</td>
+        <td align="center">C</td>
+        <td>Fall back to command line if no windows are available to prompt for the user pin graphically.</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSpi</td>
+        <td align="center">B</td>
+        <td>Correclty DER-encode serial numbers in X.509 certificates objects</td>
+      </tr>
+      <tr>
+        <td>iaik.pkcs.pkcs11.provider.TokenKeyStoreSpi</td>
+        <td align="center">B</td>
+        <td>Allow import of keys of type EC (previously only accepted key type ECDSA).</td>
+      </tr>
+    </table>
+    
+    <HR>
+    <CENTER>Copyright (c) 1997 - 2003 IAIK. Copyright (c) 2003 - 2015 Stiftung SIC. All rights reserved.</CENTER>
+  </BODY>
+</HTML>

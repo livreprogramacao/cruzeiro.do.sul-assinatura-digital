@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<link rel="StyleSheet" href="style.css" type="text/css">
+	<TITLE>IAIK-CMS Features</TITLE>
+</HEAD>
+<BODY>
+<table border="0" width="100%">
+  <tr>
+    <td><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/siclogo.jpg" alt="IAIK" border="0"></a></td>
+
+    <td align="center"><h1>IAIK-CMS Features</h1><h2><U>Cryptographic Message Syntax / S/MIME Version 3</U></h2></td>
+    <td align="right"><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/iaik_logo.gif" alt="SIC" border="0"></a></td>
+  </tr>
+</table>
+
+<h3>Main Features:</h3>
+
+<ul>
+   <li>Implemented entirely in the Java<sup>TM</sup> language guaranteeing cross platform portability</li>
+   <li>Works on JDK versions 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8 and compatible (JDK 1.5, 1.6, 1.7, 1.8 are also called JDK 5, 6, 7, 8, respectively).</li>
+   <li>Centralized security policy configuration</li>
+   <li>Stream based CMS implementation for supporting one-pass processing making it possible to handle large amounts of data without running into memory problems</li>
+   <li>S/MIME library compatible with the javax.mail architecture from SUN</li> 
+   <li>Supports ESS TripleWrapping and arbitrary nesting of S/MIME entities</li>
+</ul>
+
+<h3>Protocol Standards Compliance:</h3>
+
+<ul>
+    <li>Implements the IETF CMS, S/MIMEv3 and ESS specifications (RFC 5652; 5751; 2634, 5053)</li>
+    <li>Implements all CMS content types:
+        <ul>
+          <li>Data</li>
+          <li>Signed-Data</li>
+          <li>Enveloped-Data</li>
+          <li>Digested-Data</li>
+          <li>Encrypted-Data</li>
+          <li>Authenticated-Ddata</li>
+          <li>Authenticated-Enveloped-Data (RFC 5083)</li> 
+          <li>Compressed-Data (RFC 3274)</li>
+        </ul>   
+       </li> 
+    <li>Implements all CMS RecipientInfo types:
+        <ul>
+          <li>KeyTransRecipientInfo</li>
+          <li>KeyAgreeRecipientInfo</li>
+          <li>KEKRecipientInfo</li>
+          <li>PasswordRecipientInfo (RFC 3211)</li>
+          <li>OtherRecipientInfo (user plugable)</li>
+        </ul>  
+    </li>       
+    <li>Supports all algorithms required and recommended for the implemented content types:
+         SHA-1 (and also SHA-224, SHA-256, SHA-384, SHA-512), MD5 (digest), RSA (PKCS#1v1.5 and PKCS#1v2.1 PSS signature, PKCS#1v1.5 and PKCS#1v2.1 OAEP key transport), 
+         DSA (signature), X9.42 Ephemeral Static and Static Static Diffie Hellman - RFC 2631 (key agreement), 
+         AES Key Wrap, Triple-DES Key Wrap, RC2 Key Wrap, HMACwith3DESwrap and HMACwithAESwrap (key encryption), AES, Triple-DES and RC2 (content encryption),
+         PBKDF2 with PWRI-KEK (RFC 3211, password-based encryption for CMS)</li>
+    <li>Can be used with any alternative algorithms fulfilling the requirements of the CMS / S/MIME protocols and supported by an installed security provider</li>
+    <li>Supports Elliptic Curve Cryptography (ECDSA, ECDH) when used with the IAIK-ECC library</li>
+    <li>Supports DSA with SHA-2 according to FIPS 186-3</li>
+    <li>Support for Camellia Encryption and Key Wrap algorithm (RFC 3657)</li> 
+    <li>Supports X.509 public key and attribute certificates</li>
+    <li>Supports all content types of S/MIMEv3 and ESS:
+        <ul>
+          <li>multipart/signed with application/pkcs7-signature</li>
+          <li>application/pkcs7-mime (<br>
+                + signed-data<br>
+                + enveloped-data<br>
+                + certs-only<br>
+                + signed-receipt (ESS)<br>
+                + application/pkcs10 from S/MIMEv2 respectively CMC (Certificate Management Messages over CMS)<br> 
+                + compressed-data (from S/MIMEv3.1)<br>
+           </li>     
+       </ul>         
+    </li>
+    <li>Supports ESS TripleWrapping and arbitrary nesting of S/MIME parts</li>
+    <li>Supports all Enhanced Security Services specified by ESS: (RFC 2634, 5035):
+        <ul>
+          <li>Signing Certificates (+ V2 Signing Certificates)</li>
+          <li>Security Labels</li>
+          <li>Signed Receipts</li>
+          <li>Secure Mailing List </li>
+        </ul>  
+     </li>
+</ul>
+     
+<h3>Application Extensible Design:</h3>
+<ul>
+   <li>Pluggable custom content-type implementations</li>
+   <li>Pluggable custom certification path verification</li>
+   <li>Pluggable custom cryptographic algorithm implementations</li>
+   <li>Pluggable custom canonicalization policies (S/MIME)</li>
+   <li>Pluggable custom security label policies (S/MIME ESS)</li>
+   <li>Allows application defined crypto methods</li>
+</ul>
+
+
+<h3>Proven Interoperability:</h3>
+<ul>
+    <li>Interoperates with any CMS and S/MIMEv3 implementation</li>
+    <li>Backwards compatible to PKCS#7v1.5 and S/MIMEv2</li>
+    <li>Interoperability tested among others with clients Microsoft Outlook Express, Microsoft Outlook, Netscape, Mozilla Messenger and Thunderbird</li>
+    <li>Listed in the IETF CMS Draft Standard Implementation Report (see http://www.ietf.org/iesg/implementation/: 
+        <a href="http://www.ietf.org/iesg/implementation/report-rfc3852.pdf" target="_blank">pdf</a>, 
+        <a href="http://www.ietf.org/iesg/implementation/report-rfc3852.txt" target="_blank">txt</a>)</li>
+</ul>
+
+<h3>Cryptographic Provider Independence:</h3>
+<ul>
+   <li>Can be used with any JCA/JCE 1.2 (or later) compliant cryptography provider</li>
+   <li>Can use several different cryptography providers at the same time</li>
+   <li>Provisions for the integration of smartcards and other secure hardware devices</li>
+   <li>Allows plug-in of user written JCA/JCE engines</li>
+   <li>Allows plug-in of user written non JCA/JCE compliant crypto code</li>
+   <li>Comes with the IAIK-JCE provider by default (included in license)</li>
+</ul>
+<p>&nbsp;</p>
+<DIV align=center>
+  <CENTER>
+   <TABLE cellPadding=2 border=0>
+    <TR>
+     <TD><IMG src="images/arrow.gif" width=55></TD>
+     <TD>Back to <A href="Readme.html">Readme</A></TD>
+    </TR>
+   </TABLE>
+  </CENTER>
+</DIV>
+    
+
+<HR>
+
+<P align=center>Copyright (c) 2002 by&nbsp;IAIK. Copyright (C) 2003 - 2016 Stiftung SIC. All rights reserved.</P>
+<P align=center>&nbsp;</P>
+</BODY>
+</HTML>

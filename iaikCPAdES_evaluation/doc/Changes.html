@@ -1,0 +1,222 @@
+<!doctype html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+  <head>
+    <title>IAIK [CP]AdES</title>
+  </head>
+  <body>
+    <table border=0>
+      <tr>
+        <td><img src="images/siclogo.jpg" alt="SIC Logo"></td>
+        <td width="10"></TD>
+        <td><IMG src="images/iaik_logo.gif" alt="IAIK Logo"></td>
+        <td width="10"></TD>
+        <td>
+          <h2>IAIK [CP]AdES Change Notes</h2>
+        </td>
+      </tr>
+    </table>
+
+	<br /><br />
+
+    <table border="2" cellpadding="2">
+   	  <tr>
+      	<td colspan="3"><br /><h3>Version 2.2 - December 2 2016</h3></td>
+      </tr>
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pdf</td>
+        <td align="center">NF</td>
+        <td>Add parameter classes and methods for supporting the archive timestamp 
+        as defined in ETSI EN 319 122-1 v1.1.1.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf</td>
+        <td align="center">NF</td>
+        <td>Add methods and classes to support the content timestamp 
+        as defined in ETSI TS 101 733 and ETSI EN 319 122.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf</td>
+        <td align="center">NF</td>
+        <td>Support multiple signature time stamps.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.asn1objects</td>
+        <td align="center">NF</td>
+        <td>Add dedicated class for the signature time stamp, providing a verification method.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.asn1objects</td>
+        <td align="center">NF</td>
+        <td>Add dedicated class for the signature-policy-identifier and signature-policy-qualifier-info as required for CAdES-EPES and PAdES-EPES.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.cmscades</td>
+        <td align="center">C</td>
+        <td>Provide two different methods for encoding the signature object: 
+        encodeSignature for new signatures and encodeUpgradedSignature for upgraded signatures. </td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.cmscades.AbstractCadesSignature</td>
+        <td align="center">NF</td>
+        <td>Methods to extract time stamps using the signer certificate additionally to using the signer info index.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.parameters.CadesBESParameters</td>
+        <td align="center">NF</td>
+        <td>Add signing time attribute by default as required by ETSI EN 319 122-1.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.pdfbox.PdfSignatureDetailsPdfBox</td>
+        <td align="center">B</td>
+        <td>Return correct signature name with getName() - instead of signer's name.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.signature.PdfSignatureInstance</td>
+        <td align="center">NF</td>
+        <td>Methods to read from a stream (and write to a stream) to create and verify signatures.</td>
+      </tr>
+    
+    
+      <tr>
+      	<td colspan="3"><br /><h3>Version 2.1 - August 14 2015</h3></td>
+      </tr>
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.cmscades</td>
+        <td align="center">B</td>
+        <td>Javadoc of previously obfuscated methods is now correctly displayed.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.cmscades.CadesSignature(Stream)</td>
+        <td align="center">B</td>
+        <td>Add certificates to signed data for new signer info instead of replacing existing ones.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.cmscades.OcspResponseUtil</td>
+        <td align="center">NF</td>
+        <td>Add method for requesting an OCSP response using a signed request.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.itext.PdfSignatureInstanceItext</td>
+        <td align="center">B</td>
+        <td>Correctly use reason, location and contact as configured in parameter class. Only empty string 
+        was previously set. Also allow null values.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.parameters</td>
+        <td align="center">B</td>
+        <td>Reason, location and contact now default to null instead of empty string.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.parameters</td>
+        <td align="center">NF</td>
+        <td>OCSP responder URL can be set together with optional key and certificates to sign 
+        the OCSP request during signature creation.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.parameters</td>
+        <td align="center">NF</td>
+        <td>Support multiple OCSP responses to be added to a PAdES signature.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.parameters</td>
+        <td align="center">B</td>
+        <td>Fixed a bug that prevented signature timestamp creation although TSA URL was set.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.pdfbox.PdfSignatureInstancePdfbox</td>
+        <td align="center">NF</td>
+        <td>Configure visible signature by providing PdfBox's PDVisibleSigProperties to ((PdfSignatureInstancePdfbox) sigInst)
+          .setPDVisibleSigProperties.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.pdfbox.PdfSignatureInstancePdfbox</td>
+        <td align="center">B</td>
+        <td>PdfBox's method PDDocument.saveIncremental(FileInputStream, OutputStream) was changed to take InputStream instead 
+        of FileInputStream in version 1.8.8. This leads to a NoSuchMethodError for previous versions. Use reflection to support also 
+        previous versions again.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.signature.ApprovalSignature.getOcspRevocationStatus</td>
+        <td align="center">B</td>
+        <td>Use the first OCSP response, that was actually requested for the signer's certificate. 
+        In previous version an exception was thrown if the first OCSP response did not include an response
+        for the signer's certificate (but for an intermediate CA certificate for example).</td>
+      </tr>
+
+
+
+      <tr>
+      	<td colspan="3"><br /><h3>Version 2.0 - March 6 2015</h3></td>
+      </tr>
+      <tr>
+        <td height="48">
+          <p align="center">Class or Package
+        </td>
+        <td align="center" height="48">
+          <strong>B</strong>ug/<strong>
+          C</strong>hange/<br>
+          <strong>N</strong>ew <strong>F</strong>eature
+        </td>
+        <td height="48">
+          <p align="center">Description
+        </td>
+      </tr>
+      <tr>
+        <td>iaik.pdf</td>
+        <td align="center">C</td>
+        <td>Add Apache PDFBox as possible underlying PDF library. Either iText or PDFBox can now be used.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf</td>
+        <td align="center">C</td>
+        <td>Complete restructuring to provide a general interface independent from underlying PDF libraries.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.signature</td>
+        <td align="center">NF</td>
+        <td>Adding support for certification signature and document timestamps according to PAdES LTV.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.signature</td>
+        <td align="center">NF</td>
+        <td>Allow extraction of signatures and signature details from a PDF file.</td>
+      </tr>
+      <tr>
+        <td>iaik.pdf.cmscades</td>
+        <td align="center">NF</td>
+        <td>Add support for CAdES signatures (according to CAdES-BES and CAdES-T).</td>
+      </tr>
+      
+    </table>
+    <p>&nbsp;
+
+    <hr>
+    <center>Copyright (c) 2002 IAIK. Copyright (c) 2003 - 2016 Stiftung SIC. All rights reserved.</center>
+  </body>
+</html>

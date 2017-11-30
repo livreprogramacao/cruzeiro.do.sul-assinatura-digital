@@ -1,0 +1,1071 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<link rel="StyleSheet" href="style.css" type="text/css">
+	<TITLE>IAIK-CMS Version History</TITLE>
+</HEAD>
+<BODY>
+<table border="0" width="100%">
+  <tr>
+    <td><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/siclogo.jpg" alt="IAIK" border="0"></a></td>
+
+    <td align="center"><h1>IAIK-CMS Version History</h1><h2><U>Cryptographic Message Syntax / S/MIME Version 3</U></h2></td>
+    <td align="right"><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/iaik_logo.gif" alt="SIC" border="0"></a></td>
+  </tr>
+</table>
+
+
+<ul>
+  <li><a href="#IAIK-CMS 5.1">IAIK-CMS 5.1 - 4. November 2016</a></li>
+  <li><a href="#IAIK-CMS 5.0">IAIK-CMS 5.0 - 20. December 2013</a></li>
+  <li><a href="#IAIK-CMS 4.103">IAIK-CMS 4.103 - 13. July 2012</a></li>
+  <li><a href="#IAIK-CMS 4.102">IAIK-CMS 4.102 - 13. July 2012</a></li>
+  <li><a href="#IAIK-CMS 4.1">IAIK-CMS 4.1 - 16. October 2009</a></li>
+  <li><a href="#IAIK-CMS 4.0">IAIK-CMS 4.01 - 21. December 2007</a></li>
+  <li><a href="#IAIK-CMS 4.0">IAIK-CMS 4.0 - 20. September 2007</a></li>
+  <li><a href="#IAIK-CMS 3.2">IAIK-CMS 3.2 - 11. February 2005</a></li>
+  <li><a href="#IAIK-CMS 3.1">IAIK-CMS 3.1 - 01. July 2004</a></li>
+  <li><a href="#IAIK-CMS 3.0 Beta 1">IAIK-CMS 3.0 Beta 1 - 18. May 2001</a></li>
+</ul>
+
+<p>&nbsp;</p>
+<p><font color="#DD0000" size="4"><a name="IAIK-CMS 5.1">IAIK-CMS 5.1</a>: 04. November 2016</font></p>
+<div align="left">
+  <table border="2" cellpadding="2">
+    <tr>
+      <td align="center">Class or Package</td>
+      <td align="center"><b>B</b>ug/<b>C</b>hange<br> <b>N</b>ew <b>F</b>eature</td>
+      <td align="center">Description and Examples</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.AuthenticatedData,<br>
+          iaik.cms.AuthenticatedDataStream,<br>
+          iaik.cms.AuthenticatedDataOutputStream,<br>
+          iaik.cms.SignedData,<br>
+          iaik.cms.SignedDataStream,<br>
+          iaik.cms.SignedDataOutputStream,<br>
+          iaik.cms.SignerInfo,<br>
+          iaik.cms.attributes.CounterSignature
+      </td>    
+      <td align="center">C</td>
+      <td>Changed <code>ContentType</code> attribute handling. When creating a SignedData* or
+          AuthenticatedData* object the ContentType attribute is automatically added if not included
+          in the provided signed/authenticated attributes. During verification now an 
+          InvalidContentTypeException is also thrown if signed attributes are present but
+          do not contain the ContentType attribute. <br>
+          When creating/verifying a CounterSignature attribute a ContentType attribute must
+          not be included. 
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.CertificateChoices
+      </td>    
+      <td align="center">NF</td>
+      <td>Class <code>CertificateChoices</code> to provide explicit access to the 
+          CMS type <i>CerificateChoices</i> that models several certificate types 
+          to maybe included into / got from a <code>CertificateSet</code>.  
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.CertificateSet
+      </td>    
+      <td align="center">NF</td>
+      <td>Methods <code>add/get/setCertificateChoices</code> added.  
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.CMSAlgorithmID
+      </td>    
+      <td align="center">NF</td>
+      <td>Constructor added to parse AlgorithmID from a DerInputStream. 
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.CMSAlgorithmID
+      </td>    
+      <td align="center">C</td>
+      <td><code>aes128_CBC</code>, <code>aes128_CCM</code>, <code>aes128_GCM</code>: 
+          implementation names (&quot;AES/CBC/PKCS5Padding&quot;, &quot;AES/CCM/PKCS5Padding&quot;,
+          &quot;AES/GCM/PKCS5Padding&quot; or &quot;AES128/CBC/PKCS5Padding&quot;, &quot;AES128/CCM/PKCS5Padding&quot;,
+          &quot;AES128/GCM/PKCS5Padding&quot;) depend on version of IAIK-JCE that is used 
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.CMSAttribute<br>
+      </td>    
+      <td align="center">NF</td>
+      <td>Extends class <code>iaik.asn1.structures.Attribute</code> to can keep the encoding when 
+          parsing an attribute from an InputStream (when <code>SignedDataInOutStream</code> is used).  
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.attributes.CMSContentType,<br>
+          iaik.cms.attributes.CMSMessageDigest,<br>
+          iaik.cms.attributes.SigningTime<br>
+      </td>    
+      <td align="center">C</td>
+      <td>Now override method <code>multipleAllowed</code> to return <code>false</code>
+          indicating that only one AttributeValue is allowed in the SET OF AttributeValue
+          for the CMS ContentType, MessageDigest and SigningTime attribute types.
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.EncodedAttributeValue<br>
+      </td>    
+      <td align="center">NF</td>
+      <td>New class that represents a CMS AttributeValue together with its BER encoded representation.
+          Maybe got from an <code>CMSAttribute</code> object after parsing to get the parsed encoded
+          representation of the attribute values (when <code>SignedDataInOutStream</code> is used).  
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.EnvelopedDataStream,<br>
+          iaik.cms.EnvelopedData,<br>
+          iaik.cms.EncryptedContentInfoStream,<br>
+          iaik.cms.EncryptedContentInfo<br>
+      </td>    
+      <td align="center">NF</td>
+      <td>Support for <i>explicit</i> mode where the encrypted content maybe transmitted by
+          other means outside the EnvelopedData/EncryptedContentInfo.
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.ecc.IaikEccProvider<br>
+      </td>    
+      <td align="center">NF</td>
+      <td>Support for BSI TR-03109  ("ECKA-EG") added. Note, however, that the usage of the old
+      IAIK-ECC library is deprecated. For ECC the new IAIK <a href="http://jce.iaik.tugraz.at/sic/Products/Core-Crypto-Toolkits/ECCelerate" target="_blank">ECCelerate<sup><font size="-2">TM</font></sup></a>
+      toolkit shall be used. See <a href="Install.html">installation guidelines</a>. 
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.OCSPRevocationInfo<br>
+      </td>    
+      <td align="center">NF</td>
+      <td>Implements the CMS type <code>OtherRevocationInfoFormat</code> for the OtherRevocationInfo 
+          format OCSP (id-ri-ocsp-response - 1.3.6.1.5.5.7.16.2) according to RFC 5940.
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.RevocationInfoChoice
+      </td>    
+      <td align="center">NF</td>
+      <td>Class <code>RevocationInfoChoice</code> to provide explicit access to the 
+          CMS type <i>RevocationInfoChoice</i> that models several certificate revocation
+          information types to maybe included into / got from a RevocationInfoChoices set.  
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.RevocationInfoChoices
+      </td>    
+      <td align="center">NF</td>
+      <td>Methods for adding/setting/counting/querying general <code>RevocationInfoChoice</code>
+          and <code>OCSPRevocationInfo</code> objects added.  
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SecurityProvider<br>
+      </td>    
+      <td align="center">B, C</td>
+      <td><code>getInputStreamCipherEngine()</code>, <code>getByteArrayCipherEngine()</code>,
+          <code> getInputStreamAuthCipherEngine()</code>, <code>getByteArrayAuthCipherEngine()</code>,
+          <code>getAuthCipherEngine()</code>: set SecurityProvider for the returned engines.
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SecurityProvider<br>
+      </td>    
+      <td align="center">B</td>
+      <td>Fixed reflection signature based parameter setting.
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignedAttributes
+      </td>    
+      <td align="center">NF</td>
+      <td>Implements the signed attributes set of a CMS SignerInfo.
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerIdentifier
+      </td>    
+      <td align="center">NF</td>
+      <td>Implements the SignerIdentifier type of CMS SignerInfo. It is defined as ASN.1 CHOICE of 
+          IssuerAndSerialNumber or SubjectKeyIdentifier. 
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignatureValue
+      </td>    
+      <td align="center">NF</td>
+      <td>Provides an alternative way to get the signature value from a 
+          SignerInfo object obtained from a SignedDataInOutStream object during
+          parsing to get the encoded representation of the signature value.
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo
+      </td>    
+      <td align="center">NF</td>
+      <td>Constructor and decode method added to parse AlgorithmID from a DerInputStream. 
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo<br>
+      </td>    
+      <td align="center">C</td>
+      <td><code>toASN1Object()</code> keeps the sorting of the parsed signed attributes
+          when encoding a SignerInfo again
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo<br>
+      </td>    
+      <td align="center">C</td>
+      <td>Added method <code>removeUnsignedAttribute</code>;  declared methods
+          <code>addUnSignedAttribute</code>, <code>removeUnSignedAttribute</code>
+          as deprecated
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignedDataStream<br>
+      </td>    
+      <td align="center">C</td>
+      <td>SignerInfo(s) are now parsed using DerInputStream. 
+      </td>
+    </tr>
+     <tr>
+      <td>iaik.cms.SignedDataStream<br>
+      </td>    
+      <td align="center">NF</td>
+      <td>Method <code>addDigestAlgorithm</code> added. 
+      </td>
+    </tr>
+    </tr>
+     <tr>
+      <td>iaik.cms.SignedDataStream<br>
+      </td>    
+      <td align="center">NF</td>
+      <td>Method <code>addSDSEncodeListener</code> added to allow usage of more than one
+          EncodeListener 
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignedDataInOutStream<br>
+      </td>    
+      <td align="center">NF</td>
+      <td>SignedDataStream implementation that encodes a SignedData object again 
+          during parsing is done. The SignedData object may be modified before finishing
+          the encoding. 
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.smime.attributes.SMIMECapabilities,<br>
+          iaik.smime.attributes.SMIMEEncryptionKeyPreference<br>
+          <br>
+      </td>    
+      <td align="center">C</td>
+      <td>Now override method <code>multipleAllowed</code> to return <code>false</code>
+          indicating that only one AttributeValue is allowed in the SET OF AttributeValue
+          for the S/MIME SMIMECapabilities and SMIMEEncryptionKeyPreference attribute types.
+      </td>
+    </tr>
+    <tr>
+      <td>iaik.smime.ess.ContentHints,<br>
+          iaik.smime.ess.ContentIdentifier,<br>
+          iaik.smime.ess.ESSSecurityLabel,<br>
+          iaik.smime.ess.MsgSigDigest,<br>
+          iaik.smime.ess.MLExpansionHistory,<br>
+          iaik.smime.ess.ReceiptRequest,<br>
+          iaik.smime.ess.ContentReference,<br>
+          iaik.smime.ess.EquivalentLabels,</br>
+          iaik.smime.ess.SigningCertificate
+      </td>    
+      <td align="center">C</td>
+      <td>Now override method <code>multipleAllowed</code> to return <code>false</code>
+          indicating that only one AttributeValue is allowed in the SET OF AttributeValue
+          for all attribute value types specified by ESS (RFC 2634): contentHints,
+          contentIdentifier, eSSecurityLabel, msgSigDigest, mlExpansionHistory,
+          receiptRequest, contentReference, equivalentLabels and
+          signingCertificate (and also signingCertificateV2) attribute types.
+      </td>
+    </tr>
+  </table>
+
+<p>&nbsp;</p>
+<p><font color="#DD0000" size="4"><a name="IAIK-CMS 5.0">IAIK-CMS 5.0</a>: 20. December 2013</font></p>
+<div align="left">
+  <table border="2" cellpadding="2">
+    <tr>
+      <td align="center">Class or Package</td>
+      <td align="center"><b>B</b>ug/<b>C</b>hange<br> <b>N</b>ew <b>F</b>eature</td>
+      <td align="center">Description and Examples</td>
+    </tr>
+    <tr>
+      <td>*</td>
+      <td align="center">C</td>
+      <td>JDK 1.1.x is no longer supported. Supported Java(TM) versions are
+        1.2, 1.3, 1.4, 1.5 (5.0), 1.6 (6.0), 1.7 (7.0) and compatible.</td>
+    </tr>
+    <tr>
+      <td>*</td>
+      <td align="center">C</td>
+      <td>Adapted to latest Internet Standard versions of CMS and S/MIME: RFC 5652 (CMS)
+          and RFC 5751 (S/MIME Version 3.2)</td>
+    </tr>
+    <tr>
+      <td>demo.cms.ecc.*,<br>
+          demo.smime.ecc*</td>
+      <td align="center">C</td>
+      <td>Adapted for use with new IAIK ECC library IAIK-Eccelerate<sup>TM</sup>.</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.CMSAlgorithmID
+      <td align="center">C</td>
+      <td>changed implementation names for some ALgorithmIDs (aes192_CBC: from  "AES/CBC/PKCS5Padding"
+          to "AES192/CBC/PKCS5Padding", aes256_CBC: from  "AES/CBC/PKCS5Padding" to "AES256/CBC/PKCS5Padding",
+          cms_aes192_wrap: from "AESWrapAES" to "AES192WrapAES192", cms_aes256_wrap: from
+          "AESWrapAES" to "AES256WrapAES256", cms_camellia192_wrap: from "CamelliaWrapCamellia" to
+          "Camellia192WrapCamellia192", cms_camellia256_wrap: from "CamelliaWrapCamellia" to 
+          "Camellia256WrapCamellia256")</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.AuthenticatedDataOutputStream,<br>
+          iaik.cms.AuthEnvelopedDataOutputStream,<br>
+          iaik.cms.CompressedDataOutputStream,<br>
+          iaik.cms.DigestedDataOutputStream,<br>
+          iaik.cms.EnvelopedDataOutputStream,<br>
+          iaik.cms.SignedDataOutputStream,<br>
+      <td align="center">C</td>
+      <td>added stream closing check to write and flush methods</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.CMSAttribute,
+          iaik.cms.CMSAttributes</td>
+      <td align="center">C</td>
+      <td>Concrete attribute value implementation (if available) is not created/initialized
+          before <code>getAttributeValue(s)</code> is called.</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.KeyTransRecipientInfo,<br>
+          iaik.cms.KeyAgreeRecipientInfo</td>
+      <td align="center">C</td>
+      <td>Method <code>decryptKey</code> allows <code>null</code> as
+          PrivateKey (may be useful for HSM based decryption).</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.IaikProvider</td>
+      <td align="center">C</td>
+      <td>Method <code>verifySignatureFromHash</code> uses the IAIK-JCE RAWRSASSA_PKCS1_V15 Signature
+          engine to handle PKCS1#v15 signatures containing digest algorithms with
+          both absent and NULL parameters.</td>
+    </tr>
+     <tr>
+      <td>iaik.cms.SecurityProvider</td>
+      <td align="center">C</td>
+      <td>Method <code>verifySignatureFromHash</code> decodes the PKCS#1 <code>DigestInfo</code> instead of
+          encoding it to handle PKCS1#v15 signatures containing digest algorithms with
+          both absent and NULL parameters.</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SecurityProvider</td>
+      <td align="center">NF</td>
+      <td>Method <code>getSignature(String algorithm, int mode, Key key, AlgorithmParameterSpec paramSpec)</code> added
+          to allow parameter based Signature engine intialization.</td>
+    </tr>  
+    <tr>
+      <td>iaik.cms.SecurityProvider</td>
+      <td align="center">NF</td>
+      <td>Method <code>getKeyLength(Key key)</code> added
+          to allow provider independent calculation of key length.</td>
+    </tr>                           
+    <tr>
+      <td>iaik.cms.SecurityProvider,<br>
+          iaik.cms.IaikEccProvider</td>
+      <td align="center">C</td>
+      <td>Method <code>calculateSharedSecret</code> added to calculate a
+          shared secret between two parties using a specific KeyAgreement algorithm.</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SecurityProvider
+      <td align="center">C</td>
+      <td><code>getSignature()</code> calls <code>getSecureRandom()</code> to get the
+          SecureRandom for initializing the JCA Signature engine</td>
+    </tr>
+        <tr>
+      <td>iaik.cms.SecurityProvider
+      <td align="center">C</td>
+      <td><code>getMicAlgs</code> now supports OID strings as micalg parameters for the most
+          well known hash algorithms</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignedDataStream
+      <td align="center">MF</td>
+      <td>Method <code>removeMessageDigest</code> added.</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo
+      <td align="center">C</td>
+      <td>Method <code>getSigningCertificateAttribute</code>, <code>getSigningCertificateV2Attribute</code>:
+          check if only one SigningCertificate, SigningCertificateV2 attribute
+          is present and if they are single-valued.</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo
+      <td align="center">C</td>
+      <td>Constructors with signer certificate added to allow automatic
+          algorithm derivation from public key.</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo
+      <td align="center">C</td>
+      <td>Adapted automatic algorithm selection to NIST SP 800-57; default hash algorithm now is SHA-256</td>
+    </tr>
+    
+    <tr>
+      <td>iaik.cms.SignerInfo
+      <td align="center">B</td>
+      <td><code>toASN1Object</code>: Fixed signature algorithm NULL/absent parameter encoding.</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.CompressedDataStream,<br>
+          iaik.cms.EnvelopedDataStream,<br>
+          iaik.cms.EncryptedContentInfoStream,<br>
+          iaik.cms.SignedDataStream</td>
+      <td align="center">C</td>
+      <td><code>toASN1Object</code>: allows definite length encoding</td>
+    </tr>
+    
+    <tr>
+      <td>iaik.smime.BufferedLineInputStream
+      <td align="center">C</td>
+      <td><code>read</code> tries to read from the underlying stream if less then the
+          requested number of bytes are available in the buffer</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.SignedContent,<br>
+          iaik.smime.SMimeContent
+      <td align="center">C</td>
+      <td>Method <code>setBlockSize</code> added to allow
+          definite length encoding.</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.SignedContent,<br>
+          iaik.smime.SMimeContent
+      <td align="center">C</td>
+      <td>Workaround in method <code>setDataHandler</code> to avoid problems with
+          JavaMail 1.5 when setting the DataHandler of an existing
+          MimeMessage/MimeBodyPart as DataHandler for a new MimeMessage/MimeBodyPart.
+          The problem is fixed in version 1.5.1 of JavaMail
+          (see JavaMail <a href="https://kenai.com/bugzilla/show_bug.cgi?id=6072" 
+          target="_blank">bug report</a>).
+          </td>
+    </tr>
+    <tr>
+      <td>iaik.smime.SignedContent,<br>
+          iaik.smime.SMimeSigned
+          iaik.smime.SMimeUtil
+      <td align="center">C</td>
+      <td>SigningCertificate/SigningCertificateV2 attribute added to the default
+          signed attributes where applicable.<br>
+          AES-256-CBC and AES-128-CBC added to the default SMIME capabilities
+          attribute</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.SMimeSigned,<br>
+          iaik.smime.SMimeContent
+      <td align="center">C</td>
+      <td>SHA-1/rsaEncryption defaults removed (if not explicitly set, 
+          digest and signature algorithm are derived from the signer key algorithm).</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.SMimeSigned
+      <td align="center">NF</td>
+      <td><code>addSigner</code> methods with signer certificate added to allow automatic
+          algorithm derivation from public key.</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.ess.MLReceiptPolicy
+      <td align="center">B</td>
+      <td>Implements the <code>Cloneable</code> interface. Fixed <code>equals</code> method.</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.ess.ReceiptContent
+      <td align="center">B</td>
+      <td>Fixed MsgSigDigest attribute calculation in method <code>setSigner</code>.</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.ess.utils.KeyStoreDatabase
+      <td align="center">B</td>
+      <td>Fixed certChain null check in method <code>addKey</code>.</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.ess.utils.SignedReceipt
+      <td align="center">B</td>
+      <td>Fixed address list calculation in method <code>getReceiptsToAddressList</code>.</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.ess.SigningCertificate(V2)
+      <td align="center">C</td>
+      <td><code>decode</code> keeps ASN.1 structure to keep ASN.1 structure to can verify signatures with SigningCertificateV2
+          attributes that contain an invalid DER encoded ESSCertIDv2 object (default hash algid included)</td>
+    </tr>
+  </table>
+
+
+
+<p>&nbsp;</p>
+<p><font color="#DD0000" size="4"><a name="IAIK-CMS 4.1">IAIK-CMS 4.1</a>: 16. Oktober 2009</font></p>
+<div align="left">
+  <table border="2" cellpadding="2">
+    <tr>
+      <td align="center">Class or Package</td>
+      <td align="center"><b>B</b>ug/<b>C</b>hange<br> <b>N</b>ew <b>F</b>eature</td>
+      <td align="center">Description and Examples</td>
+    </tr>
+    <tr>
+      <td>*</td>
+      <td align="center">C</td>
+      <td>Where possible Hashtables are replaced by HashMaps to increase access performance especially
+          in multithreaded environments; for JDK 1.1.x a new jdk11x_update.jar version must be used </td>
+    </tr>
+    <tr>
+      <td>demo.smime.ecc.SMimeEccSuiteBDemo</td>
+      <td align="center">NF</td>
+      <td>Demo showing how to use the S/MIME library with the NSA Suite B algorithm suite (RFC 5008)</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.ecc.IaikEccProvider</td>
+      <td align="center">NF</td>
+      <td>Support for the dhSinglePass_stdDH_sha256kdf_scheme and dhSinglePass_stdDH_sha384kdf_scheme
+          key encryption schemes as required by the NSA Suite B S/MIME algorithm suite (RFC 5008)</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.AuthenticatedData,<br>
+          iaik.cms.AuthenticatedDataStream,<br>
+          iaik.cms.AuthenticatedDataOutputStream</td>
+      <td align="center">NF</td>
+      <td>Support for HMACwithAESwrap key wrap algorithm (RFC 3537).  
+        </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.AuthEnvelopedData,<br>
+          iaik.cms.AuthEnvelopedDataStream,<br>
+          iaik.cms.AuthEnvelopedDataOutputStream</td>
+      <td align="center">NF</td>
+      <td>Implementation of the Authenticated-Enveloped-Data Content Type according to RFC 5083 for authenticated
+          content encryption using AES-CCM or AES-GCM (RFC 5084).  
+        </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.ContentInfo</td>
+      <td align="center">B</td>
+      <td>Fixed EOC parsing</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.Data,<br>
+          iaik.cms.EncapsulatedContentInfo</td>
+      <td align="center">C</td>
+      <td>Uses DerCoder for content parsing to support arbitrary nested octet strings</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.EncryptedContentInfo,<br>
+          iaik.cms.EnvelopedData</td>
+      <td align="center">C</td>
+      <td><code>setInputStream</code> now read the stream instead of throwing an &quot;Method not supported&quot; exception</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.EncryptedContentInfoSream</td>
+      <td align="center">C</td>
+      <td>Additional <code>setupCipher</code> methods (required for AuthEnvelopedData type support)</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.EncryptedData,<br>
+          iaik.cms.EncryptedDataStream,<br>
+          iaik.cms.EncryptedDataOutputStream</td>
+      <td align="center">NF</td>
+      <td>Support for Camellia cipher algorithm added (RFC 3657).</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.EnvelopedData,<br>
+          iaik.cms.EnvelopedDataStream,<br>
+          iaik.cms.EnvelopedDataOutputStream,
+          iaik.smime.EncryptedContent</td>
+      <td align="center">NF</td>
+      <td>Support for Camellia cipher and Camellia key encryption algorithm added (RFC 3657).</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.IaikProvider</td>
+      <td align="center">NF</td>
+      <td>When used with the unltd version of IAIK-JCE (v3.17 or later), IAIK-CMS can be used with unlimited strength
+          cryptography even if only the default jurisdiction policy files are installed.</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.OtherRecipientInfo</td>
+      <td align="center">B</td>
+      <td><code>getEncryptedKey</code>: fixed recursive call</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SecurityProvider</td>
+      <td align="center">NF</td>
+      <td><code>getAuthCipherEngine</code> methods and <code>AuthCipherEngine</code> interfaces added; 
+          used for Authenticated-Enveloped-Data Content Type support (RFC 5083)</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignedDataStream</td>
+      <td align="center">NF</td>
+      <td><code>decode</code>: Now also can handle an empty content OCTET STRING
+          if included in explicit mode (some applications erronously may include an empty OCTET
+          STRING instead of omitting the eContent field)</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo,<br>
+          iaik.cms.SignedData,<br>
+          iaik.cms.SignedDataStream,<br>
+          iaik.cms.SignedDataOutputStream,<br>
+          iaik.smime.SignedContent</td>
+      <td align="center">NF</td>
+      <td>Added SHA-2 support for Digital Signature Algorithm (DSA) specified by FIPS PUB 186-3.<br>
+          Added support for ECDSA plain variant according to German BSI Technical Guideline TR-03111.</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo</td>
+      <td align="center">NF</td>
+      <td><code>verifySignature</code>: If signature verification fails with the given signed attributes 
+                                        try a second time with sorted attributes</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo</td>
+      <td align="center">C</td>
+      <td>Automatic digest- and/or signature algorithm derivation (if not explcitly set) now
+          also considers RSA-PSS, DSA with SHA-2 and ECSDA with SHA-2</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo</td>
+      <td align="center">B</td>
+      <td>Fixed version number setting in constructor 
+          <code>SignerInfo(signerIdentifier, digestAlgorithm, signatureAlgorithm, privateKey)</code></td>
+    </tr>
+    <tr>
+      <td>iaik.cms.TrustVerifier</td>
+      <td align="center">NF</td>
+      <td><code>verifyChain</code>: check that different consecutive certificates do not have the same signature value 
+                                  (countermeasure against preimage attacks on the signature hash algorithm)</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.SMimeParameters</td>
+      <td align="center">NF</td>
+      <td>New method <code>setCommandMap</code> allowing to set a MailcapCommandCap for locale use
+          without changing the system-wide default command map (see the Javadoc guidelines for
+          using this method).</td>
+    </tr>
+  </table>
+
+<p>&nbsp;</p>
+<p><font color="#DD0000" size="4"><a name="IAIK-CMS 4.01">IAIK-CMS 4.01</a>: 21. December 2007</font></p>
+<div align="left">
+  <table border="2" cellpadding="2">
+    <tr>
+      <td align="center">Class or Package</td>
+      <td align="center"><b>B</b>ug/<b>C</b>hange<br> <b>N</b>ew <b>F</b>eature</td>
+      <td align="center">Description and Examples</td>
+    </tr>
+    <tr>
+      <td>ECC</td>
+      <td align="center">NF</td>
+      <td>Support for ECDSA with SHA224, SHA256, SHA384, SHA512, RIPEMD160 added; requires version 2.16 (or later)
+          of the <a href = "http://jce.iaik.tugraz.at/sic/products/core_crypto_toolkits/ecc" target="_blank">IAIK-ECC</a> provider</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.SignedContent</td>
+      <td align="center">B, C</td>
+      <td>micalg header update done already when adding a signer (to be recognized by any JavaMail<sup>TM</sup> version)</td>
+    </tr>
+
+  </table>
+
+<p>&nbsp;</p>
+<p><font color="#DD0000" size="4"><a name="IAIK-CMS 4.0">IAIK-CMS 4.0</a>: 20. September 2007</font></p>
+<div align="left">
+  <table border="2" cellpadding="2">
+    <tr>
+      <td align="center">Class or Package</td>
+      <td align="center"><b>B</b>ug/<b>C</b>hange<br> <b>N</b>ew <b>F</b>eature</td>
+      <td align="center">Description and Examples</td>
+    </tr>
+    <tr>
+      <td>demo.cms.*, demo.smime.*</td>
+      <td align="center">NF</td>
+      <td>Demos showing how to use the IAIK-ECC and IAIK-PKCS#11 libraries with
+          IAIK-CMS to use ECDSA, ECDH and smartcards with CMS/SMIME, respectively. 
+          A lot of further demos added. CMS demos splitted according to content
+          type membership. </td>
+    </tr>
+     <tr>
+      <td>iaik.cms.SignedDataOutputStream,
+          iaik.cms.EnvelopedDataOutputStream,
+          iaik.cms.DataOutputStream,
+          iaik.cms.AuthenticatedDataOutputStream,
+          iaik.cms.EncryptedDataOutputStream,
+          iaik.cms.DigestedDataOutputStream,
+          iaik.cms.CompressedDataOutputStream
+          iaik.cms.ContentInfoOutputStream</td>
+      <td align="center">NF</td>
+      <td>OutputStream based implementations of the several
+          CMS content types to encode the CMS object during
+          the application write the content data to an
+          output stream, e.g.:
+          <pre>
+    // the output stream to which to write the signed data
+    OutputStream resultStream = ...
+    
+    // create SignedDataOutputStream
+    SignedDataOutputStream signedData = 
+      new SignedDataOutputStream(resultStream, SignedDataOutputStream.IMPLICIT);
+      
+    ...    
+    // add certificates, SignerInfos...
+    ...
+    
+    // write in the data to be signed
+    byte[] buffer = new byte[2048];
+    int bytesRead;
+    while ((bytesRead = dataInputStream.read(buffer)) != -1) {
+      signedData.write(buffer, 0, bytesRead);
+    }
+    // closing the stream add the signer infos and closes the underlying stream
+    signedData.close();
+  
+  </pre></td>
+    </tr>
+    <tr>
+      <td>iaik.cms.AuthenticatedDataStream</td>
+      <td align="center">B</td>
+      <td>Fixed <code>getAuthenticatedAttributes</code>; accidently
+          returned authenticated attributes</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.AuthenticatedDataStream,
+          iaik.cms.AuthenticatedData</td>
+      <td align="center">B</td>
+      <td><code>toASN1Object</code>: unauthenticated attributes tagged with number 3</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.ContentInfo</td>
+      <td align="center">C, NF</td>
+      <td>Does no more keep encoded content by default; 
+          static method <code>keepEncodedContent</code>
+          may be used to enforce to change the default
+          behaviour and keep the encoded content</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.ContentInfo, 
+          iaik.cms.ContentInfoStream
+      </td>
+      <td align="center">C</td>
+      <td>Changed content type implementation class registration
+          so that classes are not loaded before actually needed</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.CounterSignature</td>
+      <td align="center">B, C</td>
+      <td>Fixed recursive call in methods <code>get(Un)signedAttributes</code>,
+          methods <code>add(un)SignedAttribute</code>, <code>getUnsignedAttributeValue</code>
+          added</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.EncryptedDataStream</td>
+      <td align="center">NF, C</td>
+      <td>Additional <code>setupCipher</code> methods; default
+          iteration count for pbe encryption set to 2000</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.DigestedDataStream,
+          iaik.cms.DigestedData</td>
+      <td align="center">NF</td>
+      <td>Method <code>setInputStream</code>, <code>setContent</code>,
+          respectively, added</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.EncryptedContentInfo(Stream)</td>
+      <td align="center">C</td>
+      <td>If not set, tries to get the name of the cek name from the content
+          encryption algorithm to avoid problems due to jurisdiction 
+          policy checks</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.IaikCCProvider</td>
+      <td align="center">NF</td>
+      <td>CMS SecurityProvider for use with the Common Criteria 
+          evaluated IAIK-JCE versions, IAIK-JCE 3.1CC, IAIK-JCE 3.15CC</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.IaikEccProvider</td>
+      <td align="center">NF</td>
+      <td>CMS SecurityProvider for using the IAIK-ECC library to encrypt
+          CMS and S/MIME messages based on ECDH</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.OutputStreamCompressEngine</td>
+      <td align="center">NF</td>
+      <td>OutputStreamCompressEngine for use with CompressedDataOutputStream added</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.OutputStreamMacEngine</td>
+      <td align="center">NF</td>
+      <td>OutputStreamMacEngine for use with AuthenticatedDataOutputStream added</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.RecipientEncryptedKey</td>
+      <td align="center">NF</td>
+      <td>AES key wrap added</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SecurityProvider</td>
+      <td align="center">B</td>
+      <td><code>checkDomainParameters</code>: fixed getting algorithm id from public key</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SecurityProvider</td>
+      <td align="center">NF</td>
+      <td>Method <code>getOriginatorPublicKey</code> added to parse the OriginatorPublicKey of
+                                      a KeyAgreeRecipientInfo, if present</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SecurityProvider</td>
+      <td align="center">NF</td>
+      <td>Method <code>getOutputStreamCompressEngine</code> added for use with 
+                                      CompressedDataOutputStream</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SecurityProvider</td>
+      <td align="center">NF</td>
+      <td>Method <code>getOutputStreamMacEngine</code> added for use with 
+                                      AuthenticatedDataOutputStream</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SecurityProvider</td>
+      <td align="center">NF</td>
+      <td><code>verifySignatureFromHash</code>:
+                                      countermeasure against Bleichenbacher RSA signature forgery attack
+                                      against signature value garbage when keys with public
+                                      exponents of 3 are used (when not using IAIK-JCE 3.142 or later
+                                      for RSA PKCS#1v1.5 signatures)</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SecurityProvider</td>
+      <td align="center">C</td>
+      <td>Changed Attribute implementation class registration
+          so that classes are not loaded before actually needed</td>
+    </tr>
+    
+    <tr>
+      <td>iaik.cms.SignedDataStream,
+                                      iaik.cms.SignedData</td>
+      <td align="center">NF</td>
+      <td>New method <code>getCertificates(CertificateIdentifier)</code>
+                                      to get the (sorted) certificate chain of some specific
+                                      signer, if included</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo</td>
+      <td align="center">C</td>
+      <td><code>get(Un)SignedAttributes</code>: return empty array if no attributes
+                                            are included</td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo</td>
+      <td align="center">C</td>
+      <td>Constructor with digest algorithm now does not set the signature
+          algorithm automatically to <i>rsaEncryption</i>; rather it tries to 
+          derive the signature algorithm (and digest algorithm -- if not set)
+          from the private key algorithm </td>
+    </tr>
+     <tr>
+      <td>iaik.cms.SignerInfo</td>
+      <td align="center">NF</td>
+      <td>Support for SigningCertificateV2 attribute (methods <code>getSigningCertificateV2Attribute</code>, 
+                                                             <code>isSignerCertificate</code>)</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.BinaryCanonicalizer</td>
+      <td align="center">NF</td>
+      <td>New canonicalizer that does not canonicalize
+                                      the contents; to be used in environments where no canonicalization is needed,
+                                      for instance when transfering multipart/signed S/MIME messages over HTTP (as, e.g.,
+                                      done by AS2)</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.EncryptedContent</td>
+      <td align="center">NF</td>
+      <td>Method <code>setupCipher</code> added to allow an application to initialize
+                                     the cipher for decryption with the (already decrypted) symmetric content
+                                     encryption key</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.SignedContent</td>
+      <td align="center">C</td>
+      <td>Performance improvements by using new buffering and 
+                                      canonicalization meachanisms</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.SMimeParameters</td>
+      <td align="center">NF</td>
+      <td>New method <code>setTempDirectory</code>
+                                      allows to configure a temporary directory
+                                      to avoid memory problems by temorarily writing 
+                                      contents to a file during message processing</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.SharedFileInputStream,
+                                      iaik.smime.SharedByteArrayInputStream</td>
+      <td align="center">NF</td>
+      <td>New shared streams used for performance 
+                                      improvements</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.ess.MLData</td>
+      <td align="center">B</td>
+      <td>Fixed <code>equals</code> method</td>
+    </tr>
+    <tr>
+      <td>iaik.smime.ess.ESSCertIDv2, 
+          iaik.smime.ess.SigningCertificateV2</td>
+      <td align="center">NF</td>
+      <td>Implementation of RFC 5035 to support hash algorithm agility for the SigningCertificateV2 attribute</td>
+    </tr>
+
+  </table>
+</div>
+<p>&nbsp;</p>
+<p><font color="#DD0000" face="Arial" size="4"><a name="IAIK-CMS 3.2">IAIK-CMS 3.2</a>: 11. February 2005</font></p>
+<div align="left">
+  <table border="2" cellpadding="2">
+    <tr>
+      <td align="center">Class or Package</td>
+      <td align="center"><b>B</b>ug/<b>C</b>hange<br> <b>N</b>ew <b>F</b>eature</td>
+      <td align="center">Description and Examples</td>
+    </tr>
+    <tr>
+      <td>demo.cms.*</td>
+      <td align="center">NF</td>
+      <td>Demos showing how to use the IAIK-ECC and IAIK-TSP libraries with IAIK-CMS to use ECDSA as signaure algorithm and adding a TimeStampToken attribute to a SignedData object, respectively. </td>
+    </tr>
+    <tr>
+      <td>demo.smime.ess.*</td>
+      <td align="center">NF</td>
+      <td>SecurityLabel and SigningCertificate attribute demos added. </td>
+    </tr>
+    <tr>
+      <td><small>iaik.cms</small></td>
+      <td align="center">NF</td>
+      <td>Adopted to most recent standard specification (<a href="http://www.ietf.org/rfc/rfc3852.txt" target="_blank">RFC 3852</a>) </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.CertificateSet</td>
+      <td align="center">B</td>
+      <td>Fixed tag in AttributeCertificate encoding. </td>
+    </tr>
+    <tr>
+      <td>iaik.cms.SignerInfo</td>
+      <td align="center">B</td>
+      <td>Parameters field must be absent only for DSA in encoding of signature algorithm (not for ECDSA). </td>
+    </tr>
+    <tr>
+      <td>iaik.smime</td>
+      <td align="center">NF</td>
+      <td>Adopted to most recent standard specification (<a href="http://www.ietf.org/rfc/rfc3851.txt">RFC 3851</a>) </td>
+    </tr>
+    <tr>
+      <td>iaik.smime.encrypted_content</td>
+      <td align="center">B,C</td>
+      <td>If header parsing failes, tries to parse content type from encoding.</td>
+    </tr>
+    <tr>
+      <td>iaik.smime</td>
+      <td align="center">C</td>
+      <td>SignedContent, EncryptedContent, CompressedContent: Allow/Recommend to call methods setContentHeaders/setContentContentTransferEncoding <em>before</em> setting the content (to avoid header update overhead during the saveChanges run).</td>
+    </tr>
+  </table>
+</div>
+<p>&nbsp;</p>
+<p><font color="#DD0000" face="Arial" size="4"><a name="IAIK-CMS 3.1">IAIK-CMS 3.1</a>: 1. July 2004</font></p>
+<div align="left"> 
+  <table border="2" cellpadding="2">
+    <tr>
+      <td align="center">Class or Package</td>
+      <td align="center"><b>B</b>ug/<b>C</b>hange<br> <b>N</b>ew <b>F</b>eature</td>
+      <td align="center">Description and Examples</td>
+    </tr>
+    <tr> 
+      <td>All</td>
+      <td align="center">NF, B, C</td>
+      <td>A lot of changes and new 
+        features, some bug fixes throughout the library. Full ESS (Enhanced Security 
+        Services, RFC 2634) support added. Authenticated-data content type and 
+        Compressed-data content type (RFC 3274) added. PasswordRecipientInfo (RFC 
+        3211) and OtherRecipientInfo added. S/MIMEv3.1 ContentType application/pkcs7-mime 
+        compressed-data added. New SDSEncodeListener interface allows to update 
+        (e.g. add attributes like time stamp or counter signature) a SignedDataStream 
+        during the encoding phase (also when verifying and encoding an already 
+        existing SignedData again). Improved attribute handling.</td>
+    </tr>
+  </table>
+</div>
+
+<p>&nbsp;</p>
+<p><font color="#DD0000" face="Arial" size="4"><a name = "IAIK-CMS 3.0 Beta 1">IAIK-CMS 3.0 Beta 1</a>: 18. May 2001</font></p>
+<div align="left">
+
+<table border="2" cellpadding="2">
+  <tr>
+      <td align="center">Class or Package</td>
+      <td align="center"><b>B</b>ug/<b>C</b>hange<br> <b>N</b>ew <b>F</b>eature</td>
+      <td align="center">Description and Examples</td>
+    </tr>
+  <tr>
+    <td>demo.cms</td>
+    <td align="center">NF</td>
+    <td>CMS demo examples</td>
+  </tr>
+  <tr>
+    <td>demo.smime</td>
+    <td align="center">NF</td>
+    <td>S/MIME demo examples</td>
+  </tr>
+  <tr>
+    <td>iaik.cms</td>
+    <td align="center">NF</td>
+    <td>Implements the
+      Cryptographic Message Syntax (CMS, RFC 2630); succeeds the PKCS#7 library
+      of IAIK-JCE</td>
+  </tr>
+  <tr>
+    <td>iaik.smime</td>
+    <td align="center">NF</td>
+    <td>Implements the S/MIME
+      Version 3 standard; succeeds IAIK-S/MIMEv2&nbsp;</td>
+  </tr>
+</table>
+</div>
+
+<p>&nbsp;</p>
+<DIV align=center>
+  <CENTER>
+   <TABLE cellPadding=2 border=0>
+    <TR>
+     <TD><IMG src="images/arrow.gif"/></TD>
+     <TD>Back to <A href="Readme.html">Readme</A></TD>
+    </TR>
+   </TABLE>
+  </CENTER>
+</DIV>
+    
+
+<HR>
+
+<P align=center>Copyright (c) 2002 by&nbsp;IAIK. Copyright (C) 2003 - 2016 Stiftung SIC. All rights reserved.</P>
+<P align=center>&nbsp;</P>
+</BODY>
+</HTML>

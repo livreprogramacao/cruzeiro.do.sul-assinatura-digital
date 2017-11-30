@@ -1,0 +1,533 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Linux (vers 25 March 2009), see www.w3.org">
+  <meta name="generator" content="Bluefish 2.0.2">
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii">
+  <meta name="generator" content="Bluefish 2.0.2">
+
+  <title>Speed.html</title>
+  <style type="text/css">
+<!--
+  .faster {
+        color: #00F;
+  }
+  -->
+  </style>
+  <style type="text/css">
+p.c7 {font-family: Trebuchet MS; text-align: center}
+  span.c6 {font-family: Trebuchet MS; font-size: 100%}
+  div.c5 {text-align: center}
+  p.c4 {color: #000000; font-family: Trebuchet MS}
+  span.c3 {font-family: Trebuchet MS; text-decoration: underline}
+  p.c2 {font-family: Trebuchet MS}
+  span.c1 {font-family: Trebuchet MS}
+  </style>
+</head>
+
+<body>
+  <table border="0" width="100%">
+    <tr>
+      <td width="8%"><a href="http://jce.iaik.tugraz.at/"><img src=
+      "images/siclogo.jpg" width="113" height="100" border=
+      "0"></a></td>
+
+      <td width="83%" align="center">
+        <h1>IAIK-JCE Performance</h1>
+      </td>
+
+      <td width="9%"><a href="http://jce.iaik.tugraz.at/"><img src=
+      "images/iaik_logo.gif" alt="IAIK Logo" border="0"></a></td>
+    </tr>
+  </table>
+
+  <p class="c2"><span class="c1">The tables below summarize some
+  test results measuring the execution speed of <em>IAIK-JCE</em>
+  for typical applications. The tests have been performed by
+  running the <em>TestSpeed</em> program of the IAIK-JCE inherent
+  <em>demo</em> package. This program also may be used to benchmark
+  other JCA/JCE providers, like the default Sun provider for MD5
+  and SHA-1 hashes or the SunJCE provider for cipher
+  engines.</span></p>
+
+  <p class="c2"><span class="c1">The results below have been
+  obtained on an <b>Intel Pentium Core i5 2540M 2.60 GHz (running in turbo mode at 3.3GHz), 8.0 GB
+  RAM</b> running Windows 7 Enterprise (64 bit) as well as on
+  Ubuntu Linux 11.10 (amd64).</span></p>
+
+  <p class="c2"><strong><span class="c3">Results for Windows 7
+  Enterprise (running a 64-bit Java VM):</span></strong></p>
+
+ <table class="horLines" border="0" cellpadding="0" cellspacing="0" width="95%">
+
+<tr>
+
+
+<td valign="top" >  
+<p>
+
+<b> Security provider: IAIK, version 5.2</b>
+<br />
+<b> Java VM: Sun Microsystems Inc., version 1.7.0_01, JIT</b>
+<br />
+<b> OS: Windows 7/amd64, version 6.1</b>
+</p>
+<p>
+<span>The 'numbers' </span>
+<span>are in 1000s of bytes per second processed.</span>
+</p>
+<pre>type              8 bytes    64 bytes   256 bytes  1024 bytes  8192 bytes   
+md2               8192.8k     8361.8k     8328.8k     8367.4k     8368.8k   
+md5             192768.8k   278787.2k   299987.1k   308221.9k   310547.8k   
+sha1            131748.4k   178218.1k   181367.1k   180751.9k   174020.8k   
+sha224           92638.3k   111189.5k   113375.8k   114167.3k   113953.4k   
+sha256           93090.7k   108834.0k   112697.8k   113722.4k   114043.1k   
+sha384          128688.7k   164949.4k   170873.2k   171309.9k   171457.9k   
+sha512          130878.8k   164634.2k   169945.4k   170414.5k   171128.7k   
+ripe md128      146981.0k   204095.7k   204572.0k   204929.2k   207050.0k   
+ripe md160       81875.8k   105747.6k   106845.8k   106367.4k   106700.0k   
+ripe md256      143191.8k   197190.0k   197856.2k   199598.3k   201015.5k   
+ripe md320       82946.9k    97874.1k    99081.7k    99863.6k    99979.9k   
+whirlpool        22848.2k    26719.6k    26641.5k    26676.3k    26426.0k   
+aes cbc              n/a    104703.3k   109686.7k   110553.5k   111307.7k   
+aes gcm              n/a     47072.2k    48876.1k    45624.4k    47391.1k   
+aes ccm              n/a     37161.4k    39320.9k    38398.4k    38792.7k   
+des cbc          45501.5k    51692.5k    52308.7k    52770.5k    52533.8k   
+rc2 cbc          34764.1k    37557.7k    38205.0k    38238.9k    38217.5k   
+blowfish cbc     64908.8k    74834.3k    78109.4k    78271.8k    78840.1k   
+rc5 cbc          66286.7k    79032.8k    81391.9k    78292.6k    82015.2k   
+gost cbc         37226.2k    40858.4k    41593.7k    41875.8k    41778.9k   
+cast128 cbc      58399.8k    66593.6k    68516.5k    68696.7k    69083.7k   
+rc6 cbc              n/a     90648.9k    91982.9k    92758.2k    92704.8k   
+mars cbc             n/a     78499.2k    81449.8k    80043.7k    81199.0k   
+twofish cbc          n/a     83585.2k    85332.4k    85644.6k    86694.8k   
+arcfour         148935.0k   252969.5k   264484.7k   284319.3k   285884.7k   
+serpent cbc          n/a     50064.3k    53411.5k    53415.3k    53600.3k   
+rijndael-256 cbc     n/a     71354.6k    74097.3k    74019.1k    74816.2k   
+camellia cbc         n/a     71468.5k    73533.3k    73922.5k    74503.3k   
+rsa 512  bit private key             0.309 ms
+rsa 512  bit public key (2^16 +1)    0.024 ms
+rsa 1024 bit private key             1.448 ms
+rsa 1024 bit public key (2^16 +1)    0.066 ms
+rsa 2048 bit private key             8.115 ms
+rsa 2048 bit public key (2^16 +1)    0.225 ms
+rsa 4096 bit private key            55.759 ms
+rsa 4096 bit public key (2^16 +1)    0.834 ms
+</pre>
+  </td>
+<td valign="top" >  &nbsp;
+  </td>
+<td valign="top" >  
+<p>
+<b> Security provider: IAIK, version 5.2 (with AES addon)</b>
+<br />
+<b> Java VM: Sun Microsystems Inc., version 1.7.0_01, JIT</b>
+<br />
+<b> OS: Windows 7/amd64, version 6.1</b>
+</p>
+<p>
+<span>The 'numbers' </span>
+<span>are in 1000s of bytes per second processed.</span>
+</p>
+<pre>type              8 bytes    64 bytes   256 bytes  1024 bytes  8192 bytes   
+md2               8186.1k     8276.6k     8292.4k     8320.8k     8308.9k   
+md5             194896.0k   297683.1k   307329.9k   309925.1k   309717.9k   
+sha1            133692.3k   177186.7k   180563.7k   181079.3k   181655.0k   
+sha224           92125.6k   110622.5k   113042.4k   114933.8k   112418.9k   
+sha256           93814.0k   110153.5k   113298.2k   114672.6k   114908.3k   
+sha384          130208.5k   166805.7k   160485.8k   171432.4k   169314.0k   
+sha512          130768.5k   164233.4k   169897.2k   170384.2k   170603.6k   
+ripe md128      147508.0k   202093.8k   203951.1k   205582.8k   203752.5k   
+ripe md160       87422.6k   105639.0k   105817.8k   106642.2k   106972.1k   
+ripe md256      145238.0k   192878.3k   196550.1k   197925.8k   199268.8k   
+ripe md320       87399.8k   102687.1k   100944.2k   102346.2k    97338.1k   
+whirlpool        20088.6k    25927.7k    26547.9k    26761.3k    26649.1k   
+aes cbc              n/a    163261.0k   326741.5k   490796.6k   570920.6k   
+aes gcm              n/a     47103.8k    48320.8k    46011.0k    47410.7k   
+aes ccm              n/a     37366.7k    39127.2k    38821.9k    39561.5k   
+des cbc          46504.8k    52049.1k    53410.0k    53529.5k    53284.7k   
+rc2 cbc          33437.0k    37142.4k    38048.0k    38268.8k    38261.0k   
+blowfish cbc     65475.8k    77140.6k    79923.4k    80948.4k    81413.9k   
+rc5 cbc          66750.8k    82410.6k    85805.7k    86510.8k    86686.6k   
+gost cbc         39299.1k    43802.9k    44716.4k    44873.0k    45013.8k   
+cast128 cbc      55421.2k    65639.5k    67577.5k    67988.7k    67494.8k   
+rc6 cbc              n/a     91000.4k    92971.7k    88395.5k    93790.3k   
+mars cbc             n/a     77938.2k    80620.3k    80840.9k    81413.9k   
+twofish cbc          n/a     82801.9k    85394.4k    84413.8k    85397.0k   
+arcfour         152430.8k   255504.2k   281974.4k   286814.2k   284818.2k   
+serpent cbc          n/a     49235.5k    53060.6k    53073.1k    53077.9k   
+rijndael-256 cbc     n/a     69108.3k    73627.0k    73466.8k    73630.0k   
+camellia cbc         n/a     69944.4k    72135.6k    67346.6k    73276.3k   
+rsa 512  bit private key             0.370 ms
+rsa 512  bit public key (2^16 +1)    0.024 ms
+rsa 1024 bit private key             1.446 ms
+rsa 1024 bit public key (2^16 +1)    0.066 ms
+rsa 2048 bit private key             8.050 ms
+rsa 2048 bit public key (2^16 +1)    0.223 ms
+rsa 4096 bit private key            55.599 ms
+rsa 4096 bit public key (2^16 +1)    0.826 ms
+</pre>
+  </td>
+</tr>
+</table>
+<p>
+</p>
+<p>
+<b>Results for Windows7/x64 and 32-bit VM:</b>
+</p>
+<table class="horLines" border="0" cellpadding="0" cellspacing="0" width="95%">
+<tr>
+<td valign="top" >  
+<p>
+<b> Security provider: IAIK, version 5.2</b>
+<br />
+<b> Java VM: Sun Microsystems Inc., version 1.7.0, JIT</b>
+<br />
+<b> OS: Windows 7/x86, version 6.1</b>
+</p>
+<p>
+<span>The 'numbers' </span>
+<span>are in 1000s of bytes per second processed.</span>
+</p>
+<pre>type              8 bytes    64 bytes   256 bytes  1024 bytes  8192 bytes   
+md2               7774.5k     7881.9k     7925.5k     7908.0k     7909.0k   
+md5             171882.2k   245575.6k   264835.0k   269613.6k   271590.2k   
+sha1            120515.3k   144979.5k   164770.3k   164323.9k   166476.3k   
+sha224           72577.3k    84347.5k    85443.8k    84795.4k    85184.8k   
+sha256           68138.6k    83742.6k    84524.9k    84298.2k    83919.7k   
+sha384           31501.7k    33904.5k    33929.0k    34311.3k    34209.9k   
+sha512           31645.3k    33714.4k    33814.7k    34377.2k    33981.4k   
+ripe md128      125691.1k   169376.1k   171722.9k   172169.3k   171436.1k   
+ripe md160       93459.2k   116264.1k   116800.7k   118136.8k   118818.0k   
+ripe md256      123595.7k   160494.2k   169136.9k   168605.6k   169711.2k   
+ripe md320       91941.3k   114195.7k   116037.5k   116498.9k   117327.0k   
+whirlpool        18850.7k    19818.2k    19785.2k    19849.4k    19833.8k   
+aes cbc              n/a     70377.6k    72619.8k    73566.7k    73779.7k   
+aes gcm              n/a     25391.6k    25416.8k    25976.6k    26293.3k   
+aes ccm              n/a     24322.0k    25035.0k    24973.0k    25808.0k   
+des cbc          32244.7k    36594.5k    37615.9k    37876.4k    37956.3k   
+rc2 cbc          30393.1k    34085.6k    34889.7k    34687.1k    34990.8k   
+blowfish cbc     48282.5k    58331.5k    59988.8k    60680.2k    60611.5k   
+rc5 cbc          45844.3k    56464.8k    58255.0k    58278.8k    58908.3k   
+gost cbc         32375.6k    37288.9k    38109.2k    35691.7k    38649.3k   
+cast128 cbc      41960.0k    52945.9k    54240.5k    54363.1k    54880.9k   
+rc6 cbc              n/a     70250.6k    72971.9k    73694.3k    73659.9k   
+mars cbc             n/a     59707.3k    61145.5k    61575.7k    61709.4k   
+twofish cbc          n/a     69657.0k    72412.4k    73484.8k    73888.5k   
+arcfour          77074.4k   122718.0k   132467.8k   134102.5k   134671.4k   
+serpent cbc          n/a     39023.5k    39972.0k    37220.7k    39605.0k   
+rijndael-256 cbc     n/a     57642.5k    59913.0k    60327.5k    60850.9k   
+camellia cbc         n/a     48140.4k    49426.2k    49791.3k    50185.8k   
+rsa 512  bit private key             0.943 ms
+rsa 512  bit public key (2^16 +1)    0.077 ms
+rsa 1024 bit private key             5.282 ms
+rsa 1024 bit public key (2^16 +1)    0.259 ms
+rsa 2048 bit private key            34.397 ms
+rsa 2048 bit public key (2^16 +1)    0.957 ms
+rsa 4096 bit private key           246.000 ms
+rsa 4096 bit public key (2^16 +1)    3.685 ms
+</pre>
+  </td>
+<td valign="top" >  &nbsp;
+  </td>
+<td valign="top" >  
+<p>
+<b> Security provider: IAIK, version 5.2 (with AES addon)</b>
+<br />
+<b> Java VM: Sun Microsystems Inc., version 1.7.0, JIT</b>
+<br />
+<b> OS: Windows 7/x86, version 6.1</b>
+</p>
+<p>
+<span>The 'numbers' </span>
+<span>are in 1000s of bytes per second processed.</span>
+</p>
+<pre>type              8 bytes    64 bytes   256 bytes  1024 bytes  8192 bytes   
+md2               7745.9k     7805.1k     7866.7k     7877.4k     7881.8k   
+md5             169483.8k   258748.7k   267118.0k   268694.0k   268926.6k   
+sha1            121917.7k   164900.0k   167138.3k   167731.2k   168533.1k   
+sha224           71909.7k    84566.7k    85486.3k    85113.0k    85456.8k   
+sha256           72745.7k    84280.3k    78504.0k    85535.4k    84874.6k   
+sha384           31642.9k    33985.7k    34220.8k    34389.1k    34294.3k   
+sha512           31898.9k    33875.8k    34239.9k    34446.3k    34316.0k   
+ripe md128      126060.4k   169366.4k   172089.8k   172652.3k   173139.3k   
+ripe md160       93140.6k   116492.3k   117037.7k   117702.8k   119068.3k   
+ripe md256      123817.0k   166513.2k   170014.0k   170803.9k   164454.8k   
+ripe md320       91572.1k   112127.3k   115389.1k   116275.5k   116908.0k   
+whirlpool        18882.8k    19888.2k    19839.3k    19850.8k    19956.2k   
+aes cbc              n/a     76694.7k   155416.7k   349515.5k   520000.1k   
+aes gcm              n/a     25321.9k    25524.3k    25610.7k    26539.6k   
+aes ccm              n/a     24460.8k    25289.7k    25360.1k    25427.9k   
+des cbc          32389.8k    35310.1k    37647.3k    38046.8k    38242.0k   
+rc2 cbc          30618.7k    34714.9k    35310.4k    35132.9k    35349.9k   
+blowfish cbc     47507.0k    58538.2k    60084.2k    60974.0k    60908.1k   
+rc5 cbc          45850.7k    56426.6k    58797.7k    59504.5k    58149.3k   
+gost cbc         32309.1k    37413.3k    38156.0k    38422.9k    38271.9k   
+cast128 cbc      43636.0k    50771.7k    53521.5k    54698.1k    54579.7k   
+rc6 cbc              n/a     69451.4k    72207.0k    73344.7k    73834.1k   
+mars cbc             n/a     58796.5k    60591.9k    60795.1k    61082.2k   
+twofish cbc          n/a     68775.4k    72478.7k    73572.9k    73763.3k   
+arcfour          91715.6k   154340.5k   157259.0k   165858.7k   170162.8k   
+serpent cbc          n/a     38782.6k    39749.6k    40038.7k    39871.7k   
+rijndael-256 cbc     n/a     58765.7k    56869.4k    62217.4k    62341.9k   
+camellia cbc         n/a     49482.5k    50792.0k    51140.4k    51135.3k   
+rsa 512  bit private key             0.931 ms
+rsa 512  bit public key (2^16 +1)    0.075 ms
+rsa 1024 bit private key             5.218 ms
+rsa 1024 bit public key (2^16 +1)    0.256 ms
+rsa 2048 bit private key            33.831 ms
+rsa 2048 bit public key (2^16 +1)    0.938 ms
+rsa 4096 bit private key           244.846 ms
+rsa 4096 bit public key (2^16 +1)    3.623 ms
+</pre>
+  </td>
+</tr>
+</table>
+<p>
+<b>Results for Ubuntu Linux 11.10/amd64 and 64-bit VM:</b>
+</p>
+<table class="horLines" border="0" cellpadding="0" cellspacing="0" width="95%">
+<tr>
+<td valign="top" >  
+<p>
+<b>Security provider: IAIK, version 5.2</b>
+<br />
+<b>Java VM: Sun Microsystems Inc., version 1.6.0_23, JIT</b>
+<br />
+<b>OS: Linux/amd64, version 3.0.0-14-generic</b>
+</p>
+<p>
+<span>The 'numbers' </span>
+<span>are in 1000s of bytes per second processed.</span>
+</p>
+<pre>type               8 bytes   64 bytes   256 bytes   1024 bytes   8192 bytes   
+md2               8236.0k     8322.3k     8396.9k     8386.5k     8347.5k   
+md5             200893.0k   302100.4k   310835.1k   313921.5k   313638.9k   
+sha1            131815.3k   174837.6k   176549.9k   178310.8k   178853.2k   
+sha224           91425.2k   110981.9k   111590.7k   112523.6k   112902.1k   
+sha256           92974.0k   110711.5k   111650.3k   111594.1k   112164.8k   
+sha384          126978.0k   165760.8k   171397.4k   171090.9k   172569.9k   
+sha512          132950.3k   165426.8k   171347.0k   171213.4k   172367.8k   
+ripe md128      150315.3k   203312.5k   206315.3k   207510.5k   207541.5k   
+ripe md160       82350.6k    96687.2k    97386.4k    97715.5k    97525.7k   
+ripe md256      145574.3k   185433.1k   195366.7k   198403.0k   199240.3k   
+ripe md320       81370.7k    95493.2k    94723.9k    96071.4k    96266.9k   
+whirlpool        29228.9k    41794.9k    41804.8k    42024.9k    42109.6k   
+aes cbc              n/a    102938.4k   109955.2k   111000.5k   111392.0k   
+aes gcm              n/a     47065.2k    48433.2k    48786.5k    48859.9k   
+aes ccm              n/a     37085.9k    40440.3k    39611.5k    39653.5k   
+des cbc          45203.2k    50808.8k    52400.2k    52482.0k    52228.4k   
+rc2 cbc          34699.1k    37845.5k    38228.7k    38521.5k    38469.6k   
+blowfish cbc     58037.8k    67607.6k    69156.4k    69793.7k    69976.0k   
+rc5 cbc          69334.6k    84703.3k    87511.0k    88754.5k    88307.6k   
+gost cbc         31446.2k    34583.7k    35014.5k    35003.7k    35159.2k   
+cast128 cbc      56889.1k    66440.8k    68167.1k    68507.9k    68949.3k   
+rc6 cbc              n/a     87897.3k    90236.8k    91657.2k    91335.3k   
+mars cbc             n/a     78245.4k    81238.2k    81473.8k    82070.1k   
+twofish cbc          n/a     83661.0k    85644.4k    86681.7k    86499.3k   
+arcfour         157530.5k   282012.5k   305346.7k   311394.3k   318327.8k   
+serpent cbc          n/a     48921.1k    53738.7k    53887.1k    54010.9k   
+rijndael-256 cbc     n/a     71919.5k    74154.2k    74159.6k    74918.1k   
+camellia cbc         n/a     70834.4k    72754.0k    73924.9k    74006.4k   
+rsa 512  bit private key             0.327 ms
+rsa 512  bit public key (2^16 +1)    0.034 ms
+rsa 1024 bit private key             1.437 ms
+rsa 1024 bit public key (2^16 +1)    0.085 ms
+rsa 2048 bit private key             7.973 ms
+rsa 2048 bit public key (2^16 +1)    0.257 ms
+rsa 4096 bit private key            53.210 ms
+rsa 4096 bit public key (2^16 +1)    0.873 ms</pre>
+  </td>
+<td valign="top" >  &nbsp;
+  </td>
+<td valign="top" >  
+<p>
+<b>Security provider: IAIK, version 5.2</b>
+<b>(with AES addon)</b>
+<br />
+<b>Java VM: Sun Microsystems Inc., version 1.6.0_23, JIT</b>
+<br />
+<b>OS: Linux/amd64, version 3.0.0-14-generic</b>
+</p>
+<p>
+<span>The 'numbers' </span>
+<span>are in 1000s of bytes per second processed.</span>
+</p>
+<pre>type               8 bytes   64 bytes   256 bytes   1024 bytes   8192 bytes   
+md2               8240.1k     8356.1k     8389.8k     8367.1k     8402.1k   
+md5             200615.5k   285807.1k   307981.6k   313814.0k   313942.0k   
+sha1            132045.8k   174409.8k   177720.2k   178468.0k   178413.5k   
+sha224           90700.4k   111554.9k   111726.4k   112596.3k   112347.8k   
+sha256           92736.0k   111675.9k   111847.0k   112741.0k   112905.4k   
+sha384          130648.6k   163098.0k   168191.6k   171061.2k   172474.3k   
+sha512          131690.2k   162739.2k   168391.5k   169603.4k   171338.4k   
+ripe md128      148196.9k   194506.1k   204275.4k   205884.0k   208112.2k   
+ripe md160       81362.3k    96420.2k    97392.0k    97101.8k    97954.4k   
+ripe md256      146730.9k   196365.8k   198911.4k   200342.5k   200518.3k   
+ripe md320       81581.5k    95425.3k    96213.7k    96698.3k    96526.3k   
+whirlpool        29832.1k    42052.8k    41802.5k    41990.4k    41869.3k   
+aes cbc              n/a    213282.8k   424044.2k   546418.6k   593420.2k   
+aes gcm              n/a     47007.2k    48171.0k    48504.4k    49076.4k   
+aes ccm              n/a     37497.2k    39250.8k    39474.4k    39534.8k   
+des cbc          47209.0k    51961.1k    53043.5k    53127.5k    51876.2k   
+rc2 cbc          35272.0k    37791.1k    38388.9k    38582.9k    38491.4k   
+blowfish cbc     58732.5k    68587.4k    69673.5k    70517.7k    70579.5k   
+rc5 cbc          72282.8k    85963.0k    88641.5k    88909.1k    89388.3k   
+gost cbc         31690.4k    34705.9k    35284.6k    34957.9k    35394.9k   
+cast128 cbc      57858.7k    66357.3k    68378.0k    68814.8k    68506.9k   
+rc6 cbc              n/a     89383.5k    90965.6k    92157.9k    91873.2k   
+mars cbc             n/a     78277.5k    81047.8k    81582.4k    81510.4k   
+twofish cbc          n/a     83700.7k    85169.4k    86283.6k    86343.6k   
+arcfour         153854.9k   247516.6k   276623.3k   283919.7k   286067.3k   
+serpent cbc          n/a     49861.1k    53550.5k    53803.0k    53661.5k   
+rijndael-256 cbc     n/a     72108.5k    74293.0k    74430.8k    74866.3k   
+camellia cbc         n/a     70028.1k    72900.9k    73359.7k    73176.5k   
+rsa 512  bit private key             0.331 ms
+rsa 512  bit public key (2^16 +1)    0.034 ms
+rsa 1024 bit private key             1.433 ms
+rsa 1024 bit public key (2^16 +1)    0.085 ms
+rsa 2048 bit private key             7.934 ms
+rsa 2048 bit public key (2^16 +1)    0.256 ms
+rsa 4096 bit private key            52.789 ms
+rsa 4096 bit public key (2^16 +1)    0.870 ms</pre>
+  </td>
+</tr>
+</table>
+<p>
+<b>Results for Ubuntu Linux 11.10/amd64 and 32-bit VM:</b>
+</p>
+<table class="horLines" border="0" cellpadding="0" cellspacing="0" width="95%">
+<tr>
+<td valign="top" >  
+<p>
+<b>Security provider: IAIK, version 5.2</b>
+<br />
+<b>Java VM: Sun Microsystems Inc., version 1.6.0_25, JIT</b>
+<br />
+<b>OS: Linux/i386, version 3.0.0-14-generic</b>
+</p>
+<p>
+<span>The 'numbers' </span>
+<span>are in 1000s of bytes per second processed.</span>
+</p>
+<pre>type               8 bytes   64 bytes   256 bytes   1024 bytes   8192 bytes   
+md2               8123.2k     8323.6k     8334.8k     8300.5k     8314.8k   
+md5             163998.5k   280917.1k   290870.5k   292294.9k   293718.6k   
+sha1            114625.3k   161941.3k   165003.4k   165266.7k   166488.7k   
+sha224           79338.9k    99172.1k    99858.2k   101340.5k   101086.5k   
+sha256           81325.2k    99121.9k   100820.9k   101279.4k   100951.8k   
+sha384           45611.7k    53295.1k    53973.7k    54096.8k    52244.8k   
+sha512           49214.6k    53348.5k    53898.5k    54094.8k    54160.0k   
+ripe md128      133182.6k   183257.6k   184231.4k   185255.9k   185685.3k   
+ripe md160       67132.4k    76492.9k    78156.6k    78592.3k    79026.4k   
+ripe md256      128659.5k   172585.8k   175225.0k   176485.7k   175946.4k   
+ripe md320       62078.6k    71091.0k    71843.0k    72224.7k    71862.9k   
+whirlpool        11485.9k    22302.7k    22122.4k    22390.1k    22112.9k   
+aes cbc              n/a     86624.4k    90797.0k    91254.1k    91657.0k   
+aes gcm              n/a     31214.2k    31707.1k    31846.4k    31673.0k   
+aes ccm              n/a     28844.9k    31227.8k    31362.1k    31164.5k   
+des cbc          40946.6k    45942.3k    47072.7k    47101.6k    47325.1k   
+rc2 cbc          30166.2k    33607.8k    34285.3k    34455.8k    34349.0k   
+blowfish cbc     41867.3k    48407.3k    49830.3k    50254.8k    50154.1k   
+rc5 cbc          60944.0k    75899.5k    77879.2k    79369.8k    78700.5k   
+gost cbc         27987.0k    31404.5k    31813.4k    32105.1k    32082.8k   
+cast128 cbc      49533.4k    60321.7k    62051.2k    62795.7k    62852.6k   
+rc6 cbc              n/a     74263.6k    77131.6k    78049.2k    78084.6k   
+mars cbc             n/a     66706.6k    69652.6k    70404.7k    70478.5k   
+twofish cbc          n/a     74914.6k    77963.7k    78634.7k    78900.8k   
+arcfour          94164.4k   165045.9k   181442.9k   186806.9k   185222.1k   
+serpent cbc          n/a     47466.0k    50887.5k    51566.5k    51638.8k   
+rijndael-256 cbc     n/a     61845.7k    65315.7k    65909.7k    64782.3k   
+camellia cbc         n/a     59095.5k    61602.4k    61722.8k    61919.0k   
+rsa 512  bit private key             0.540 ms
+rsa 512  bit public key (2^16 +1)    0.054 ms
+rsa 1024 bit private key             2.541 ms
+rsa 1024 bit public key (2^16 +1)    0.152 ms
+rsa 2048 bit private key            15.842 ms
+rsa 2048 bit public key (2^16 +1)    0.509 ms
+rsa 4096 bit private key           113.629 ms
+rsa 4096 bit public key (2^16 +1)    1.842 ms</pre>
+  </td>
+<td valign="top" >  &nbsp;
+  </td>
+<td valign="top" >  
+<p>
+<b>Security provider: IAIK, version 5.2</b>
+<b>(with AES addon)</b>
+<br />
+<b>Java VM: Sun Microsystems Inc., version 1.6.0_23, JIT</b>
+<br />
+<b>OS: Linux/amd64, version 3.0.0-14-generic</b>
+</p>
+<p>
+<span>The 'numbers' </span>
+<span>are in 1000s of bytes per second processed.</span>
+</p>
+<pre>type               8 bytes   64 bytes   256 bytes   1024 bytes   8192 bytes   
+md2               8140.4k     8322.7k     8333.1k     8327.5k     8331.2k   
+md5             164416.9k   281184.4k   290190.5k   292677.9k   294548.8k   
+sha1            113844.2k   161927.9k   164697.7k   165188.6k   166283.9k   
+sha224           78332.7k    99790.5k   100921.1k   100834.6k   101520.7k   
+sha256           79921.3k    95432.8k    99465.9k   100059.8k   100963.6k   
+sha384           45961.4k    53365.5k    54081.3k    54155.6k    53980.9k   
+sha512           48953.9k    53315.5k    54106.7k    54083.9k    53937.2k   
+ripe md128      132593.1k   182542.4k   183173.3k   184803.3k   184486.5k   
+ripe md160       66327.9k    76120.5k    77479.6k    78453.7k    78727.8k   
+ripe md256      127782.8k   174707.8k   175121.7k   176989.5k   177430.5k   
+ripe md320       60981.3k    71265.3k    71368.5k    71416.4k    71761.9k   
+whirlpool        11451.8k    22391.0k    22411.3k    22330.0k    22418.7k   
+aes cbc              n/a    197636.5k   392540.5k   533565.0k   589840.3k   
+aes gcm              n/a     31917.9k    31893.3k    31809.4k    31747.9k   
+aes ccm              n/a     28073.2k    31412.8k    31635.4k    31335.4k   
+des cbc          43596.4k    47793.5k    48235.2k    48693.4k    48810.7k   
+rc2 cbc          31506.0k    34358.7k    34414.0k    34882.2k    34891.7k   
+blowfish cbc     44011.2k    51104.8k    52252.5k    51456.3k    52662.4k   
+rc5 cbc          57674.5k    66731.0k    68554.4k    68882.0k    68476.9k   
+gost cbc         29352.2k    32181.8k    32606.2k    32797.6k    32680.6k   
+cast128 cbc      53401.3k    61587.8k    63050.9k    63672.6k    63824.4k   
+rc6 cbc              n/a     79707.4k    81850.3k    82350.7k    82741.6k   
+mars cbc             n/a     69498.9k    69516.4k    72093.6k    72433.6k   
+twofish cbc          n/a     77930.9k    80370.9k    81131.8k    80863.2k   
+arcfour         110587.0k   180509.5k   196470.2k   203962.7k   203833.3k   
+serpent cbc          n/a     48094.3k    51911.0k    51978.2k    52262.2k   
+rijndael-256 cbc     n/a     62717.2k    64887.3k    65800.8k    65828.1k   
+camellia cbc         n/a     59323.2k    61237.4k    61360.4k    61718.5k   
+rsa 512  bit private key             0.535 ms
+rsa 512  bit public key (2^16 +1)    0.054 ms
+rsa 1024 bit private key             2.544 ms
+rsa 1024 bit public key (2^16 +1)    0.152 ms
+rsa 2048 bit private key            15.826 ms
+rsa 2048 bit public key (2^16 +1)    0.507 ms
+rsa 4096 bit private key           113.370 ms
+rsa 4096 bit public key (2^16 +1)    1.849 ms</pre>
+  </td>
+</tr>
+</table>
+
+  <p class="c2"></p>
+
+  <div class="c5">
+    <div class="c5">
+      <table border="0" cellpadding="2">
+        <tr>
+          <td><img src="images/arrow.gif" alt=
+          "arrow.gif (1267 Byte)" width="55" height="42"></td>
+
+          <td><big><span class="c1">Back to <a href=
+          "Readme.html">Readme</a></span></big></td>
+        </tr>
+      </table>
+    </div>
+    <hr>
+
+    <p class="c7"><span class="c6">Copyright (c) 2002 by IAIK.
+    Copyright (C) 2003 - 2013 Stiftung SIC. All rights
+    reserved.</span></p>
+
+    <p class="c2"></p>
+  </div>
+</body>
+</html>

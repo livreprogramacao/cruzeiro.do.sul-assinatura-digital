@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<link rel="StyleSheet" href="style.css" type="text/css">
+	<TITLE>IAIK-CMS SecurityProvider</TITLE>
+</HEAD>
+<BODY>
+<table border="0" width="100%">
+  <tr>
+    <td><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/siclogo.jpg" alt="IAIK" border="0"></a></td>
+
+    <td align="center"><h1>IAIK-CMS SecurityProvider Model</h1><h2><U>Cryptographic Message Syntax / S/MIME Version 3</U></h2></td>
+    <td align="right"><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/iaik_logo.gif" alt="SIC" border="0"></a></td>
+  </tr>
+</table>
+
+<p>&nbsp;IAIK-CMS adopts the SecurityProvider model introduced by the IAIK SSL/TLS 
+  library (<i><a href="http://jce.iaik.tugraz.at/products/02_isasilk/index.php" target="_blank">iSaSiLk)</a> 
+  </i>for centralizing all cryptographic tasks into one class, <a href="docs/iaik/cms/SecurityProvider.html" target="_blank">iaik.cms.SecurityProvider</a>. 
+  The SecurityProvider model used here is similar to that of <i>iSaSiLk</i> except 
+  for a the following changes: 
+<ul>
+  <li>Because of the high dependence of CMS onto ASN.1, <i>IAIK-CMS</i> makes 
+    use of the ASN.1 library of the crypto toolkit <i><a href="http://jce.iaik.tugraz.at/products/01_jce/index.php" target="_blank">IAIK-JCE</a></i>; 
+    so it cannot be used without having IAIK-JCE in the classpath (which does 
+    not necessarily mean to have to use (all the) the cryptographic engines provided 
+    by IAIK-JCE; i.e. any cryptographic task may be performed by any proper cryptography 
+    provider supporting the required engine). 
+  <li>Since CMS certificate handling requires access to certificate properties 
+    not supported by the JCA certificate API, any X.509 public key certficate 
+    used for IAIK-CMS has to be supplied as <code>iaik.x509.X509Certficate</code>, 
+    and any attribute certificate has to be supplied as <code>iaik.x509.attr.AttributeCertificate</code>.
+     
+    An application wishing to use certificates from other providers may use methods 
+    <code>convertCertificateChain</code>   and <code>convertToAttributeCertificateChain</code> 
+     
+    of the IAIK-JCE crypto toolkit for converting them into the IAIK X.509 representation 
+    before using them with IAIK-CMS. Please note that both, <code>iaik.x509.X509Certificate</code> 
+     
+    and <code>iaik.x509.attr.AttributeCertificate</code>   fit into the JCA certificate 
+    API because being descendants of class  <code>java.security.cert.Certificate</code>.
+     
+    Unfortunately <code>java.security.cert.Certificate</code>   only groups public 
+    key certificates; so <code>iaik.x509.attr.AttributeCertificate</code> 
+     returns 
+    <code>null</code>   when calling method <code>getPublicKey</code>. 
+  <li>Most of the <code>getEngine</code> 
+     methods of the SecurityProvider class do
+    not specify the requested engine by its name; rather the engines are
+    requested by its AlgorithmIDs as used with CMS
+  <li>Wheras <i>iSaSiLk</i> consults the SecurityProvider for getting the required 
+    -- if necessary -- initialized engine and subsequently performs the cryptographic 
+    operation on the engine itself, IAIK-CMS -- where appropriate -- allows the 
+    SecurityProvider to do the whole cryptographic task. This shall give a SecurityProvider 
+    implementing application more independence in how to perform the cryptographic 
+    operation. When, for instance, allowing the SecurityProvider to calcualte 
+    a RSA signature value, the specific SecurityProvider implementation itself 
+    may decide to use a Cipher or Signature engine or any other way to get the 
+    Signature value (e.g. from a Smartcard). This concept provides more flexibility, 
+    but sometimes may require some knowledge about the way the CMS protocol expects 
+    a cryptographic operation has to be performed. However, in general you may not have to 
+    take care about the IAIK-CMS SecurityProvider at all because you simply can
+    use the default SecurityProvider.
+  </li>
+</ul>
+
+Class <a href="docs/iaik/cms/SecurityProvider.html" target="_blank"><code>iaik.cms.SecurityProvider</code></a> 
+is the main class of the IAIK-CMS SecurityProvider model. It itself provides 
+default implementations of all cryptographic operations required by CMS, expect 
+for Ephemeral Static Diffie Hellman. Unfortunately there is no general way to 
+initialize a KeyPairGenerator with algorithm parameters as required when creating 
+a originator ESDH key pair with domain parameters matching to those of the public key
+of the recipient. Thus the default implementation of method <code>generateKeyAgreementKeyPair(AlgorithmID 
+keyAgreeAlgorithm, PublicKey otherKey)</code>   has to throw an exception and has 
+to be implemented if using another cryptographic provider than IAIK. The same 
+applies to method <code>createSharedKeyEncryptionKey</code>   which cannot handle 
+an ESDHKeyAgreement in provider independent way. Thus it might 
+be preferable to override all ESDH related methods when intending to use another 
+provider than IAIK. 
+<p>With class <a href="docs/iaik/cms/IaikProvider.html"><code>IaikProvider</code></a> 
+  
+  IAIK-CMS contains an SecurityProvider implemention for the IAIK cryptography 
+  provider of the crypto toolkit IAIK-JCE. Please note the difference: The IAIK 
+  provider is a JCA/JCE cryptography provider supplying cryptographic engines; 
+  Class <code>IaikProvider</code> is an IAIK-CMS SecurityProvider implementation that makes 
+  the cryptographic engines of the IAIK JCA/JCE cyrptography provider available 
+  for IAIK-CMS. 
+<p>Per default IAIK-CMS is configured to look if the IAIK cryptography provider 
+  is available. If yes, it uses the IaikProvider as SecurityProvider. If not it 
+  uses the default SecurityProvider implementation. Thus if you want to use the 
+  IAIK provider you do not have to take any care about the SecurityProvider setting. 
+  However, if you do not want to use the IAIK provider for some reasons (e.g. 
+  you require a specific, e.g. smartcard depending, handling for some tasks) you 
+  have two options: 
+<ol>
+  <li>Use the default SecurityProvider implementation by setting it as SecurityProvider 
+    to be used: 
+    <pre>     SecurityProvider.setSecurityProvider(new SecurityProvider());
+     </pre>
+  <li>Implement your own SecurityProvider for the required cryptographic tasks 
+    and install it as SecurityProvider to be used: 
+    <pre>     MySecurityProvider mySecurityProvider = ...;
+     SecurityProvider.setSecurityProvider(mySecurityProvider);
+     </pre>
+  </li>
+</ol>
+
+If choosing the second option from above basically you may follow one of two
+ways for implementing your own SecurityProvider:
+<ol>
+  <li>You want to mainly use the IAIK JCE as a cryptography provider and use
+    another provider just for a few algorithms. For example, you want to use a
+    smartcard requiring a particular handling for RSA signature calculatuion.
+  <li>You do not want to use the IAIK JCE at all and use only some other
+    provider.</li>
+</ol>
+
+In the first case you may extend the IaikProvider class, e.g.: 
+<pre> public class MySecurityProvider extends IaikProvider {
+
+
+   ...
+   
+
+   public byte[] calculateSignatureFromSignedAttributes(AlgorithmID signatureAlgorithm, 
+                                                        AlgorithmID digestAlgorithm, 
+                                                        PrivateKey privateKey, 
+                                                        byte[] signedAttributes) 
+
+     throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+     
+
+     byte[] signatureValue = null;
+     // get the implementation name: RSA? (note that CMS indicates rsaEncryption as Signature algorithm)
+     String implementationName = signatureAlgorithm.getImplementationName();
+     if (implementationName == IMPLEMENTATION_NAME_RSA) {
+       // let the smartcard calculate the signature value
+       byte[] signatureValue = ...;
+
+     } else {
+       signatureValue = super.calculateSignatureFromSignedAttributes(signatureAlgorithm, 
+                                                                     digestAlgorithm, 
+                                                                     privateKey, 
+                                                                     signedAttributes);
+     } 
+     return signatureValue;
+   } 
+ }
+ </pre>
+
+In the second case, if you want to use a different provider alltogether and not 
+use the IAIK-JCE at all (for whatever reason ;-) you may start with the SecurityProvider 
+class and override those methods where you cannot use the default implementation. 
+<p>
+
+Note that you also may install a SecurityProvider per CMS object. To, for instance,
+use one specific SecurityProvider only for one specific <code>SignedDataStream</code>
+ 
+object, you may use its  <code>setSecurityProvider</code>   method, e.g.:
+<pre>
+   MySecurityProvider myProvider = ...;
+   SignedDataStream signedData = ...;
+   signedData.setSecurityProvider(myProvider);
+</pre>
+
+Now <i>myProvider</i> will be used for any cryptographic operation required by 
+this one specific SignedDataStream object. If any of the CMS objects (SignerInfos) 
+belonging to this SignedDataStream object needs a SecurityProvider, it will use 
+<i>myProvider</i>, too; except for those, who already have installed their own 
+SecurityProvider. However, SecurityProviders are only forwarded from "higher" 
+to "lower" objects, e.g.: if a SignedData(Stream) object has its own SecurityProvider 
+it forwards it to its SignerInfos objects (as long as they do not already have 
+their own SecurityProviders), but if a SignerInfo with its own SecurityProvider 
+is added to a SignedData(Stream) object that has no SecurityProvider installed, 
+the SecurityProvider of the SignerInfo is not forwarded to the SignedData(Stream) 
+object. In this case the SignedDataStream object will use the default, system-wide 
+installed SecurityProvider (which should be available in any case). <br>
+If you want to use a specific SecurityProvider for a specific CMS object please look at the Javadoc if you
+may add it by using method <code>setSecurityProvider</code>   (if present), or if you already
+may install it via the constructor (which may required when, for instance, parsing a CMS object
+that needs cryptographic engines already during the parsing procedure (e.g. for digest calculation
+initialization when parsing a SignedData object)).
+
+<p>&nbsp;</p>
+<DIV align=center>
+  <CENTER>
+   <TABLE cellPadding=2 border=0>
+    <TR>
+     <TD><IMG src="images/arrow.gif"</TD>
+     <TD>Back to <A href="Readme.html">Readme</A></TD>
+    </TR>
+   </TABLE>
+  </CENTER>
+</DIV>
+    
+
+<HR>
+
+<P align=center>Copyright (c) 2002 by&nbsp;IAIK. Copyright (C) 2003 - 2016 Stiftung SIC. All rights reserved.</P>
+<P align=center>&nbsp;</P>
+</BODY>
+</HTML>

@@ -1,0 +1,3604 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+  <HEAD>
+    <TITLE>IAIK JCE Provider for PKCS#11</TITLE>
+    <META NAME="Keywords" CONTENT="IAIK, Java, Security, Hardware, JCA, JCE, PKCS#11, Cryptoki, Signature, Encrpytion, Decryption, Cryptography">
+    <META NAME="Description" CONTENT="A Java JCA/JCE Provider that uses PKCS#11 compatible Cryptographic Tokens">
+  </HEAD>
+  <BODY>
+    <TABLE BORDER=0>
+      <TR>
+        <TD><IMG SRC="images/siclogo.jpg" ALT="SIC Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD><IMG SRC="images/iaik_logo.gif" ALT="IAIK Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD>
+          <H2>Features of the IAIK JCE Provider for PKCS#11</H2>
+        </TD>
+      </TR>
+    </TABLE>
+
+    <H2>Introduction</H2>
+      <p>The IAIK JCE Provider for PKCS#11 provides access to various types of cryptographic algorithms. This includes ciphers, hash algorithms, key agreement algorithms, MACs and signature algorithms. Moreover, it provides access to key and key-pair generators for key generation and key factories for importing end exporting keys to and from other providers.
+      <p>The provider does not implement these algorithms itself. It rather converts the command parameters into structures suitable for PKCS#11 modules and forwards the calls to an underlying PKCS#11 token. A PKCS#11 token can be a smart card or a hardware security module. There are some exceptions to this rule. For signature algorithms there are two different types in general. One does the hashing in software inside the provider and sends the final hash for signing to the token. The other does the complete calculation, including the hash, on the token. The first type will have performance advantages, whereby the second may have security advantages - it may be harder to attack.
+      <p>The JCA key objects of this provider only contain key material that is extractable from the token. If some key material of PKCS#11 key objects in not extractable, which almost always holds for private keys, the key objects of this provider do not hold any sensitive key material. This is the main reason why key objects of this provider cannot be used with signature and cipher engines of software JCE providers and vice versa. However, if the key material is extractable, the application can use the key factories of the PKCS#11 provider to generate key specifications. Using this key specifications, the application can use the key factories of another provider to generate keys suitable for the other provider. Have a look at the key factory samples. Some key types provide their key material directly, if extractable from the token; for example RSA, DSA, DH and secret keys.
+
+    <H2><a name="RegistrationOfAlgorithms">Registration of Algorithms</a></H2>
+      <p>By default, the IAIK JCE Provider for PKCS#11 always registers all algorithms listed in the feature description of the documentation regardless of the supported features of any present token. One reason for this behavior is that SUN's JCE architecture does not support removing an already registered algorithm. Thus, it would not be possible to adapt the list of algorithms on demand. The mechanisms that the provider can access through PKCS#11 depend on the token currently present, and this may change at any time.
+      <p>However, the application can modify the list of algorithms that the provider registers. The provider simply reads a properties file from the CLASSPATH and registers the algorithms as listed in this file. The name of this properties file can be configured with the <code>ALGORITHM_PROPERTIES</code> entry in the provider's configuration properties. This file must be in the CLASSPATH.
+      The default file is <code>iaik.pkcs.pkcs11.provider.IAIKPkcs11Algorithm.properties</code>, which is included in the provider's jar file. It contains all algorithms listed below.
+      If the application provides an own algorithms file, the provider will use this file instead of the default file.
+      <p>A configuration option allows to modify the list of supported algorithms dynamically. This option can be enabled by setting the property with the key CHECK_MECHANISM_SUPPORTED. If this feature is enabled, the provider reads the list of supported algorithms as configured with the <code>ALGORITHM_PROPERTIES</code>, but it does not pass any algorithm to the JCA/JCE framework, if the currently present token does not support the required PKCS#11 mechanism or if there is currently no token present. Notice that this feature may not work as expected with every Java runtime environment; for example, most SUN VMs cache the algorithms of a provider internally in their JCA/JCE framework. This means, if the VM uses an algorithm of an provider, it expects that this algorithm is available at any time and does not request this algorithm from the provider, but rather takes the implementation class out of its own cache.
+
+    <H2>Supported Algorithms</H2>
+    <p>The following table shows the supported algorithms. For each JCA and JCE algorithm it shows the underlying PKCS#11 mechanism and the used functions of the configured PKCS#11 module.
+
+    <ul>
+      <li><a href="#MessageDigestAlgorithms">Message Digest Algorithms</a></li>
+      <li><a href="#DigitalSignatureAlgorithms">Digital Signature Algorithms</a></li>
+      <li><a href="#KeyPairGenerators">Key-Pair Generators</a></li>
+      <li><a href="#KeyFactories">Key Factories</a></li>
+      <li><a href="#Ciphers">Ciphers</a></li>
+      <li><a href="#KeyAgreementAlgorithms">Key Agreement Algorithms</a></li>
+      <li><a href="#MACs">Message Authentication Codes (MACs)</a></li>
+      <li><a href="#KeyGenerators">Key Generators</a></li>
+      <li><a href="#SecretKeyFactories">Secret Key Factories</a></li>
+      <li><a href="#KeyStores">Key Stores</a></li>
+      <li><a href="#SecureRandom">Secure Random</a></li>
+    </ul>
+
+
+    <table border=1 width="100%">
+      <tr>  
+				<th colspan = 4 bgcolor = "#AAABBB" align = center><b>JCA and JCE Algorithms</b></th>
+			</tr>
+				
+      <tr>
+        <td colspan = 4 bgcolor = "#AEAEAE">
+          <b><a name="MessageDigestAlgorithms">Message Digest Algorithms</a></b>
+          <br></br>
+          <code>MessageDigest md = MessageDigest.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, &lt;provider name&gt;);</code>
+        </td>
+      </tr>
+
+      <tr>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Mechanism</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Functions</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/hashes/Md2.html">
+            <CODE>Md2</CODE>
+          </A>
+          <p>(Message Digest 2)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_MD2 of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_DigestInit
+          <br>C_DigestUpdate
+          <br>C_DigestFinal
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/hashes/Md5.html">
+            <CODE>Md5</CODE>
+          </A>
+          <p>(Message Digest 5)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_MD5 of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_DigestInit
+          <br>C_DigestUpdate
+          <br>C_DigestFinal
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/hashes/Sha1.html">
+            <CODE>SHA-1</CODE>
+          </A>
+          <p>(Secure Hash Algorithm)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA_1 of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_DigestInit
+          <br>C_DigestUpdate
+          <br>C_DigestFinal
+        </td>
+        <td>
+          <p>SHA
+          <br>SHA1
+          <br>1.3.14.3.2.18
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/hashes/Sha256.html">
+            <CODE>SHA-256</CODE>
+          </A>
+          <p>(Secure Hash Algorithm)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA256 of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_DigestInit
+          <br>C_DigestUpdate
+          <br>C_DigestFinal
+        </td>
+        <td>
+          <p>SHA256
+          <br>2.16.840.1.101.3.4.2.1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/hashes/Sha384.html">
+            <CODE>SHA-384</CODE>
+          </A>
+          <p>(Secure Hash Algorithm)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA384 of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_DigestInit
+          <br>C_DigestUpdate
+          <br>C_DigestFinal
+        </td>
+        <td>
+          <p>SHA384
+          <br>2.16.840.1.101.3.4.2.2
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/hashes/Sha512.html">
+            <CODE>SHA-512</CODE>
+          </A>
+          <p>(Secure Hash Algorithm)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA512 of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_DigestInit
+          <br>C_DigestUpdate
+          <br>C_DigestFinal
+        </td>
+        <td>
+          <p>SHA512
+          <br>2.16.840.1.101.3.4.2.3
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/hashes/RipeMd128.html">
+            <CODE>RipeMd128</CODE>
+          </A>
+          <p>(RACE Integrity Primitives Evaluation Message Digest 128)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RIPEMD128 of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_DigestInit
+          <br>C_DigestUpdate
+          <br>C_DigestFinal
+        </td>
+        <td>
+          <p>RipeMd-128
+          <br>1.3.36.3.2.2
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/hashes/RipeMd160.html">
+            <CODE>RipeMd160</CODE>
+          </A>
+          <p>(RACE Integrity Primitives Evaluation Message Digest 160)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RIPEMD160 of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_DigestInit
+          <br>C_DigestUpdate
+          <br>C_DigestFinal
+        </td>
+        <td>
+          <p>RipeMd-160
+          <br>1.3.36.3.2.1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/hashes/FastHash.html">
+            <CODE>FastHash</CODE>
+          </A>
+          <p>(US Government's Fast Hash Algorithm)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_FASTHASH of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_DigestInit
+          <br>C_DigestUpdate
+          <br>C_DigestFinal
+        </td>
+        <td></td>
+      </tr>
+
+
+      <tr>
+        <td colspan = 4 bgcolor = "#AEAEAE">
+          <b><a name="DigitalSignatureAlgorithms">Digital Signature Algorithms</a></b>
+          <br></br>
+          <code>Signature sig = Signature.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, &lt;provider name&gt;);</code>
+        </td>
+      </tr>
+
+      <tr>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Mechanism</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Functions</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalMd2RsaSignature.html">
+            <CODE>MD2/RSA</CODE>
+          </A>
+          <p>(MD2 [in software] with RSA encryption [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>MD2withRSA
+          <br>1.2.840.113549.1.1.2
+          <br>ExternalMD2/RSA
+          <br>ExternalMD2withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalMd5RsaSignature.html">
+            <CODE>MD5/RSA</CODE>
+          </A>
+          <p>(MD5 [in software] with RSA encryption [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>MD5withRSA
+          <br>1.2.840.113549.1.1.4
+          <br>ExternalMD5/RSA
+          <br>ExternalMD5withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalSha1RsaSignature.html">
+            <CODE>SHA/RSA</CODE>
+          </A>
+          <p>(SHA-1 [in software] with RSA encryption [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-1/RSA
+          <br>SHAwithRSA
+          <br>SHA1withRSA
+          <br>1.2.840.113549.1.1.5
+          <br>1.3.14.3.2.29
+          <br>ExternalSHA/RSA
+          <br>ExternalSHAwithRSA
+          <br>ExternalSHA1withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalSha256RsaSignature.html">
+            <CODE>SHA256/RSA</CODE>
+          </A>
+          <p>(SHA-256 [in software] with RSA encryption [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-256/RSA
+          <br>SHA256withRSA
+          <br>1.2.840.113549.1.1.11
+          <br>ExternalSHA256/RSA
+          <br>ExternalSHA256withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalSha384RsaSignature.html">
+            <CODE>SHA384/RSA</CODE>
+          </A>
+          <p>(SHA-384 [in software] with RSA encryption [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-384/RSA
+          <br>SHA384withRSA
+          <br>1.2.840.113549.1.1.12
+          <br>ExternalSHA384/RSA
+          <br>ExternalSHA384withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalSha512RsaSignature.html">
+            <CODE>SHA512/RSA</CODE>
+          </A>
+          <p>(SHA-512 [in software] with RSA encryption [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-512/RSA
+          <br>SHA512withRSA
+          <br>1.2.840.113549.1.1.13
+          <br>ExternalSHA512/RSA
+          <br>ExternalSHA512withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalSha1RsaX931Signature.html">
+            <CODE>SHA/RSA/X9.31</CODE>
+          </A>
+          <p>(SHA-1 [in software] with X9.31 RSA signature [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_X9_31 of the underlying PKCS#11 module. The hash is calculated in software inside the provider. X9.31 is an ANSI standard.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-1/RSA/X9.31
+          <br>SHAwithX9_31RSA
+          <br>SHA1withX9_31RSA
+          <br>ExternalSHA/RSA/X9.31
+          <br>ExternalSHAwithX9_31RSA
+          <br>ExternalSHA1withX9_31RSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalSha1RsaPssSignature.html">
+            <CODE>SHA/RSA/PSS</CODE>
+          </A>
+          <p>(SHA-1 [in software] with RSA signature and PSS padding [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS_PSS of the underlying PKCS#11 module. The hash is calculated in software inside the provider. The PSS padding is defined in PKCS#1 version 2.1.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-1/RSA/PSS
+          <br>SHAwithPssRSA
+          <br>SHA1withPssRSA
+          <br>SHAwithRSAandMGF1
+          <br>SHA1withRSAandMGF1
+          <br>ExternalSHA/RSA/PSS
+          <br>ExternalSHAwithPssRSA
+          <br>ExternalSHA1withPssRSA
+          <br>ExternalSHAwithRSAandMGF1
+          <br>ExternalSHA1withRSAandMGF1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalSha256RsaPssSignature.html">
+            <CODE>SHA256/RSA/PSS</CODE>
+          </A>
+          <p>(SHA-256 [in software] with RSA signature and PSS padding [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS_PSS of the underlying PKCS#11 module. The hash is calculated in software inside the provider. The PSS padding is defined in PKCS#1 version 2.1.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-256/RSA/PSS
+          <br>SHA256withPssRSA
+          <br>SHA256withRSAandMGF1
+          <br>ExternalSHA256/RSA/PSS
+          <br>ExternalSHA256withPssRSA
+          <br>ExternalSHA256withRSAandMGF1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalSha384RsaPssSignature.html">
+            <CODE>SHA384/RSA/PSS</CODE>
+          </A>
+          <p>(SHA-384 [in software] with RSA signature and PSS padding [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS_PSS of the underlying PKCS#11 module. The hash is calculated in software inside the provider. The PSS padding is defined in PKCS#1 version 2.1.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-384/RSA/PSS
+          <br>SHA384withPssRSA
+          <br>SHA384withRSAandMGF1
+          <br>ExternalSHA384/RSA/PSS
+          <br>ExternalSHA384withPssRSA
+          <br>ExternalSHA384withRSAandMGF1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalSha512RsaPssSignature.html">
+            <CODE>SHA512/RSA/PSS</CODE>
+          </A>
+          <p>(SHA-512 [in software] with RSA signature and PSS padding [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS_PSS of the underlying PKCS#11 module. The hash is calculated in software inside the provider. The PSS padding is defined in PKCS#1 version 2.1.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-512/RSA/PSS
+          <br>SHA512withPssRSA
+          <br>SHA512withRSAandMGF1
+          <br>ExternalSHA512/RSA/PSS
+          <br>ExternalSHA512withPssRSA
+          <br>ExternalSHA512withRSAandMGF1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalRipeMd128RsaSignature.html">
+            <CODE>RipeMd128/RSA</CODE>
+          </A>
+          <p>(RipeMd128 [in software] with RSA encryption [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>RipeMd128withRSA
+          <br>RipeMd-128/RSA
+          <br>1.3.36.3.3.1.3
+          <br>ExternalRipeMd128/RSA
+          <br>ExternalRipeMd128withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalRipeMd160RsaSignature.html">
+            <CODE>RipeMd160/RSA</CODE>
+          </A>
+          <p>(RipeMd160 [in software] with RSA encryption [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>RipeMd160withRSA
+          <br>RipeMd-160/RSA
+          <br>1.3.36.3.3.1.2
+          <br>ExternalRipeMd160/RSA
+          <br>ExternalRipeMd160withRSA
+        </td>
+      </tr>
+      
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/ExternalRipeMd256RsaSignature.html">
+            <CODE>RipeMd256/RSA</CODE>
+          </A>
+          <p>(RipeMd256 [in software] with RSA encryption [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>RipeMd256withRSA
+          <br>RipeMd-256/RSA
+          <br>1.3.36.3.3.1.4
+          <br>ExternalRipeMd256/RSA
+          <br>ExternalRipeMd256withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/dsa/ExternalSha1DsaSignature.html">
+            <CODE>DSA</CODE>
+          </A>
+          <p>(SHA-1 [in software] with DSA [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_DSA of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA/DSA
+          <br>SHA-1/DSA
+          <br>SHAwithDSA
+          <br>SHA1withDSA
+          <br>1.3.14.3.2.13
+          <br>1.3.14.3.2.27
+          <br>1.2.840.10040.4.3
+          <br>ExternalSHA/DSA
+        </td>
+      </tr>
+      
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/dsa/ExternalSha256DsaSignature.html">
+            <CODE>DSA</CODE>
+          </A>
+          <p>(SHA-256 [in software] with DSA [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_DSA of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA256/DSA
+          <br>SHA-256/DSA
+          <br>SHA256withDSA
+          <br>2.16.840.1.101.3.4.3.2
+          <br>ExternalSHA256/DSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/ecdsa/ExternalSha1EcdsaSignature.html">
+            <CODE>SHA/ECDSA</CODE>
+          </A>
+          <p>(SHA-1 [in software] with EC-DSA [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_ECDSA of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>ECDSA
+          <br>SHA-1/ECDSA
+          <br>SHAwithECDSA
+          <br>SHA1withECDSA
+          <br>ecdsa-with-SHA1
+          <br>EcdsaWithSHA1
+          <br>1.2.840.10045.4.1
+          <br>ExternalSHA/ECDSA
+        </td>
+      </tr>
+      
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/ecdsa/ExternalSha224EcdsaSignature.html">
+            <CODE>SHA224/ECDSA</CODE>
+          </A>
+          <p>(SHA-224 [in software] with EC-DSA [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_ECDSA of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-224/ECDSA
+          <br>SHA224withECDSA
+          <br>ecdsa-with-SHA224
+          <br>EcdsaWithSHA224
+          <br>1.2.840.10045.4.3.1
+          <br>ExternalSHA224/ECDSA
+        </td>
+      </tr>
+      
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/ecdsa/ExternalSha256EcdsaSignature.html">
+            <CODE>SHA256/ECDSA</CODE>
+          </A>
+          <p>(SHA-256 [in software] with EC-DSA [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_ECDSA of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-256/ECDSA
+          <br>SHA256withECDSA
+          <br>ecdsa-with-SHA256
+          <br>EcdsaWithSHA256
+          <br>1.2.840.10045.4.3.2
+          <br>ExternalSHA256/ECDSA
+        </td>
+      </tr>
+      
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/ecdsa/ExternalSha384EcdsaSignature.html">
+            <CODE>SHA384/ECDSA</CODE>
+          </A>
+          <p>(SHA-384 [in software] with EC-DSA [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_ECDSA of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-384/ECDSA
+          <br>SHA384withECDSA
+          <br>ecdsa-with-SHA384
+          <br>EcdsaWithSHA384
+          <br>1.2.840.10045.4.3.3
+          <br>ExternalSHA384/ECDSA
+        </td>
+      </tr>
+      
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/ecdsa/ExternalSha512EcdsaSignature.html">
+            <CODE>SHA512/ECDSA</CODE>
+          </A>
+          <p>(SHA-512 [in software] with EC-DSA [on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_ECDSA of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>SHA-512/ECDSA
+          <br>SHA512withECDSA
+          <br>ecdsa-with-SHA512
+          <br>EcdsaWithSHA512
+          <br>1.2.840.10045.4.3.4
+          <br>ExternalSHA512/ECDSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/InternalMd2RsaSignature.html">
+            <CODE>InternalMD2/RSA</CODE>
+          </A>
+          <p>(MD2 with RSA encryption [both on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_MD2_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated on the token.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <p>InternalMD2withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/InternalMd5RsaSignature.html">
+            <CODE>InternalMD5/RSA</CODE>
+          </A>
+          <p>(MD5 with RSA encryption [both on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_MD5_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated on the token.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <p>InternalMD5withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/InternalSha1RsaSignature.html">
+            <CODE>InternalSHA/RSA</CODE>
+          </A>
+          <p>(SHA-1 with RSA encryption [both on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA1_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated on the token.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <p>InternalSHAwithRSA
+          <br>InternalSHA1withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/nternalSha256RsaSignature.html">
+            <CODE>InternalSHA256/RSA</CODE>
+          </A>
+          <p>(SHA-256 with RSA encryption [both on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA256_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated on the token.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <br>InternalSHA256withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/InternalSha384RsaSignature.html">
+            <CODE>InternalSHA384/RSA</CODE>
+          </A>
+          <p>(SHA-384 with RSA encryption [both on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA384_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated on the token.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <br>InternalSHA384withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/InternalSha512RsaSignature.html">
+            <CODE>InternalSHA512/RSA</CODE>
+          </A>
+          <p>(SHA-512 with RSA encryption [both on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA512_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated on the token.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <br>InternalSHA512withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/InternalSha1RsaX931Signature.html">
+            <CODE>InternalSHA/RSA/X9.31</CODE>
+          </A>
+          <p>(SHA-1 with X9.31 RSA signature [both on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA1_RSA_X9_31 of the underlying PKCS#11 module. The hash is calculated on the token. X9.31 is an ANSI standard.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <p>InternalSHAwithX9_31RSA
+          <br>InternalSHA1withX9_31RSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/InternalSha1RsaPssSignature.html">
+            <CODE>InternalSHA/RSA/PSS</CODE>
+          </A>
+          <p>(SHA-1 with RSA signing and PSS padding [all on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA1_RSA_PKCS_PSS of the underlying PKCS#11 module. The hash is calculated on the token. PSS padding is defined in PKCS#1 version 2.1.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <p>InternalSHAwithPssRSA
+          <br>InternalSHA1withPssRSA
+          <p>InternalSHAwithRSAandMGF1
+          <br>InternalSHA1withRSAandMGF1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/InternalSha256RsaPssSignature.html">
+            <CODE>InternalSHA256/RSA/PSS</CODE>
+          </A>
+          <p>(SHA-256 with RSA signing and PSS padding [all on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA256_RSA_PKCS_PSS of the underlying PKCS#11 module. The hash is calculated on the token. PSS padding is defined in PKCS#1 version 2.1.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <br>InternalSHA256withPssRSA
+          <br>InternalSHA256withRSAandMGF1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/InternalSha384RsaPssSignature.html">
+            <CODE>InternalSHA384/RSA/PSS</CODE>
+          </A>
+          <p>(SHA-384 with RSA signing and PSS padding [all on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA384_RSA_PKCS_PSS of the underlying PKCS#11 module. The hash is calculated on the token. PSS padding is defined in PKCS#1 version 2.1.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <br>InternalSHA384withPssRSA
+          <br>InternalSHA384withRSAandMGF1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/InternalSha512RsaPssSignature.html">
+            <CODE>InternalSHA512/RSA/PSS</CODE>
+          </A>
+          <p>(SHA-512 with RSA signing and PSS padding [all on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_SHA512_RSA_PKCS_PSS of the underlying PKCS#11 module. The hash is calculated on the token. PSS padding is defined in PKCS#1 version 2.1.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <br>InternalSHA512withPssRSA
+          <br>InternalSHA512withRSAandMGF1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/InternalRipeMd128RsaSignature.html">
+            <CODE>InternalRipeMd128/RSA</CODE>
+          </A>
+          <p>(RipeMd128 with RSA encryption [both on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RIPEMD128_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated on the token.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <p>InternalRipeMd128withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/InternalRipeMd160RsaSignature.html">
+            <CODE>InternalRipeMd160/RSA</CODE>
+          </A>
+          <p>(RipeMd160 with RSA encryption [both on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RIPEMD160_RSA_PKCS of the underlying PKCS#11 module. The hash is calculated on the token.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td>
+          <p>InternalRipeMd160withRSA
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/dsa/InternalSha1DsaSignature.html">
+            <CODE>InternalSHA/DSA</CODE>
+          </A>
+          <p>(SHA-1 with DSA [both on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_DSA_SHA1 of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/ecdsa/InternalSha1EcdsaSignature.html">
+            <CODE>InternalSHA/ECDSA</CODE>
+          </A>
+          <p>(SHA-1 with EC-DSA [both on the token])
+        </td>
+        <td valign = "top">Uses the mechanism CKM_ECDSA_SHA1 of the underlying PKCS#11 module. The hash is calculated in software inside the provider.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_SignUpdate
+          <br>C_SignFinal
+          <br>C_VerifyInit
+          <br>C_VerifyUpdate
+          <br>C_VerifyFinal
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/RsaSignature.html">
+            <CODE>RawRSA</CODE>
+          </A>
+          <p>(raw RSA encryption [on the token] without hashing and without padding)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_X_509 of the underlying PKCS#11 module. This algorithm does not calculate a hash at all, it just signs what it gets. The input data must already be appropriately padded; e.g. it must have the length of the modulus of the used key but if interpreted as an integer with most significant byte first, it must be less than the modulus.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>
+          <p>RawRSA/X.509
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/RsaPkcs1Signature.html">
+            <CODE>RawRSA/PKCS1</CODE>
+          </A>
+          <p>(raw RSA encryption [on the token] without hashing but with PKCS#1 padding)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS of the underlying PKCS#11 module. This algorithm does not calculate a hash at all, it just signs what it gets. The application must provide a hash value wrapped in a DigestInfo object as input.
+        The PKCS padding is defined in PKCS#1 version 1.5.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td>RSAforSSL</td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/RsaIso9796Signature.html">
+            <CODE>RawRSA/ISO9796</CODE>
+          </A>
+          <p>(raw RSA encryption [on the token] without hashing but with ISO/IEC 9796 padding)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS of the underlying PKCS#11 module. This algorithm does not calculate a hash at all, it just signs what it gets. The application must provide a hash value as input.
+        The ISO/IEC 9796 is an ISO and IEC standard.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/RsaPssSignature.html">
+            <CODE>RawRSA/PSS</CODE>
+          </A>
+          <p>(raw RSA encryption [on the token] without hashing but with PSS padding)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS_PSS of the underlying PKCS#11 module. This algorithm does not calculate a hash at all, it just signs what it gets. The application must provide a hash value as input.
+        The PSS padding is defined in PKCS#1 version 2.1.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/rsa/RsaX931Signature.html">
+            <CODE>RawRSA/X9.31</CODE>
+          </A>
+          <p>(raw RSA encryption [on the token] according to X9.31 without hashing but partial padding)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_X9_31 of the underlying PKCS#11 module. This algorithm does not calculate a hash. The application must provide a hash value with the appropriate X9.31 trailer as input. For instance, the trailer for SHA-1 is 0x33 0xCC. The input to this signature algorithm will consist of 22 bytes - 20 bytes SHA-1 hash and two bytes trailer (0x33 0xCC). X9.31 is an ANSI standard.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/dsa/DsaSignature.html">
+            <CODE>RawDSA</CODE>
+          </A>
+          <p>(raw DSA signing [on the token] without hashing)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_DSA of the underlying PKCS#11 module. This algorithm does not calculate a hash at all, it just signs what it gets. The input data must be 20 bytes in length; e.g. a SHA-1 hash value.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/signatures/ecdsa/EcdsaSignature.html">
+            <CODE>RawECDSA</CODE>
+          </A>
+          <p>(raw EC-DSA signing [on the token] without hashing)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_ECDSA of the underlying PKCS#11 module. This algorithm does not calculate a hash at all, it just signs what it gets.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyInit
+          <br>C_Verify
+        </td>
+        <td></td>
+      </tr>
+
+
+      <tr>
+        <td colspan = 4 bgcolor = "#AEAEAE">
+          <b><a name="KeyPairGenerators">Key-Pair Generators</a></b>
+          <br></br>
+          <code>KeyPairGenerator keyGen = KeyPairGenerator.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, &lt;provider name&gt;);</code>
+        </td>
+      </tr>
+
+      <tr>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Mechanism</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Functions</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keypairgenerators/RsaKeyPairGenerator.html">
+            <CODE>RSA</CODE>
+          </A>
+          <p>(RSA Key-Pair Generator)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_PKCS_KEY_PAIR_GEN of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKeyPair
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keypairgenerators/RsaX931KeyPairGenerator.html">
+            <CODE>RSA/X9.31</CODE>
+          </A>
+          <p>(RSA Key-Pair Generator)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_RSA_X9_31_KEY_PAIR_GEN of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKeyPair
+        </td>
+        <td>
+          <p>SHA-1/RSA/X9.31
+          <br>SHAwithX9_31RSA
+          <br>SHA1withX9_31RSA
+          <br>PKCS11/SHA/RSA/X9.31</p>
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keypairgenerators/DsaKeyPairGenerator.html">
+            <CODE>DSA</CODE>
+          </A>
+          <p>(DSA Key-Pair Generator)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_DSA_KEY_PAIR_GEN of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKeyPair
+        </td>
+        <td>
+          <p>1.3.14.3.2.12
+          <br>1.2.840.10040.4.1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keypairgenerators/EcdsaKeyPairGenerator.html">
+            <CODE>ECDSA</CODE>
+          </A>
+          <p>(EC-DSA Key-Pair Generator)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_ECDSA_KEY_PAIR_GEN (CKM_EC_KEY_PAIR_GEN) of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKeyPair
+        </td>
+        <td>
+          <p>EC
+          <br>ECDH
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keypairgenerators/DhKeyPairGenerator.html">
+            <CODE>DH</CODE>
+          </A>
+          <p>(Diffie-Hellman Key-Pair Generator)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_DH_PKCS_KEY_PAIR_GEN of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKeyPair
+        </td>
+        <td>
+          <p>DiffieHellman
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keypairgenerators/X942DhKeyPairGenerator.html">
+            <CODE>DH/X9.42</CODE>
+          </A>
+          <p>(X9.42 Diffie-Hellman Key-Pair Generator)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_X9_42_DH_KEY_PAIR_GEN of the underlying PKCS#11 module. X9.42 is an ANSI standard.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKeyPair
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keypairgenerators/KeaKeyPairGenerator.html">
+            <CODE>KEA</CODE>
+          </A>
+          <p>(NIST's Key Exchange Algorithm Key-Pair Generator)
+        </td>
+        <td valign = "top">Uses the mechanism CKM_KEA_KEY_PAIR_GEN of the underlying PKCS#11 module.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKeyPair
+        </td>
+        <td></td>
+      </tr>
+
+
+      <tr>
+        <td colspan = 4 bgcolor = "#AEAEAE">
+          <b><a name="KeyFactories">Key Factories</a></b>
+          <br></br>
+          <code>KeyFactory keyFac = KeyFactory.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, &lt;provider name&gt;);</code>
+        </td>
+      </tr>
+
+      <tr>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Mechanism</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Functions</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/RsaKeyFactory.html">
+            <CODE>RSA</CODE>
+          </A>
+          <p>(RSA Key Factory)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td>
+          <p>1.2.840.113549.1.1.1
+          <br>1.2.840.113549.1.1.2
+          <br>1.2.840.113549.1.1.4
+          <br>1.2.840.113549.1.1.5
+          <br>1.3.36.3.3.1.1.1
+          <br>1.3.14.3.2.29
+          <br>1.3.36.3.3.1.2
+          <br>1.3.36.3.3.1.3
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/DsaKeyFactory.html">
+            <CODE>DSA</CODE>
+          </A>
+          <p>(DSA Key Factory)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td>
+          <p>1.3.14.3.2.12
+          <br>1.2.840.10040.4.1
+          <br>1.3.14.3.2.13
+          <br>1.3.14.3.2.27
+          <br>1.2.840.10040.4.3
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/DhKeyFactory.html">
+            <CODE>DH</CODE>
+          </A>
+          <p>(Diffie-Hellman Key Factory)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td>
+          <p>DiffieHellman
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/EcDsaKeyFactory.html">
+            <CODE>ECDSA</CODE>
+          </A>
+          <p>(Elliptic Curve Key Factory)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td>
+            <p>EC
+        		<br>ECDH
+        </td>
+      </tr>
+
+
+      <tr>
+        <td colspan = 4 bgcolor = "#AEAEAE">
+          <b>
+            <a name="Ciphers">Ciphers</a>
+            (<a href="#paddings">1</a>)
+          </b>
+          <br></br>
+          <code>Cipher cipher = Cipher.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, &lt;provider name&gt;);</code>
+        </td>
+      </tr>
+
+      <tr>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Mechanism</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Functions</b><br>(<a href="#cipherfunctions">2</a>)</td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/ciphers/RsaCipher.html">
+            <CODE>RSA</CODE>
+          </A>
+          <p>(Rivest Shamir Adleman Cipher)
+        </td>
+        <td valign = "top">
+          This cipher supports ECB mode only. It uses different mechanisms of the underlying PKCS#11 module denpending on the set padding. Used PKCS#11 mechanisms are:
+          <ul>
+            <li>CKM_RSA_X_509 (with padding: NoPadding and RawX509; e.g. RSA/ECB/NoPadding)</li>
+            <li>CKM_RSA_PKCS (with padding: Pkcs1Padding; e.g. RSA/ECB/Pkcs1Padding)</li>
+            <li>CKM_RSA_PKCS_OAEP (with padding: OaepPadding and OAEP; e.g. RSA/ECB/OaepPadding)</li>
+            <li>CKM_RSA_9796 (with padding: ISO9796Padding and ISO9796; e.g. RSA/ECB/ISO9796Padding)</li>
+          </ul>
+          If this cipher is used in encryption mode with a private key, 
+          it uses the C_SignInit and C_Sign of the PKCS#11 module; 
+          i.e. it behaves like a cipher engine to the application but like a signature engine to the token.
+          The situation is similar for public keys. With a public key used for decryption,
+          this class uses C_VerifyRecoverInit and C_VerifyRecover of the PKCS#11 module.
+        </td>
+        <td valign = "top">
+          <p>C_EncryptInit
+          <br>C_Encrypt
+          <br>C_DecryptInit
+          <br>C_Decrypt
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_VerifyRecoverInit
+          <br>C_VerifyRecover
+          <br>C_Unwrap
+          <br>C_Wrap
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/ciphers/DesCipher.html">
+            <CODE>DES</CODE>
+          </A>
+          <p>(Data Encryption Standard Cipher)
+        </td>
+        <td valign = "top">
+          This cipher supports ECB and CBC mode. It uses different mechanisms of the underlying PKCS#11 module denpending on the set padding. Used PKCS#11 mechanisms are:
+          <ul>
+            <li>CKM_DES_ECB (with padding: NoPadding; e.g. DES/ECB/NoPadding)</li>
+            <li>CKM_DES_CBC (with padding: NoPadding; e.g. DES/CBC/NoPadding)</li>
+            <li>CKM_DES_CBC_PAD (with padding: Pkcs5Padding; e.g. DES/CBC/Pkcs5Padding)</li>
+          </ul>
+        </td>
+        <td valign = "top">
+          <p>C_EncryptInit
+          <br>C_Encrypt
+          <br>C_EncryptUpdate
+          <br>C_EncryptFinal
+          <br>C_DecryptInit
+          <br>C_Decrypt
+          <br>C_DecryptUpdate
+          <br>C_DecryptFinal
+          <br>C_Unwrap
+          <br>C_Wrap
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/ciphers/DesEdeCipher.html">
+            <CODE>DESede</CODE>
+          </A>
+          <p>(Triple DES Cipher)
+        </td>
+        <td valign = "top">
+          This cipher supports ECB and CBC mode. It uses different mechanisms of the underlying PKCS#11 module denpending on the set padding. Used PKCS#11 mechanisms are:
+          <ul>
+            <li>CKM_DES3_ECB (with padding: NoPadding; e.g. DESede/ECB/NoPadding)</li>
+            <li>CKM_DES3_CBC (with padding: NoPadding; e.g. DESede/CBC/NoPadding)</li>
+            <li>CKM_DES3_CBC_PAD (with padding: Pkcs5Padding; e.g. DESede/CBC/Pkcs5Padding)</li>
+          </ul>
+        </td>
+        <td valign = "top">
+          <p>C_EncryptInit
+          <br>C_Encrypt
+          <br>C_EncryptUpdate
+          <br>C_EncryptFinal
+          <br>C_DecryptInit
+          <br>C_Decrypt
+          <br>C_DecryptUpdate
+          <br>C_DecryptFinal
+          <br>C_Unwrap
+          <br>C_Wrap
+        </td>
+        <td>
+          <p>3DES
+          <br>TripleDES
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/ciphers/Rc2Cipher.html">
+            <CODE>RC2</CODE>
+          </A>
+          <p>(Ron�s Code 2; Rivest Cipher 2)
+        </td>
+        <td valign = "top">
+          Uses different mechanisms of the underlying PKCS#11 module denpending on the set padding. Used PKCS#11 mechanisms are:
+          <ul>
+            <li>CKM_RC2_ECB (with padding: NoPadding; e.g. RC2/ECB/NoPadding)</li>
+            <li>CKM_RC2_CBC (with padding: NoPadding; e.g. RC2/CBC/NoPadding)</li>
+            <li>CKM_RC2_CBC_PAD (with padding: Pkcs5Padding; e.g. RC2/CBC/Pkcs5Padding)</li>
+          </ul>
+        </td>
+        <td valign = "top">
+          <p>C_EncryptInit
+          <br>C_Encrypt
+          <br>C_EncryptUpdate
+          <br>C_EncryptFinal
+          <br>C_DecryptInit
+          <br>C_Decrypt
+          <br>C_DecryptUpdate
+          <br>C_DecryptFinal
+          <br>C_Unwrap
+          <br>C_Wrap
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/ciphers/Rc4Cipher.html">
+            <CODE>RC4</CODE>
+          </A>
+          <p>(Ron�s Code 4; Rivest Cipher 4)
+        </td>
+        <td valign = "top">This is a stream cipher, and thus it does not support modes and paddings However, <code>NONE</code> as mode name and <code>NoPadding</code> as padding name are accepted. It uses the CKM_RC4 PKCS#11 mechanism of the underlying token.</td>
+        <td valign = "top">
+          <p>C_EncryptInit
+          <br>C_Encrypt
+          <br>C_EncryptUpdate
+          <br>C_EncryptFinal
+          <br>C_DecryptInit
+          <br>C_Decrypt
+          <br>C_DecryptUpdate
+          <br>C_DecryptFinal
+          <br>C_Unwrap
+          <br>C_Wrap
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/ciphers/Rc5Cipher.html">
+            <CODE>RC5</CODE>
+          </A>
+          <p>(Ron�s Code 5; Rivest Cipher 5)
+        </td>
+        <td valign = "top">
+          This cipher supports ECB and CBC mode. It uses different mechanisms of the underlying PKCS#11 module denpending on the set padding. Used PKCS#11 mechanisms are:
+          <ul>
+            <li>CKM_RC5_ECB (with padding: NoPadding; e.g. RC5/ECB/NoPadding)</li>
+            <li>CKM_RC5_CBC (with padding: NoPadding; e.g. RC5/CBC/NoPadding)</li>
+            <li>CKM_RC5_CBC_PAD (with padding: Pkcs5Padding; e.g. RC5/CBC/Pkcs5Padding)</li>
+          </ul>
+        </td>
+        <td valign = "top">
+          <p>C_EncryptInit
+          <br>C_Encrypt
+          <br>C_EncryptUpdate
+          <br>C_EncryptFinal
+          <br>C_DecryptInit
+          <br>C_Decrypt
+          <br>C_DecryptUpdate
+          <br>C_DecryptFinal
+          <br>C_Unwrap
+          <br>C_Wrap
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/ciphers/IdeaCipher.html">
+            <CODE>IDEA</CODE>
+          </A>
+          <p>(International Data Encryption Algorithm)
+        </td>
+        <td valign = "top">
+          This cipher supports ECB and CBC mode. It uses different mechanisms of the underlying PKCS#11 module denpending on the set padding. Used PKCS#11 mechanisms are:
+          <ul>
+            <li>CKM_IDEA_ECB (with padding: NoPadding; e.g. IDEA/ECB/NoPadding)</li>
+            <li>CKM_IDEA_CBC (with padding: NoPadding; e.g. IDEA/CBC/NoPadding)</li>
+            <li>CKM_IDEA_CBC_PAD (with padding: Pkcs5Padding; e.g. IDEA/CBC/Pkcs5Padding)</li>
+          </ul>
+        </td>
+        <td valign = "top">
+          <p>C_EncryptInit
+          <br>C_Encrypt
+          <br>C_EncryptUpdate
+          <br>C_EncryptFinal
+          <br>C_DecryptInit
+          <br>C_Decrypt
+          <br>C_DecryptUpdate
+          <br>C_DecryptFinal
+          <br>C_Unwrap
+          <br>C_Wrap
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/ciphers/CastCipher.html">
+            <CODE>CAST</CODE>
+          </A>
+          <p>(Carlisle Adams and Stafford Tavares)
+        </td>
+        <td valign = "top">
+          This cipher supports ECB and CBC mode. It uses different mechanisms of the underlying PKCS#11 module denpending on the set padding. Used PKCS#11 mechanisms are:
+          <ul>
+            <li>CKM_CAST_ECB (with padding: NoPadding; e.g. CAST/ECB/NoPadding)</li>
+            <li>CKM_CAST_CBC (with padding: NoPadding; e.g. CAST/CBC/NoPadding)</li>
+            <li>CKM_CAST_CBC_PAD (with padding: Pkcs5Padding; e.g. CAST/CBC/Pkcs5Padding)</li>
+          </ul>
+        </td>
+        <td valign = "top">
+          <p>C_EncryptInit
+          <br>C_Encrypt
+          <br>C_EncryptUpdate
+          <br>C_EncryptFinal
+          <br>C_DecryptInit
+          <br>C_Decrypt
+          <br>C_DecryptUpdate
+          <br>C_DecryptFinal
+          <br>C_Unwrap
+          <br>C_Wrap
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/ciphers/Cast3Cipher.html">
+            <CODE>CAST3</CODE>
+          </A>
+          <p>(Carlisle Adams and Stafford Tavares 3)
+        </td>
+        <td valign = "top">
+          This cipher supports ECB and CBC mode. It uses different mechanisms of the underlying PKCS#11 module denpending on the set padding. Used PKCS#11 mechanisms are:
+          <ul>
+            <li>CKM_CAST3_ECB (with padding: NoPadding; e.g. CAST3/ECB/NoPadding)</li>
+            <li>CKM_CAST3_CBC (with padding: NoPadding; e.g. CAST3/CBC/NoPadding)</li>
+            <li>CKM_CAST3_CBC_PAD (with padding: Pkcs5Padding; e.g. CAST3/CBC/Pkcs5Padding)</li>
+          </ul>
+        </td>
+        <td valign = "top">
+          <p>C_EncryptInit
+          <br>C_Encrypt
+          <br>C_EncryptUpdate
+          <br>C_EncryptFinal
+          <br>C_DecryptInit
+          <br>C_Decrypt
+          <br>C_DecryptUpdate
+          <br>C_DecryptFinal
+          <br>C_Unwrap
+          <br>C_Wrap
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/ciphers/Cast128Cipher.html">
+            <CODE>CAST128</CODE>
+          </A>
+          <p>(Carlisle Adams and Stafford Tavares 128)
+        </td>
+        <td valign = "top">
+          This cipher supports ECB and CBC mode. It uses different mechanisms of the underlying PKCS#11 module denpending on the set padding. Used PKCS#11 mechanisms are:
+          <ul>
+            <li>CKM_CAST128_ECB (with padding: NoPadding; e.g. CAST128/ECB/NoPadding)</li>
+            <li>CKM_CAST128_CBC (with padding: NoPadding; e.g. CAST128/CBC/NoPadding)</li>
+            <li>CKM_CAST128_CBC_PAD (with padding: Pkcs5Padding; e.g. CAST128/CBC/Pkcs5Padding)</li>
+          </ul>
+        </td>
+        <td valign = "top">
+          <p>C_EncryptInit
+          <br>C_Encrypt
+          <br>C_EncryptUpdate
+          <br>C_EncryptFinal
+          <br>C_DecryptInit
+          <br>C_Decrypt
+          <br>C_DecryptUpdate
+          <br>C_DecryptFinal
+          <br>C_Unwrap
+          <br>C_Wrap
+        </td>
+        <td>
+          <p>CAST5
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/ciphers/AesCipher.html">
+            <CODE>AES</CODE>
+          </A>
+          <p>(Advanced Encryption Standard Cipher)
+        </td>
+        <td valign = "top">
+          This cipher supports ECB and CBC mode. It uses different mechanisms of the underlying PKCS#11 module denpending on the set padding. Used PKCS#11 mechanisms are:
+          <ul>
+            <li>CKM_AES_ECB (with padding: NoPadding; e.g. AES/ECB/NoPadding)</li>
+            <li>CKM_AES_CBC (with padding: NoPadding; e.g. AES/CBC/NoPadding)</li>
+            <li>CKM_AES_CBC_PAD (with padding: Pkcs5Padding; e.g. AES/CBC/Pkcs5Padding)</li>
+          </ul>
+        </td>
+        <td valign = "top">
+          <p>C_EncryptInit
+          <br>C_Encrypt
+          <br>C_EncryptUpdate
+          <br>C_EncryptFinal
+          <br>C_DecryptInit
+          <br>C_Decrypt
+          <br>C_DecryptUpdate
+          <br>C_DecryptFinal
+          <br>C_Unwrap
+          <br>C_Wrap
+        </td>
+        <td></td>
+      </tr>
+
+
+      <tr>
+        <td colspan = 4 bgcolor = "#AEAEAE">
+          <b><a name="KeyAgreementAlgorithms">Key Agreement Algorithms</a></b>
+          <br></br>
+          <code>KeyAgreement keyAgr = KeyAgreement.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, &lt;provider name&gt;);</code>
+        </td>
+      </tr>
+
+      <tr>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Mechanism</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Functions</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyagreements/DhKeyAgreement.html">
+            <CODE>DH</CODE>
+          </A>
+          <p>(Diffie Hellman)
+        </td>
+        <td valign = "top">Uses the CKM_DH_PKCS_DERIVE mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td>
+          <p>DiffieHellman
+          <br>1.2.840.113549.1.3.1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyagreements/EcDhKeyAgreement.html">
+            <CODE>ECDH</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_ECDH1_DERIVE/CKM_ECDH1_COFACTOR_DERIVE mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td>
+          <p>ECDiffieHellman</p>
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyagreements/X942DhKeyAgreement.html">
+            <CODE>DH/X9.42</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_X9_42_DH_DERIVE mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td>
+          <p>X942DH
+          <br>X9.42DH
+          <br>DiffieHellman/X9.42</p>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan = 4 bgcolor = "#AEAEAE">
+          <b><a name="MACs">Message Authentication Codes (MACs)</a></b>
+          <br></br>
+          <code>MAC mac = MAC.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, &lt;provider name&gt;);</code>
+        </td>
+      </tr>
+
+      <tr>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Mechanism</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Functions</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/Md2HMac.html">
+            <CODE>HMAC/MD2</CODE>
+          </A>
+          <p>(HMAC with MD2)
+        </td>
+        <td valign = "top">Uses the CKM_MD2_HMAC/CKM_MD2_HMAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>HmacMD2
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/Md5HMac.html">
+            <CODE>HMAC/MD5</CODE>
+          </A>
+          <p>(HMAC with MD5)
+        </td>
+        <td valign = "top">Uses the CKM_MD5_HMAC/CKM_MD5_HMAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>HmacMD5
+          <br>HMAC/SHA-1
+          <br>1.3.6.1.5.5.8.1.1
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/Sha1HMac.html">
+            <CODE>HMAC/SHA</CODE>
+          </A>
+          <p>(HMAC with SHA-1)
+        </td>
+        <td valign = "top">Uses the CKM_SHA_1_HMAC/CKM_SHA_1_HMAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>HmacSHA1
+          <br>HMAC/SHA-1
+          <br>1.3.6.1.5.5.8.1.2
+          <br>1.2.840.113549.2.7
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/Sha256HMac.html">
+            <CODE>HMAC/SHA256</CODE>
+          </A>
+          <p>(HMAC with SHA-256)
+        </td>
+        <td valign = "top">Uses the CKM_SHA256_HMAC/CKM_SHA256_HMAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>HMAC/SHA-256
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/Sha384HMac.html">
+            <CODE>HMAC/SHA384</CODE>
+          </A>
+          <p>(HMAC with SHA-384)
+        </td>
+        <td valign = "top">Uses the CKM_SHA384_HMAC/CKM_SHA384_HMAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>HMAC/SHA-384
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/Sha512HMac.html">
+            <CODE>HMAC/SHA512</CODE>
+          </A>
+          <p>(HMAC with SHA-512)
+        </td>
+        <td valign = "top">Uses the CKM_SHA512_HMAC/CKM_SHA512_HMAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>HMAC/SHA-512
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/RipeMd128HMac.html">
+            <CODE>HMAC/RipeMd128</CODE>
+          </A>
+          <p>(HMAC with RipeMd128)
+        </td>
+        <td valign = "top">Uses the CKM_RIPEMD128_HMAC/CKM_RIPEMD128_HMAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>HmacRipeMd128
+          <br>HMAC/RipeMd-128
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/RipeMd160HMac.html">
+            <CODE>HMAC/RipeMd160</CODE>
+          </A>
+          <p>(HMAC with RipeMd160)
+        </td>
+        <td valign = "top">Uses the CKM_RIPEMD160_HMAC/CKM_RIPEMD160_HMAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>HmacRipeMd160
+          <br>HMAC/RipeMd-160
+          <br>1.3.6.1.5.5.8.1.4
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/SSL3Md5Mac.html">
+            <CODE>MAC/MD5/SSL3</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_SSL3_MD5_MAC mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/SSL3Sha1Mac.html">
+            <CODE>MAC/SHA1/SSL3</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_SSL3_SHA1_MAC mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td><p>MAC/SHA-1/SSL3</p></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/DesMac.html">
+            <CODE>MAC/DES</CODE>
+          </A>
+          <p>(MAC with DES)
+        </td>
+        <td valign = "top">Uses the CKM_DES_MAC/CKM_DES_MAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>MacDES
+          <br>DESMac
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/DesEdeMac.html">
+            <CODE>MAC/DESede</CODE>
+          </A>
+          <p>(MAC with Triple-DES)
+        </td>
+        <td valign = "top">Uses the CKM_DES3_MAC/CKM_DES3_MAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>MacDESede
+          <br>Mac3DES
+          <br>MacTripleDES
+          <br>TripleDESMac
+          <br>Mac/TripleDES
+          <br>Mac/3DES
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/IdeaMac.html">
+            <CODE>MAC/IDEA</CODE>
+          </A>
+          <p>(MAC with IDEA)
+        </td>
+        <td valign = "top">Uses the CKM_IDEA_MAC/CKM_IDEA_MAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>MacIDEA
+          <br>IDEAMac
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/Rc2Mac.html">
+            <CODE>MAC/RC2</CODE>
+          </A>
+          <p>(MAC with RC2)
+        </td>
+        <td valign = "top">Uses the CKM_RC2_MAC/CKM_RC2_MAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>MacRC2
+          <br>RC2Mac
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/Rc5Mac.html">
+            <CODE>MAC/RC5</CODE>
+          </A>
+          <p>(MAC with RC5)
+        </td>
+        <td valign = "top">Uses the CKM_RC5_MAC/CKM_RC5_MAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>MacRC5
+          <br>RC5Mac
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/CastMac.html">
+            <CODE>MAC/CAST</CODE>
+          </A>
+          <p>(MAC with CAST)
+        </td>
+        <td valign = "top">Uses the CKM_CAST_MAC/CKM_CAST_MAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>MacCAST
+          <br>CASTMac
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/Cast3Mac.html">
+            <CODE>MAC/CAST3</CODE>
+          </A>
+          <p>(MAC with CAST3)
+        </td>
+        <td valign = "top">Uses the CKM_CAST3_MAC/CKM_CAST3_MAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>MacCAST3
+          <br>CAST3Mac
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/Cast128Mac.html">
+            <CODE>MAC/CAST128</CODE>
+          </A>
+          <p>(MAC with CAST128)
+        </td>
+        <td valign = "top">Uses the CKM_CAST128_MAC/CKM_CAST128_MAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>MacCAST128
+          <br>CAST128Mac
+          <br>MAC/CAST5
+          <br>MacCAST5
+          <br>CAST5Mac
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/macs/AesMac.html">
+            <CODE>MAC/AES</CODE>
+          </A>
+          <p>(MAC with AES)
+        </td>
+        <td valign = "top">Uses the CKM_AES_MAC/CKM_AES_MAC_GENERAL mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_SignInit
+          <br>C_Sign
+          <br>C_SignUpdate
+          <br>C_SignFinal
+        </td>
+        <td>
+          <p>MacAES
+          <br>AESMac
+        </td>
+      </tr>
+
+
+      <tr>
+        <td colspan = 4 bgcolor = "#AEAEAE">
+          <b><a name="KeyGenerators">Key Generators</a></b>
+          <br></br>
+          <code>KeyGenerator keyGen = KeyGenerator.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, &lt;provider name&gt;);</code>
+        </td>
+      </tr>
+
+      <tr>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Mechanism</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Functions</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/DesKeyGenerator.html">
+            <CODE>DES</CODE>
+          </A>
+          <p>(Data Encryption Standard)
+        </td>
+        <td valign = "top">Uses the CKM_DES_KEY_GEN mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Des2KeyGenerator.html">
+            <CODE>DES2</CODE>
+          </A>
+          <p>(Two key Triple DES)
+        </td>
+        <td valign = "top">Uses the CKM_DES2_KEY_GEN mechanism of PKCS#11.
+        	<p>The generated key can be used with a 
+        		<code>DESede</code> (Triple DES) cipher.
+        	</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/DesEdeKeyGenerator.html">
+            <CODE>DESede</CODE>
+          </A>
+          <p>(Three key Triple DES)
+        </td>
+        <td valign = "top">Uses the CKM_DES3_KEY_GEN mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td>
+            <p>TripleDES
+            <br>3DES
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/IdeaKeyGenerator.html">
+            <CODE>IDEA</CODE>
+          </A>
+          <p>(International Data Encryption Algorithm)
+        </td>
+        <td valign = "top">Uses the CKM_IDEA_KEY_GEN mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Rc2KeyGenerator.html">
+            <CODE>RC2</CODE>
+          </A>
+          <p>(Ron�s Code 2; Rivest Cipher 2)
+        </td>
+        <td valign = "top">Uses the CKM_RC2_KEY_GEN mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Rc4KeyGenerator.html">
+            <CODE>RC4</CODE>
+          </A>
+          <p>(Ron�s Code 4; Rivest Cipher 4)
+        </td>
+        <td valign = "top">Uses the CKM_RC4_KEY_GEN mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Rc5KeyGenerator.html">
+            <CODE>RC5</CODE>
+          </A>
+          <p>(Ron�s Code 5; Rivest Cipher 5)
+        </td>
+        <td valign = "top">Uses the CKM_RC5_KEY_GEN mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/CastKeyGenerator.html">
+            <CODE>CAST</CODE>
+          </A>
+          <p>(Carlisle Adams and Stafford Tavares)
+        </td>
+        <td valign = "top">Uses the CKM_CAST_KEY_GEN mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Cast3KeyGenerator.html">
+            <CODE>CAST3</CODE>
+          </A>
+          <p>(Carlisle Adams and Stafford Tavares 3)
+        </td>
+        <td valign = "top">Uses the CKM_CAST3_KEY_GEN mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Cast128KeyGenerator.html">
+            <CODE>CAST128</CODE>
+          </A>
+          <p>(Carlisle Adams and Stafford Tavares 128)
+        </td>
+        <td valign = "top">Uses the CKM_CAST128_KEY_GEN mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td>
+          <p>CAST5
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/GenericSecretKeyGenerator.html">
+            <CODE>GenericSecret</CODE>
+          </A>
+          <p>(Generic Secret Key)
+        </td>
+        <td valign = "top">Uses the CKM_GENERIC_SECRET_KEY_GEN mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/AesKeyGenerator.html">
+            <CODE>AES</CODE>
+          </A>
+          <p>(Advanced Encryption Standard)
+        </td>
+        <td valign = "top">Uses the CKM_AES_KEY_GEN mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/SSL3PremasterkeyGenerator.html">
+            <CODE>SSL3/PreMaster</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_SSL3_PRE_MASTER_KEY_GEN mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/SSL§MasterKeyDerivationKeyGenerator.html">
+            <CODE>SSL3Derivation</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_SSL3_MASTER_KEY_DERIVE mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_GenerateKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/AesCbcEncrypDataKeyGenerator.html">
+            <CODE>AESDerivation/CBC</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_AES_CBC_ENCRYPT_DATA mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/AesEcbEncrypDataKeyGenerator.html">
+            <CODE>AESDerivation/ECB</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_AES_ECB_ENCRYPT_DATA mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/DesCbcEncrypDataKeyGenerator.html">
+            <CODE>DESDerivation/CBC</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_DES_CBC_ENCRYPT_DATA mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/DesEcbEncrypDataKeyGenerator.html">
+            <CODE>DESDerivation/ECB</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_DES_ECB_ENCRYPT_DATA mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Des3CbcEncrypDataKeyGenerator.html">
+            <CODE>DES3Derivation/CBC</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_DES3_CBC_ENCRYPT_DATA mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Des3EcbEncrypDataKeyGenerator.html">
+            <CODE>DES3Derivation/ECB</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_DES3_ECB_ENCRYPT_DATA mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/SSL3KeyAndMacDerivation.html">
+            <CODE>SSL3KeyAndMacDerivation</CODE>
+          </A>
+        </td>
+        <td valign = "top">Uses the CKM_SSL3_KEY_AND_MAC_DERIVE mechanism of PKCS#11.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Md2KeyDerivation.html">
+            <CODE>MD2Derivation</CODE>
+          </A>
+          <p>(MD2 Key Derivation)
+        </td>
+        <td valign = "top">Uses the CKM_MD2_KEY_DERIVATION mechanism of PKCS#11. It generates a new key using an existing base key and applying the message digest to it.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Md5KeyDerivation.html">
+            <CODE>MD5Derivation</CODE>
+          </A>
+          <p>(MD5 Key Derivation)
+        </td>
+        <td valign = "top">Uses the CKM_MD5_KEY_DERIVATION mechanism of PKCS#11. It generates a new key using an existing base key and applying the message digest to it.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Sha1KeyDerivation.html">
+            <CODE>SHA1Derivation</CODE>
+          </A>
+          <p>(SHA-1 Key Derivation)
+        </td>
+        <td valign = "top">Uses the CKM_SHA1_KEY_DERIVATION mechanism of PKCS#11. It generates a new key using an existing base key and applying the message digest to it.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Sha256KeyDerivation.html">
+            <CODE>SHA256Derivation</CODE>
+          </A>
+          <p>(SHA-256 Key Derivation)
+        </td>
+        <td valign = "top">Uses the CKM_SHA256_KEY_DERIVATION mechanism of PKCS#11. It generates a new key using an existing base key and applying the message digest to it.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Sha384KeyDerivation.html">
+            <CODE>SHA384Derivation</CODE>
+          </A>
+          <p>(SHA-384 Key Derivation)
+        </td>
+        <td valign = "top">Uses the CKM_SHA384_KEY_DERIVATION mechanism of PKCS#11. It generates a new key using an existing base key and applying the message digest to it.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keygenerators/Sha512KeyDerivation.html">
+            <CODE>SHA512Derivation</CODE>
+          </A>
+          <p>(SHA-512 Key Derivation)
+        </td>
+        <td valign = "top">Uses the CKM_SHA512_KEY_DERIVATION mechanism of PKCS#11. It generates a new key using an existing base key and applying the message digest to it.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GetAttributeValue
+          <br>C_DeriveKey
+        </td>
+        <td></td>
+      </tr>
+
+
+      <tr>
+        <td colspan = 4 bgcolor = "#AEAEAE">
+          <b><a name="SecretKeyFactories">Secret Key Factories</a></b>
+          <br></br>
+          <code>SecretKeyFactory skf = SecretKeyFactory.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, &lt;provider name&gt;);</code>
+        </td>
+      </tr>
+
+      <tr>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Mechanism</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Functions</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/DesKeyFactory.html">
+            <CODE>DES</CODE>
+          </A>
+          <p>(Data Encryption Standard)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/DesEdeKeyFactory.html">
+            <CODE>DESede</CODE>
+          </A>
+          <p>(Triple DES)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td>
+          <p>TripleDES
+          <br>3DES
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/IdeaKeyFactory.html">
+            <CODE>IDEA</CODE>
+          </A>
+          <p>(International Data Encryption Algorithm)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/Rc2KeyFactory.html">
+            <CODE>RC2</CODE>
+          </A>
+          <p>(Ron�s Code 2; Rivest Cipher 2)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/Rc4KeyFactory.html">
+            <CODE>RC4</CODE>
+          </A>
+          <p>(Ron�s Code 4; Rivest Cipher 4)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/Rc5KeyFactory.html">
+            <CODE>RC5</CODE>
+          </A>
+          <p>(Ron�s Code 5; Rivest Cipher 5)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/CastKeyFactory.html">
+            <CODE>CAST</CODE>
+          </A>
+          <p>(Carlisle Adams and Stafford Tavares)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/Cast3KeyFactory.html">
+            <CODE>CAST3</CODE>
+          </A>
+          <p>(Carlisle Adams and Stafford Tavares 3)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/Cast128KeyFactory.html">
+            <CODE>CAST128</CODE>
+          </A>
+          <p>(Carlisle Adams and Stafford Tavares 128)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td>
+          <p>CAST5
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/AesKeyFactory.html">
+            <CODE>AES</CODE>
+          </A>
+          <p>(Advanced Encryption Standard)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/keyfactories/GenericKeyFactory.html">
+            <CODE>Generic</CODE>
+          </A>
+          <p>(Generic Secret Keys)
+        </td>
+        <td valign = "top">Creates a new key object on a PKCS#11 token. The provided specification object holds a key template and the token to use.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_CreateObject
+          <br>C_GetAttributeValue
+        </td>
+        <td></td>
+      </tr>
+
+
+
+      <tr>
+        <td colspan = 4 bgcolor = "#AEAEAE">
+          <b><a name="KeyStores">Key Stores</a></b>
+          <br></br>
+          <code>KeyStore keyStore = KeyStore.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, &lt;provider name&gt;);</code>
+        </td>
+      </tr>
+
+      <tr>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Mechanism</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Functions</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/TokenKeyStore.html">
+            <CODE>PKCS11SingleTokenKeyStore</CODE>
+          </A>
+          <p>(Key Store for one PKCS#11 Token)
+        </td>
+        <td valign = "top">Holds the keys and certificates of a single PKCS#11 token. The key store supports setting new key and certificate entries, if the underlying token is writable.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetTokenInfo
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_Logout
+          <br>C_CreateObject
+          <br>C_CopyObject
+          <br>C_DestroyObject
+          <br>C_GetAttributeValue
+          <br>C_SetAttributeValue
+          <br>C_FindObjectsInit
+          <br>C_FindObjects
+          <br>C_FindObjectsFinal
+        </td>
+        <td>
+          <p>PKCS11KeyStore
+          <br>PKCS11
+        </td>
+      </tr>
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/TokenKeyStoreFastSpi.html">
+            <CODE>FastPKCS11KeyStore</CODE>
+          </A>
+          <p>(Key Store for one PKCS#11 Token not checking for external changes)
+        </td>
+        <td valign = "top">Holds the keys and certificates of a single PKCS#11 token. The key store supports setting new key and certificate entries, if the underlying token is writable.
+        Changes to the token (removed or replaced) or to token entries by external tools are not recognized.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetTokenInfo
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_Logout
+          <br>C_CreateObject
+          <br>C_CopyObject
+          <br>C_DestroyObject
+          <br>C_GetAttributeValue
+          <br>C_SetAttributeValue
+          <br>C_FindObjectsInit
+          <br>C_FindObjects
+          <br>C_FindObjectsFinal
+        </td>
+        <td>
+          <p>FastPKCS11
+        </td>
+      </tr>
+
+
+
+      <tr>
+        <td colspan = 4 bgcolor = "#AEAEAE">
+          <b><a name="SecureRandom">Secure Random</a></b>
+          <br></br>
+          <code>SecureRandom randomGenerator = SecureRandom.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, &lt;provider name&gt;);</code>
+        </td>
+      </tr>
+
+      <tr>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Mechanism</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Used PKCS#11 Functions</b></td>
+        <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/random/PKCS11RandomSpi.html">
+            <CODE>PKCS11</CODE>
+          </A>
+          <p>Secure Random Data Generator using a PKCS#11 Token
+        </td>
+        <td valign = "top">
+        This implementation of the SecureRandomSpi uses a PKCS#11 token to generate random data. If this object is created using the default constructor, and this is always the case when instantiated through the JCA mechanism, this implementation always links to the first instance of IAIKPkcs11; this means, it uses the token in the slot of the first provider instance to generate random data. The only way to link to a different instance is to instantiate the <code>iaik.pkcs.pkcs11.provider.random.PKCS11Random</code> class directly and to specify the provider to work with.
+        This implementation gets all random data directly from the token - seed bytes and random bytes.
+        If there is no token present at creation time of this object, or if the present token does not support random number generation, this implementation uses a software delegate to process all requests. Per default, the SHA1PRNG algorithm is used for the software delegate.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetTokenInfo
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GenerateRandom
+          <br>C_SeedRandom
+        </td>
+        <td>
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/random/PKCS11SeededRandomSpi.html">
+            <CODE>PKCS11Seeded</CODE>
+          </A>
+          <p>Secure Random Data Generator using a PKCS#11 Token for the seed.
+        </td>
+        <td valign = "top">This implementation of the SecureRandomSpi uses a PKCS#11 token to generate random data. If this object is created using the default constructor, and this is always the case when instantiated through the JCA mechanism, this implementation always links to the first instance of IAIKPkcs11; this means, it uses the token in the slot of the first provider instance to generate random data. The only way to link to a different instance is to instantiate the <code>iaik.pkcs.pkcs11.provider.random.PKCS11Random</code> class directly and to specify the provider to work with.
+        This implementation gets random data from a software implementation and gets seed bytes directly from the token.  It does not send any seed bytes to the token. Moreover, it automatically gets 1024 bits of seed from the token upon the first request for random data. If more seed data is required, the application can get more seed data from this object and subsequently set it to this engine object.
+        If there is no token present at creation time of this object, or if the present token does not support random number generation, this implementation uses a software delegate to process all requests. Per default, the SHA1PRNG algorithm is used for the software delegate.</td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetTokenInfo
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GenerateRandom
+          <br>C_SeedRandom
+        </td>
+        <td>
+        </td>
+      </tr>
+
+      <tr>
+        <td valign = "top">
+          <A HREF="api/iaik/pkcs/pkcs11/provider/random/PKCS11RandomSpi.html">
+            <CODE>PKCS11NoSetSeed</CODE>
+          </A>
+          <p>Secure Random Data Generator using a PKCS#11 Token, but does not send any seed to the token.
+        </td>
+        <td valign = "top">
+        This implementation of the SecureRandomSpi uses a PKCS#11 token to generate random data. An implementation of the SecureRandomSpi that uses a PKCS#11 token to generate random data and seeds. It operates like the <i>PKCS11</i> random (<code>iaik.pkcs.pkcs11.provider.random.PKCS11RandomSpi</code> class), but does not try to write (set) any seed to the token. This implementation can be used, if the underlying token supports random generation but cannot be seeded externally.
+        </td>
+        <td valign = "top">
+          <p>C_OpenSession
+          <br>C_CloseSession
+          <br>C_GetTokenInfo
+          <br>C_GetSessionInfo
+          <br>C_Login
+          <br>C_GenerateRandom
+          <br>C_SeedRandom
+        </td>
+        <td>
+        </td>
+      </tr>
+
+    </table>
+
+
+ <br>
+ <br>
+ <a name="paddings">1)</a> This provider supports the following cipher modes and padding schemes:
+
+ <p>General Usage:
+
+ <blockquote><pre>
+
+   Cipher cipher = Cipher.getInstance(&quot;Cipher/Operation Mode/Padding Scheme&quot;);
+
+ </pre></blockquote>
+
+ for instance:
+
+ <blockquote><pre>
+
+ Cipher des = Cipher.getInstance(&quot;DES/CBC/PKCS5Padding&quot;, &quot;IAIK PKCS#11:1&quot;);
+
+
+
+
+ Cipher rsa = Cipher.getInstance(&quot;RSA/ECB/PKCS1Padding&quot;, &quot;IAIK PKCS#11:1&quot;);
+
+ </pre></blockquote>
+
+ <table border = "1">
+
+  <tr>
+   <td colspan = 2 bgcolor = "#AEAEAE"><b>Cipher Modes</b> (default: ECB)</td>
+  </tr>
+
+  <tr>
+   <td align = "center" bgcolor = "#C0C0C0">Name</td>
+   <td align = "center" bgcolor = "#C0C0C0">Specification</td>
+  </tr>
+
+  <tr>
+   <td valign = "top">ECB (Electronic Code Book)</td>
+   <td valign = "top">"DES MODES OF OPERATION", <a href ="http://www.itl.nist.gov/div897/pubs/fip81.htm">NIST FIPS PUB 81</a></td>
+  </tr>
+
+  <tr>
+   <td valign = "top">CBC (Cipher Block Chaining, for block ciphers only)</td>
+   <td valign = "top">"DES MODES OF OPERATION", <a href ="http://www.itl.nist.gov/div897/pubs/fip81.htm">NIST FIPS PUB 81</a></td>
+  </tr>
+
+  <tr>
+   <td colspan = 2 bgcolor = "#AEAEAE"><b>Padding Schemes</b> (default: NoPadding)</td>
+  </tr>
+
+  <tr>
+   <td align = "center" bgcolor = "#C0C0C0">Name</td>
+   <td align = "center" bgcolor = "#C0C0C0">Specification</td>
+  </tr>
+
+  <tr>
+   <td valign = "top">NoPadding (No Padding, for all ciphers)</td>
+   <td valign = "top">This means that the application must ensure that the input is a multiple of the block size.</td>
+  </tr>
+
+  <tr>
+   <td valign = "top">PKCS5Padding (PKCS#5 Padding, only for block ciphers)</td>
+   <td valign = "top">All block ciphers use this padding in CBC mode per default. Padding scheme as described in specified by <a href ="http://www.rsa.com/rsalabs/node.asp?id=2127">PKCS#5</a></td>
+  </tr>
+
+  <tr>
+   <td valign = "top">PKCS1Padding (only for RSA cipher)</td>
+   <td valign = "top">padding scheme as specified by <a href ="http://www.rsa.com/rsalabs/node.asp?id=2125">PKCS#1 v1.5</a></td>
+  </tr>
+
+  <tr>
+   <td valign = "top">OAEP (only for RSA cipher)</td>
+   <td valign = "top">padding scheme as specified by <a href ="http://www.rsa.com/rsalabs/node.asp?id=2125">PKCS#1 v2.0</a> and IEEE P1363</td>
+  </tr>
+
+  <tr>
+   <td valign = "top">ISO9796 (only for RSA cipher)</td>
+   <td valign = "top">padding scheme as specified by ISO/IEC 9796 and its annex A.</td>
+  </tr>
+
+ </table>
+ 
+ <br>
+ <br>
+ <a name="cipherfunctions">2)</a> 
+ The ciphers do not use the update and final functions (this is 
+ <code>C_EncryptUpdate</code>,
+ <code>C_EncryptFinal</code>,
+ <code>C_DecryptUpdate</code>,
+ <code>C_DecryptFinal</code>, 
+ <code>C_SignUpdate</code>, 
+ <code>C_SignFinal</code>) of PKCS#11 unless the applications calls a <code>Cipher.update(...)</code> function.
+ Instead, it uses the single operation functions (this is 
+ <code>C_Encrypt</code>,
+ <code>C_Decrypt</code>,
+ <code>C_Sign</code>).
+ <br>
+ <br>
+
+  <HR>
+    <CENTER>Copyright (c) 1997 - 2003 IAIK. Copyright (c) 2003 - 2015 Stiftung SIC. All rights reserved.</CENTER>
+
+</BODY>
+</HTML>

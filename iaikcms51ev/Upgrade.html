@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<link rel="StyleSheet" href="style.css" type="text/css">
+	<TITLE>IAIK-CMS Upgrade</TITLE>
+</HEAD>
+<BODY>
+<table border="0" width="100%">
+  <tr>
+    <td><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/siclogo.jpg" alt="IAIK" border="0"></a></td>
+
+    <td align="center"><h1>Upgrade from IAIK-JCE/IAIK-SMIME</h1><h2><U>Cryptographic Message Syntax / S/MIME Version 3</U></h2></td>
+    <td align="right"><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/iaik_logo.gif" alt="SIC" border="0"></a></td>
+  </tr>
+</table>
+
+<p>&nbsp;</p>
+        <p><i>IAIK-JCE</i>  contains an implementation 
+          of the PKCS#7 standard, and <i>IAIK-SMIME</i> is an implementation of 
+          the S/MIMEv2 protocol. <i>IAIK-CMS with S/MIMEv3</i> implements the 
+          CMS (Cryptographic Message Syntax), S/MIMEv3 and ESS (Enhanced Security 
+          Services for S/MIME) protocols. Since CMS is the successor of PKCS#7 
+          and S/MIMEv3 is the successor of S/MIMEv2, <i>IAIK-CMS with S/MIMEv3</i> 
+          succeeds both, the PKCS#7 library of <i>IAIK-JCE</i> and the <i>IAIK-SMIME</i> 
+          library. </p>
+        <p><b><u>API</u></b></p>
+        <p>The API of <i>IAIK-CMS </i> maintains 
+          the design of IAIK-JCE and IAIK-SMIME, so that is can be used in a similar 
+          way. However, package names have been changed and enhancments/modifications 
+          have been made where required to fulfill the CMS and S/MIMEv3 protocols. 
+          The, for instance, signature contributing attributes of a PKCS#7 SignedData 
+          type are named as &quot;authenticated attributes&quot;, whereas CMS 
+          refers to them as &quot;signed attributes&quot;. In similar way, PKCS#7 
+          calculates an &quot;encrypted digest&quot; value (since it only uses 
+          the RSA algorithm), and CMS uses a &quot;signature value&quot;. Thus 
+          the names of the corresponding <code>SignedData(Stream) 
+          </code>methods have been changed from <code>set/getAuthenticatedAttributes</code> 
+          to <code>set/getSignedAttributes</code>, 
+          and the names of the corresponding <code>SignerInfo</code> 
+          methods <code>set/getEncryptedDigest</code> 
+          have been changed to <code>set/getSignatureValue</code>.</p>
+        <p>As another example, PKCS#7 only 
+          used one (RSA based) RecipientInfo type for encrypting the temporary 
+          symmetric content encryption key of an EnvelopedData message. In addition 
+          to this &quot;KeyTransRecipientInfo&quot; type (where the content encryption 
+          key is encrypted with the public key of the recipient), CMS introduces 
+          the RecipientInfo alternatives &quot;KeyAgreeRecipientInfo&quot;, &quot;KEKRecipientInfo&quot;, 
+          &quot;PasswordRecipientInfo&quot;, and &quot;OtherRecipientInfo&quot;. 
+          To group all these types, the one and only class <code>RecipientInfo</code> 
+          of <i>IAIK-JCE</i> has become an interface in <i>IAIK-CMS</i> allowing 
+          to use all different RecipientInfo types in a common way.</p>
+        <p>In order to ugrade from<i> IAIK-JCE</i> 
+          and/or<i> IAIK-SMIME</i> to <i>IAIK-CMS </i> the most straightforward 
+          way might be to change all package names from</p>
+        <p><code>iaik.pkcs</code></i> 
+          and <code><i>iaik.pkcs.pkcs7</i></code> 
+          to <i> <code>iaik.cms</code></i>.</p>
+        <p>and all package names from</p>
+        <p><code>iaik.security.smime</code></i> 
+          to <i> <code>iaik.smime</code> 
+          </i> 
+          </p>
+        <p>and then run the compiler to find 
+          and change all class and method names as required.&nbsp;</p>
+        You also may have a look at the 
+        <code>PKCS7CMS&lt;...&gt;</code>
+        demos in package <code>iaik.cms.pkcs7cms</code>.       
+        They compare the usage of IAIK-CMS with the PKCS#7
+        library of IAIK-JCE.
+        <p><b><u>SecurityProvider</u></b></p>
+        <p><i>  IAIK-CMS 
+          </i>  contains a so-called 
+          <a href="SecurityProvider.html">SecurityProvider</a> utility that centralizes 
+          all cryptographic code into one class and can be implemented by an application 
+          to plug-in its own cryptogarphic service implementations. The PKCS#7 
+          library contains a limited SecurityProvider version: The RSACipherProvider 
+          allows an application to use its own RSA cipher implementation for digest 
+          value en/decryption or content key en/decryption for SignerInfo or RecipientInfo 
+          objects, respectively. An application that uses this RSACipherProvider 
+          may replace it by a corresponding CMS SecurityProvider implementation 
+          by overriding any of the signature creation/verification or key encryption/decryption 
+          methods as required (see <a href="docs/iaik/cms/SecurityProvider.html">Javadoc</a>). 
+          </p>
+        <p><b><u>Mailcap file</u> </b></p>
+        <p>Because the package name of the S/MIME library has changed from <code>iaik.security.smime</code> 
+          to <code>iaik.smime</code>, it is 
+          also necessary to update the IAIK mailcap file accordingly (see <a href="Install.html">Installation 
+          Notes</a>):</p>
+          <p>
+          The relevant entries into the mailcap-file should look like
+          </p>
+                <pre>
+                  #
+                  # IAIK 'mailcap' file
+                  #
+                  multipart/signed;;                  x-java-content-handler=iaik.smime.signed_content
+                  application/x-pkcs7-signature;;     x-java-content-handler=iaik.smime.signed_content
+                  application/x-pkcs7-mime;;          x-java-content-handler=iaik.smime.encrypted_content
+                  application/pkcs7-signature;;       x-java-content-handler=iaik.smime.signed_content
+                  application/pkcs7-mime;;            x-java-content-handler=iaik.smime.encrypted_content
+                  application/x-pkcs10;;              x-java-content-handler=iaik.smime.pkcs10_content
+                  application/pkcs10;;                x-java-content-handler=iaik.smime.pkcs10_content
+                  </pre>
+
+
+<p>&nbsp;</p>
+<DIV align=center>
+  <CENTER>
+   <TABLE cellPadding=2 border=0>
+    <TR>
+     <TD><IMG src="images/arrow.gif"</TD>
+     <TD>Back to <A href="Readme.html">Readme</A></TD>
+    </TR>
+   </TABLE>
+  </CENTER>
+</DIV>
+    
+
+<HR>
+
+<P align=center>Copyright (c) 2002 by&nbsp;IAIK. Copyright (C) 2003 - 2016 Stiftung SIC. All rights reserved.</P>
+<P align=center>&nbsp;</P>
+</BODY>
+</HTML>

@@ -1,0 +1,18 @@
+# 
+# Default JavaMail mailcap entries
+#
+text/plain;;		x-java-content-handler=com.sun.mail.handlers.text_plain
+text/html;;		x-java-content-handler=com.sun.mail.handlers.text_html
+text/xml;;		x-java-content-handler=com.sun.mail.handlers.text_xml
+multipart/*;;		x-java-content-handler=com.sun.mail.handlers.multipart_mixed
+message/rfc822;;	x-java-content-handler=com.sun.mail.handlers.message_rfc822
+#
+# IAIK mailcap entries
+#
+multipart/signed;;				x-java-content-handler=iaik.smime.signed_content
+application/x-pkcs7-signature;;	x-java-content-handler=iaik.smime.signed_content
+application/x-pkcs7-mime;;		x-java-content-handler=iaik.smime.encrypted_content
+application/x-pkcs10;;	        x-java-content-handler=iaik.smime.pkcs10_content
+application/pkcs7-signature;;	x-java-content-handler=iaik.smime.signed_content
+application/pkcs7-mime;;		x-java-content-handler=iaik.smime.encrypted_content
+application/pkcs10;;	        x-java-content-handler=iaik.smime.pkcs10_content

@@ -1,0 +1,216 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<link rel="StyleSheet" href="style.css" type="text/css">
+	<TITLE>IAIK-CMS Demos</TITLE>
+</HEAD>
+<BODY>
+<table border="0" width="100%">
+  <tr>
+    <td><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/siclogo.jpg" alt="IAIK" border="0"></a></td>
+
+    <td align="center"><h1>IAIK-CMS Demos</h1><h2><U>Cryptographic Message Syntax / S/MIME Version 3</U></h2></td>
+    <td align="right"><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/iaik_logo.gif" alt="SIC" border="0"></a></td>
+  </tr>
+</table>
+
+
+<p>
+The IAIK-CMS library contains the following demo packages (see also <a href="DemoList.html">full demo list</a>):
+</p>
+<ul>
+   <li>
+      <code>demo.cms.basic</code>: Basic demos for all CMS content types
+   </li>
+   <li>
+      <code>demo.cms.authenticatedData</code>: CMS AuthenticatedData content type demos
+   </li>
+   <li>
+      <code>demo.cms.authEnvelopedData</code>: CMS AuthEnvelopedData content type demos
+   </li>
+   <li>
+      <code>demo.cms.compressedData</code>: CMS CompressedData content type demos
+   </li>
+   <li>
+      <code>demo.cms.data</code>: CMS Data content type demos
+   </li>
+   <li>
+      <code>demo.cms.digestedData</code>: CMS DigestedData content type demos
+   </li>
+   <li>
+      <code>demo.cms.encryptedData</code>: CMS EncryptedData content type demos
+   </li> 
+   <li>
+      <code>demo.cms.envelopedData</code>: CMS EnvelopedData content type demos
+   </li>
+   <li>
+      <code>demo.cms.signedData</code>: CMS SignedData content type demos
+   </li> 
+   <li>
+      <code>demo.cms.signedAndEnvelopedData</code>: CMS Signed- and EnvelopedData demos
+   </li>
+   <li>
+      <code>demo.cms.pkcs7cms</code>: CMS - PKCS#7 interoparability demos
+   </li>            
+   <li>
+      <code>demo.cms.ecc</code>: Elliptic Curve EnvelopedData and SignedData demos; requires the IAIK-ECCelerate<sup>TM</sup> library in your classpath; see <a href="Install.html">installation guidelines</a> 
+   </li>  
+   <li>
+      <code>demo.cms.pkcs11</code>: PKCS#11 CMS demos; requires the IAIK PKCS#11 wrapper and provider libraries<sup>*</sup> in your classpath; see <a href="Install.html">installation guidelines</a>  
+   </li>      
+   <li>
+      <code>demo.cms.tsp</code>: Shows how to add a time stamp to a SignedData message; requires the IAIK-TSP (2.0 or later) library in your classpath
+   </li>
+</ul>   
+
+<ul>	
+   <li> 
+       <code>demo.smime.basic</code>: Basic S/MIME demos
+   </li>
+   <li> 
+       <code>demo.smime.big</code>: Big S/MIME mail demos
+   </li>
+   <li>
+      <code>demo.smime.ecc</code>: Elliptic Curve S/MIME demos; requires the IAIK-ECCelerate<sup>TM</sup> library in your classpath 
+   </li>  
+   <li>
+      <code>demo.smime.pkcs11</code>: PKCS#11 S/MIME demos; requires the IAIK PKCS#11 wrapper and provider libraries<sup>*</sup> in your classpath  
+   </li>
+   <li>
+      <code>demo.smime.ess</code>: ESS (Enhanced security services for S/MIME; RFC 2634) demos
+   </li>  
+</ul>
+
+<sup>*</sup><small>The PKCS#11 demos require that you install the IAIK PKCS#11-Wrapper and IAIK PKCS#11-Provider.
+To install the IAIK PKCS#11-Wrapper put the <code>iaikPkcs11Wrapper.jar</code> file into your class
+path and the shared library (<code>pkcs11wrapper.dll</code> or <code>libpkcs11wrapper.so</code>) into
+the system library search path (you may use the -Djava.library.path option for pointing to the directory
+where the shared wrapper dll/so is located). To install the IAIK PKCS#11-Provider put the <code>iaikPkcs11Provider.jar</code>
+file into your class path. For running the PKCS#11 demos you must use JDK 1.2 or later. If you are using JDK 1.4 or
+later do not forget to use the signed version of <code>iaikPkcs11Provider.jar</code>! (see IAIK PKCS#11 provider installation and demo notes)</small>
+<p>
+The corresponding demo source files are located in the <code>src/demo</code> directory of this IAIK-CMS distribution; the demo class files are packaged
+in a separate jar-file (<code>iaik_cms_demo.jar</code>).
+</p>
+<p>
+The keys and/or certificates used by the demo programs are read from a Java<sup>TM</sup> KeyStore named "cms.keystore" which has to be created by running the 
+<code>SetupCMSKeyStore</code> program of package <code>demo.keystore</code> (do not forget to include the IAIK-JCE jar file into your classpath). e.g.:
+</p>
+
+<pre>
+java -cp lib/iaik_jce_full.jar;lib/iaik_cms.jar;lib/iaik_cms_demo.jar demo.keystore.SetupCMSKeyStore
+</pre>
+
+<p>
+When starting the SetupCMSKeyStore program, you first will be asked to enter the directory into which the new keystore
+should be saved, e.g.:
+</p>
+
+<pre>
+Create new KeyStore in directory: C:\IAIK-CMS [y]
+</pre>
+
+<p>
+By default the SetupCMSKeyStore program tries to write the new key store to a file named "cms.keystore" located
+in your current user directory. Type "y" if you agree with this option, or "n" if you want to specify another directory.
+</p>
+<p>
+Note that the execution of the SetupCMSKeyStore program may last some time because several keys are generated:
+</p>
+
+<pre>
+KeyStore will be saved to: D:\Development\JavaSecurity\IAIK-CMS\cms.keystore
+generate RSA KeyPair for CA certificate [1024 bits]...
+Generate RSA signing keys...
+generate RSA KeyPair for a test certificate [512 bits]...
+generate RSA KeyPair for a test certificate [1024 bits]...
+generate RSA KeyPair for a test certificate [2048 bits]...
+Generate RSA encryption keys...
+generate RSA KeyPair for a test certificate [512 bits]...
+generate RSA KeyPair for a test certificate [1024 bits]...
+generate second RSA KeyPair for a test certificate [1024 bits]...
+generate RSA KeyPair for a test certificate [2048 bits]...
+generate DSA KeyPair for CA certificate [1024 bits]...
+generate DSA KeyPair for a test certificate [512 bits]...
+generate DSA KeyPair for a test certificate [1024 bits]...
+generate ESDH KeyPair for a test certificate [512 bits]...
+generate ESDH KeyPair for a test certificate [1024 bits]...
+generate ESDH KeyPair for a test certificate [1024 bits]...
+generate ESDH KeyPair for a test certificate [2048 bits]...
+generate SSDH KeyPair for a test certificate [1024 bits]...
+generate SSDH KeyPair for a test certificate [1024 bits]...
+generate RSA KeyPair for a tsp server test certificate [1024 bits]...
+create self signed RSA CA certificate...
+create self signed DSA CA certificate...
+Create RSA demo certificates to be used for signing...
+create 512 bit RSA demo certificate...
+create 1024 bit RSA demo certificate...
+create 2048 bit RSA demo certificate...
+Create RSA demo certificates to be used for encryption...
+create 512 bit RSA demo certificate...
+create 1024 bit RSA demo certificate...
+create second 1024 bit RSA demo Encryption certificate...
+create 2048 bit RSA demo certificate...
+create 512 bit DSA demo certificate...
+create 1024 bit DSA demo certificate...
+create 512 bit ESDH demo certificate...
+create 1024 bit ESDH demo certificate...
+create second 1024 bit ESDH demo certificate...
+create 2048 bit ESDH demo certificate...
+create 1024 bit SSDH demo certificate...
+create second 1024 bit SSDH demo certificate...
+create 1024 bit RSA TSP demo server certificate...
+
+Certificates created!
+</pre>
+
+<p>
+After successfully having generated and saved the keystore, you may run any other of the demos included in the IAIK-CMS distribution. 
+For getting started with the CMS library, most appropriate you may look at the basic <code>CMSDemo</code>, included in package <code>demo.cms.basic</code>
+showing the most common (and simple) usage of the several CMS content types (Data, SignedData, EnvelopedData, AuthenticatedData, DigestedData, EncryptedData, 
+CompressedData).
+</p>
+<p> 
+For getting started with the S/MIME library, you may run the <code>SMimeSendDemo</code> and <code>SMimeShowDemo</code>, 
+or the <code>SMimeDemo</code> demos (all included in package <code>demo.smime</code>) which demonstrate how to send and receive/parse,
+respectively, signed and/or encrypted, etc. S/MIME mails. 
+</p>
+<p>
+Note that the required keystore file ("cms.keystore") has to be located in your current user directory; thus you must start any 
+demo program from that directory that contains your keystore file!
+</p>
+
+<p>
+Before actually running a demo, you may check if you have properly updated your classpath (see <a href = "Install.html">installation guidelines</a>).
+Remember that the S/MIME demos need the JavaBeans<sup>TM</sup> Activation Framework (<code>activation.jar</code>; already included in JDK 6 or later) and the javax.mail
+API (<code>mail.jar</code>), e.g.:
+
+<pre>
+java -cp lib/iaik_jce_full.jar;lib/iaik_cms.jar;lib/activation.jar;lib/mail.jar;lib/iaik_cms_demo.jar demo.smime.SMimeSend
+</pre>
+
+<p>
+You also can use the batch or shell scripts in the <code>cmd</code> and <code>sh</code> sub-directories to run the demos.<br>
+For running the shell scripts it might be necessary to first convert the file format by using the <code>dos2unix</code> utility 
+and granting execute permissions with the <code>chmod</code> command.
+</p>
+
+<DIV align=center>
+  <CENTER>
+   <TABLE cellPadding=2 border=0>
+    <TR>
+     <TD><IMG src="images/arrow.gif" width=55></TD>
+     <TD>Back to <A href="Readme.html">Readme</A></TD>
+    </TR>
+   </TABLE>
+  </CENTER>
+</DIV>
+    
+
+<HR>
+
+<P align=center>Copyright (c) 2002 by&nbsp;IAIK. Copyright (C) 2003 - 2016 Stiftung SIC. All rights reserved.</P>
+<P align=center>&nbsp;</P>
+</BODY>
+</HTML>

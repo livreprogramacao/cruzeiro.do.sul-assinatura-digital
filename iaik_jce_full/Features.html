@@ -1,0 +1,3419 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Linux (vers 25 March 2009), see www.w3.org">
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii">
+  <meta name="generator" content="Bluefish 2.0.2">
+
+  <title>Features.html</title>
+  <style type="text/css">
+div.c23 {font-family: Trebuchet MS; text-align: center}
+  div.c22 {text-align: center}
+  span.c21 {font-family: Trebuchet MS; font-size: 64%}
+  pre.c20 {font-family: Trebuchet MS}
+  span.c19 {font-family: Courier New}
+  li.c18 {list-style: none; display: inline}
+  ul.c17 {margin-top:0cm}
+  span.c16 {font-family: Trebuchet MS; mso-ansi-language: EN-US; mso-bidi-font-family: Times New Roman; mso-bidi-language: AR-SA; mso-fareast-font-family: Times New Roman; mso-fareast-language: DE}
+  li.c15 {mso-list:l2 level3 lfo4;tab-stops:list 108.0pt}
+  span.c14 {font-family: Trebuchet MS; mso-ansi-language: FR; mso-bidi-font-family: Times New Roman}
+  li.c13 {mso-list:l2 level2 lfo4;tab-stops:list 72.0pt}
+  span.c12 {font-family: Trebuchet MS; mso-ansi-language: EN-US; mso-bidi-font-family: Times New Roman}
+  span.c11 {mso-spacerun: yes}
+  span.c10 {mso-bidi-font-family: Times New Roman; mso-ansi-language: EN-US}
+  p.c9 {font-family: Trebuchet MS}
+  span.c8 {font-family: Trebuchet MS}
+  h3.c7 {font-family: Trebuchet MS}
+  td.c6 {background-color: #C0C0C0}
+  td.c5 {background-color: #C0C0C0; font-weight: bold}
+  td.c4 {background-color: #AEAEAE}
+  th.c3 {background-color: #AAABBB}
+  big.c2 {font-weight: bold}
+  b.c1 {font-style: italic}
+  </style>
+</head>
+
+<body bgproperties="fixed">
+  <table border="0" width="100%">
+    <tr>
+      <td width="8%"><a href="http://jce.iaik.tugraz.at/"><img src=
+      "images/siclogo.jpg" width="113" height="100" border=
+      "0"></a></td>
+
+      <td width="84%" align="center">
+        <h1>IAIK-JCE: Features</h1>
+      </td>
+
+      <td width="8%"><a href="http://jce.iaik.tugraz.at/"><img src=
+      "images/iaik_logo.gif" alt="IAIK Logo" border="0"></a></td>
+    </tr>
+  </table>The Java Cryptography Extension (JCE) extends the Java
+  Cryptography Architecture (JCA) framework to support encryption,
+  MACs and key exchange.
+
+  <p>US Law Export Regulations have restricted the use of the
+  original Java JCE framework to the United States Of America only.
+  The <b class="c1">IAIK-JCE</b> provides a re-implementation of
+  the whole Java Cryptography Extension from SUN/ORACLE:</p>
+
+  <p>- package javax.crypto</p>
+
+  <p>- package javax.crypto.spec</p>
+
+  <p>- package javax.crypto.interfaces</p><br>
+  With JDK1.4 the JCE framework (JAVAX CRYPTO) has been
+  incorporated into the standard JDK. Because of export regulations
+  a JCE provider only maybe used with JDK1.4 (or JCE 1.2.1 or
+  later) if it is signed. For that reason we now provide a signed
+  <a href="Install.html">version</a> of our crypto toolkit
+  IAIK-JCE, too.<br>
+  <i>IAIK-JCE</i> comes with its own security <a href=
+  "#The%20IAIK%20provider">provider</a> offering a great variety of
+  cryptographic services and algorithms, is equipped with a
+  built-in <a href="#ASN.1">ASN.1</a> library, supports <a href=
+  "#PKCS">PKCS</a>, can be used for building <a href=
+  "#X.509">PKI</a> solutions, contains a lot of <a href=
+  "#Random%20Number%20Generators">random number generators</a>,
+  provides easy to use <a href="#LDAP">LDAP</a> search utilities,
+  and is equipped with an extensive demo source library making it
+  easy to become familiar with Java Cryptography and IAIK-JCE.
+  IAIK-JCE also contains special jar files allowing to use <a href=
+  "#jurisdiction">unlimited strength cryptography</a> also if only
+  the default jurisdiction policy files are installed.<br>
+
+  <h3><a name="The IAIK provider"></a>The IAIK Provider</h3>The
+  <i>provider</i> architecture has been introduced by the <i>Java
+  Cryptographic Architecture (JCA)</i> making it possible for
+  different cryptographic implementations to operate on common
+  interfaces (consult the <a href=
+  "http://download.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html"
+  target="_blank">Java Cryptography Architecture API Specification
+  &amp; Reference</a>).
+
+  <p>For generally accessing and using provider-specific algorithm
+  implementations, <i>engine classes</i> and <i>factory methods</i>
+  are used. Engine classes provide interfaces to the functionality
+  of a type of cryptographic algorithm, and factory methods are
+  used for obtaining some specific implementation. To get, for
+  instance, an object of the <code>MessageDigest</code> engine
+  class, use the corresponding <code>getInstance</code> factory
+  method:</p>
+
+  <blockquote>
+    <pre>
+ MessageDigest md = MessageDigest.getInstance("AlgorithmName", "ProviderName");
+ 
+</pre>
+  </blockquote>
+
+  <p>Specifying a particular provider is optionally (for using the
+  IAIK provider, specify <code>"IAIK"</code>). If no provider is
+  stated, all actual providers are searched until one is found that
+  implements the desired algorithm, e.g.:</p>
+
+  <blockquote>
+    <pre>
+ MessageDigest md5 = MessageDigest.getInstance("SHA-1");
+ 
+</pre>
+  </blockquote>
+
+  <p>If none of the installed providers supports the requested
+  algorithm, a <code>NoSuchAlgorithmException</code> is thrown.</p>
+
+  <p>The term <i>provider</i> is an abbreviation for
+  <i>Cryptographic Package Provider</i> and denotes a package or a
+  set of packages supplying a concrete implementation of a subset
+  of the cryptography aspects of the Java Security API (see
+  <a href="http://download.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html"
+  target="_blank">JCA</a>). A JCA provider may realize
+  implementations of digital signature, message digest, and key
+  pair generation algorithms. If the JCA API is extended by a
+  <i>Java Cryptography Extension (JCE)</i> API for supporting
+  encryption and key exchange, a provider additionally may
+  implement encryption and key exchange algorithms.</p>
+
+  <p>The master class of the IAIK security package provider is the
+  <code>IAIK</code> class. It extends the
+  <code>java.security.Provider</code> class for registering the
+  IAIK provider specific security implementations within the Java
+  security architecture. The IAIK provider supports both, algorithm
+  implementations for JCA, and for the JCE extension. If you are
+  using the IAIK provider with Java 1.4 or later you will have to
+  use the signed version of the IAIK provider jar file.<br>
+  Note that depending on which IAIK JCE JAR file you are using not
+  all algorithms may be available because of legal issues. In
+  particular RC5, RC6, IDEA, and ESDH are not included in the
+  default distribution. If you want to use those algorithms as well
+  you need to download the full version of the ZIP distribution
+  file, see the <a href=
+  "http://jce.iaik.tugraz.at/download/">download</a> page, but make
+  sure you have understood the related legal and patent issues.<br>
+  The following table lists the names - case sensitive - of several
+  algorithms supported by the IAIK provider. The table is divided
+  into two parts. The first part contains the JCA related
+  implementations, and the second part lists the JCE algorithms.
+  For each algorithm, the corresponding specification and all
+  registered aliases are reported.</p>
+
+<table border = 1>
+ <tr>
+ <th colspan = 3 bgcolor = "#AAABBB" align = center><a name =
+ "JCA"><big><b>JCA implementations</b></big></a></th>
+ </tr>
+ 
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Message Digest Algorithms</b>
+ 
+ <pre>
+ MessageDigest md = MessageDigest.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHA3_224.html" title="class in iaik.security.md"><code>SHA3-224</code></a> (224 bit Secure
+ Hash Algorithm&nbsp;3)</td>
+ <td valign = "top">224 bit message digest algorithm as proposed by <a href =
+ "http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf" target="_blank">NIST (FIPS PUB 202)</a></td>
+ <td align = "center" valign = "middle">SHA3224, 2.16.840.1.101.3.4.2.7</td>
+ </tr> 
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHA3_256.html" title="class in iaik.security.md"><code>SHA3-256</code></a> (256 bit Secure
+ Hash Algorithm&nbsp;3)</td>
+ <td valign = "top">256 bit message digest algorithm as proposed by <a href =
+ "http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf" target="_blank">NIST (FIPS PUB 202)</a></td>
+ <td align = "center" valign = "middle">SHA3256, 2.16.840.1.101.3.4.2.8</td>
+ </tr> 
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHA3_384.html" title="class in iaik.security.md"><code>SHA3-384</code></a> (384 bit Secure
+ Hash Algorithm&nbsp;3)</td>
+ <td valign = "top">384 bit message digest algorithm as proposed by <a href =
+ "http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf" target="_blank">NIST (FIPS PUB 202)</a></td>
+ <td align = "center" valign = "middle">SHA3384, 2.16.840.1.101.3.4.2.9</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHA3_512.html" title="class in iaik.security.md"><code>SHA3-512</code></a> (512 bit Secure
+ Hash Algorithm&nbsp;3)</td>
+ <td valign = "top">512 bit message digest algorithm as proposed by <a href =
+ "http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf" target="_blank">NIST (FIPS PUB 202)</a></td>
+ <td align = "center" valign = "middle">SHA3512, 2.16.840.1.101.3.4.2.10</td>
+ </tr>  
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHAKE128InputStream.html" title="class in iaik.security.md"><code>SHAKE128</code></a> (SHA-3 XOF
+ &quot;Secure Hash Algorithm with KECCAK&quot; with 128 bits security strength)</td>
+ <td valign = "top">SHAKE128 Extendable Output Function (XOF) as proposed by <a href =
+ "http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf" target="_blank">NIST (FIPS PUB 202)</a>.
+ Not available as MessageDigest engine, rather as <a href="docs/iaik/security/md/SHAKE128InputStream.html" title="class in iaik.security.md"><code>SHAKE128InputStream</code></a>.</td>
+ <td align = "center" valign = "middle">SHAKE-128, 2.16.840.1.101.3.4.2.11</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHAKE256InputStream.html" title="class in iaik.security.md"><code>SHAKE256</code></a> (SHA-3 XOF
+ &quot;Secure Hash Algorithm with KECCAK&quot; with 256 bits security strength)</td>
+ <td valign = "top">SHAKE256 Extendable Output Function (XOF) as proposed by <a href =
+ "http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf" target="_blank">NIST (FIPS PUB 202)</a>.
+ Not available as MessageDigest engine, but as <a href="docs/iaik/security/md/SHAKE256InputStream.html" title="class in iaik.security.md"><code>SHAKE256InputStream</code></a>.</td>
+ <td align = "center" valign = "middle">SHAKE-256, 2.16.840.1.101.3.4.2.12</td>
+ </tr>     
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/Md2.html" title="class in iaik.security.md"><code>Md2</code></a> (Message Digest 2)</td>
+ <td valign = "top">RSA Data Security, Inc.'s MD2 message digest algorithm,
+ as specified in <a href = "http://www.ietf.org/rfc/rfc1319.txt"
+ target="_blank">RFC 1319</a> for producing a 128-bit hash value</td>
+ <td align = "center" valign = "middle" target="_blank">1.2.840.113549.2.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/Md5.html" title="class in iaik.security.md"><code>Md5</code></a> (Message Digest 5)</td>
+ <td valign = "top">RSA Data Security, Inc.'s MD5 message digest algorithm,
+ as specified in <a href = "http://www.ietf.org/rfc/rfc1321.txt"
+ target="_blank">RFC 1321</a> for producing a 128-bit hash value</td>
+ <td align = "center" valign = "middle">1.2.840.113549.2.5</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHA.html" title="class in iaik.security.md"><code>SHA-1</code></a> (Secure Hash Algorithm)
+ </td>
+ <td valign = "top">SHA-1 message digest algorithm as specified in FIPS PUB
+ 180-1 for producing a 160-bit hash value</td>
+ <td align = "center" valign = "middle">SHA, SHA1, 1.3.14.3.2.26, 1.3.14.3.2.18</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHA224.html" title="class in iaik.security.md"><code>SHA224</code></a> (224 bit Secure
+ Hash Algorithm)</td>
+ <td valign = "top">224 bit message digest algorithm as proposed by <a href =
+ "http://csrc.nist.gov/CryptoToolkit/tkhash.html" target="_blank">NIST</a></td>
+ <td align = "center" valign = "middle">SHA-224, 2.16.840.1.101.3.4.2.4</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHA512_224.html" title="class in iaik.security.md"><code>SHA512/224</code></a> (256 bit Secure
+ Hash Algorithm)</td>
+ <td valign = "top">224 bit message digest algorithm based on SHA-512 as proposed by FIPS 186-4</td>
+ <td align = "center" valign = "middle">SHA-512/224, 2.16.840.1.101.3.4.2.5</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHA256.html" title="class in iaik.security.md"><code>SHA256</code></a> (256 bit Secure
+ Hash Algorithm)</td>
+ <td valign = "top">256 bit message digest algorithm as proposed by <a href =
+ "http://csrc.nist.gov/CryptoToolkit/tkhash.html" target="_blank">NIST</a></td>
+ <td align = "center" valign = "middle">SHA-256, 2.16.840.1.101.3.4.2.1</td>
+ </tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHA512_256.html" title="class in iaik.security.md"><code>SHA512/256</code></a> (256 bit Secure
+ Hash Algorithm)</td>
+ <td valign = "top">256 bit message digest algorithm based on SHA-512 as proposed by FIPS 186-4</td>
+ <td align = "center" valign = "middle">SHA-512/256, 2.16.840.1.101.3.4.2.6</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHA384.html" title="class in iaik.security.md"><code>SHA384</code></a> (384 bit Secure
+ Hash Algorithm)</td>
+ <td valign = "top">384 bit message digest algorithm as proposed by <a href =
+ "http://csrc.nist.gov/CryptoToolkit/tkhash.html" target="_blank">NIST</a></td>
+ <td align = "center" valign = "middle">SHA-384, 2.16.840.1.101.3.4.2.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/SHA512.html" title="class in iaik.security.md"><code>SHA512</code></a> (512 bit Secure
+ Hash Algorithm)</td>
+ <td valign = "top">512 bit message digest algorithm as proposed by <a href =
+ "http://csrc.nist.gov/CryptoToolkit/tkhash.html" target="_blank">NIST</a></td>
+ <td align = "center" valign = "middle">SHA-512, 2.16.840.1.101.3.4.2.3</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/RipeMd128.html" title="class in iaik.security.md"><code>RIPEMD128</code></a> (RACE
+ Integrity Primitives Evaluation Message Digest 128)</td>
+ <td valign = "top">128-bit hash value producing message digest algorithm;
+ developed in the framework of the EU project RIPE (RACE Integrity Primitives
+ Evaluation, 1988-1992); specified in ISO/IEC 10118-3.</td>
+ <td align = "center" valign = "middle">RipeMd128, RIPEMD-128, 1.3.36.3.2.2, 1.0.10118.3.0.50</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/RipeMd160.html" title="class in iaik.security.md"><code>RIPEMD160</code></a> (RACE
+ Integrity Primitives Evaluation Message Digest 160)</td>
+ <td valign = "top">160-bit hash value producing message digest algorithm;
+ developed in the framework of the EU project RIPE (RACE Integrity Primitives
+ Evaluation, 1988-1992) ; specified in ISO/IEC 10118-3.</td>
+ <td align = "center" valign = "middle">RipeMd160, RIPEMD-160, 1.3.36.3.2.1, 1.0.10118.3.0.49</td>
+ </tr>
+ <td valign = "top"><a href="docs/iaik/security/md/RipeMd256.html" title="class in iaik.security.md"><code>RIPEMD256</code></a> (RACE
+ Integrity Primitives Evaluation Message Digest 256)</td>
+ <td valign = "top">256-bit hash value producing message digest algorithm;
+ developed in the framework of the EU project RIPE (RACE Integrity Primitives
+ Evaluation, 1988-1992); specified in ISO/IEC 10118-3.</td>
+ <td align = "center" valign = "middle">RipeMd256, RIPEMD-256, 1.3.36.3.2.3</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/RipeMd320.html" title="class in iaik.security.md"><code>RIPEMD320</code></a> (RACE
+ Integrity Primitives Evaluation Message Digest 320)</td>
+ <td valign = "top">320-bit hash value producing message digest algorithm;
+ developed in the framework of the EU project RIPE (RACE Integrity Primitives
+ Evaluation, 1988-1992)</td>
+ <td align = "center" valign = "middle">RipeMd320, RIPEMD-320</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/Whirlpool.html" title="class in iaik.security.md"><code>Whirlpool</code></a></td>
+ <td valign = "top">512-bit hash value producing message digest algorithm;
+ developed by Paulo S.L.M. Barreto and Vincent Rijmen; specified in ISO/IEC
+ 10118-3.</td>
+ <td align = "center" valign = "middle">1.0.10118.3.0.55</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/GOST3411.html" title="class in iaik.security.md"><code>GOST3411</code></a></td>
+ <td valign = "top">256-bit hash value producing Russian message digest algorithm; see 
+ <a href="http://tools.ietf.org/rfc/rfc5831.txt">RFC 5831</a>
+ </td>
+ <td align = "center" valign = "middle">GOST3411, 1.2.643.2.2.9</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/BLAKE224.html" title="class in iaik.security.md"><code>BLAKE224</code></a></td>
+ <td valign = "top">224-bit hash value producing SHA-3 candidate BLAKE
+ </td>
+ <td align = "center" valign = "middle">BLAKE-224</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/BLAKE256.html" title="class in iaik.security.md"><code>BLAKE256</code></a></td>
+ <td valign = "top">256-bit hash value producing SHA-3 candidate BLAKE
+ </td>
+ <td align = "center" valign = "middle">BLAKE-256</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/BLAKE384.html" title="class in iaik.security.md"><code>BLAKE384</code></a></td>
+ <td valign = "top">384-bit hash value producing SHA-3 candidate BLAKE
+ </td>
+ <td align = "center" valign = "middle">BLAKE-384</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/BLAKE512.html" title="class in iaik.security.md"><code>BLAKE512</code></a></td>
+ <td valign = "top">512-bit hash value producing SHA-3 candidate BLAKE
+ </td>
+ <td align = "center" valign = "middle">BLAKE-512</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/Groestl224.html" title="class in iaik.security.md"><code>Groestl224</code></a></td>
+ <td valign = "top">224-bit hash value producing SHA-3 candidate Groestl
+ </td>
+ <td align = "center" valign = "middle">Groestl-224</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/Groestl256.html" title="class in iaik.security.md"><code>Groestl256</code></a></td>
+ <td valign = "top">256-bit hash value producing SHA-3 candidate Groestl
+ </td>
+ <td align = "center" valign = "middle">Groestl-256</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/Groestl384.html" title="class in iaik.security.md"><code>Groestl384</code></a></td>
+ <td valign = "top">384-bit hash value producing SHA-3 candidate Groestl
+ </td>
+ <td align = "center" valign = "middle">Groestl-384</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/Groestl512.html" title="class in iaik.security.md"><code>Groestl512</code></a></td>
+ <td valign = "top">512-bit hash value producing SHA-3 candidate Groestl
+ </td>
+ <td align = "center" valign = "middle">Groestl-512</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/JH224.html" title="class in iaik.security.md"><code>JH224</code></a></td>
+ <td valign = "top">224-bit hash value producing SHA-3 candidate JH
+ </td>
+ <td align = "center" valign = "middle">JH-224</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/JH256.html" title="class in iaik.security.md"><code>JH256</code></a></td>
+ <td valign = "top">256-bit hash value producing SHA-3 candidate JH
+ </td>
+ <td align = "center" valign = "middle">JH-256</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/JH384.html" title="class in iaik.security.md"><code>JH384</code></a></td>
+ <td valign = "top">384-bit hash value producing SHA-3 candidate JH
+ </td>
+ <td align = "center" valign = "middle">JH-384</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/JH512.html" title="class in iaik.security.md"><code>JH512</code></a></td>
+ <td valign = "top">512-bit hash value producing SHA-3 candidate JH
+ </td>
+ <td align = "center" valign = "middle">JH-512</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/KECCAK224.html" title="class in iaik.security.md"><code>KECCAK224</code></a></td>
+ <td valign = "top">224-bit hash value producing SHA-3 candidate Keccak
+ </td>
+ <td align = "center" valign = "middle">KECCAK-224</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/KECCAK256.html" title="class in iaik.security.md"><code>KECCAK256</code></a></td>
+ <td valign = "top">256-bit hash value producing SHA-3 candidate Keccak
+ </td>
+ <td align = "center" valign = "middle">KECCAK-256</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/KECCAK384.html" title="class in iaik.security.md"><code>KECCAK384</code></a></td>
+ <td valign = "top">384-bit hash value producing SHA-3 candidate Keccak
+ </td>
+ <td align = "center" valign = "middle">KECCAK-384</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/KECCAK512.html" title="class in iaik.security.md"><code>KECCAK512</code></a></td>
+ <td valign = "top">512-bit hash value producing SHA-3 candidate Keccak
+ </td>
+ <td align = "center" valign = "middle">KECCAK-512</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/Skein224.html" title="class in iaik.security.md"><code>Skein224</code></a></td>
+ <td valign = "top">224-bit hash value producing SHA-3 candidate Skein
+ </td>
+ <td align = "center" valign = "middle">Skein-224</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/Skein256.html" title="class in iaik.security.md"><code>Skein256</code></a></td>
+ <td valign = "top">256-bit hash value producing SHA-3 candidate Skein
+ </td>
+ <td align = "center" valign = "middle">Skein-256</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/Skein384.html" title="class in iaik.security.md"><code>Skein384</code></a></td>
+ <td valign = "top">384-bit hash value producing SHA-3 candidate Skein
+ </td>
+ <td align = "center" valign = "middle">Skein-384</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/md/Skein512.html" title="class in iaik.security.md"><code>Skein512</code></a></td>
+ <td valign = "top">512-bit hash value producing SHA-3 candidate Skein
+ </td>
+ <td align = "center" valign = "middle">Skein-512</td>
+ </tr>
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Digital Signature Algorithms<SUP><A
+ HREF="#blinding">2</A></SUP></b>
+ 
+ <pre>
+ Signature sig = Signature.getInstance(&lt;Standard&nbsp;Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/RawDSA.html" title="class in iaik.security.dsa"><code>RawDSA</code></a> (Raw Digital
+ Signature Algorithm)</td>
+ <td valign = "top">"Raw" (input has to be already hashed with SHA-1) DSA
+ signature algorithm as specified in FIPS PUB 186</td>
+ <td align = "center" valign = "middle">NONEwithDSA</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/DSA.html" title="class in iaik.security.dsa"><code>DSA</code></a> (Digital Signature
+ Algorithm)</td>
+ <td valign = "top">DSS (DSA with SHA-1) signature algorithm as specified in
+ FIPS PUB 186-2</td>
+ <td align = "center" valign = "middle">SHA/DSA, SHA-1/DSA, DSS, SHAwithDSA,
+ SHA1withDSA, 1.3.14.3.2.13, 1.3.14.3.2.27, 1.2.840.10040.4.3</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/SHA224withDSA.html" title="class in iaik.security.dsa"><code>SHA224withDSA</code></a>
+ (Digital Signature Algorithm with SHA-224)</td>
+ <td valign = "top">DSA signature algorithm using SHA-224 for hash calculation
+ as specified in FIPS PUB 186-3</td>
+ <td align = "center" valign = "middle">SHA224/DSA, SHA-224/DSA,
+ SHA224withDSA, SHA-224withDSA, 2.16.840.1.101.3.4.3.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/SHA256withDSA.html" title="class in iaik.security.dsa"><code>SHA256withDSA</code></a>
+ (Digital Signature Algorithm with SHA-256)</td>
+ <td valign = "top">DSA signature algorithm using SHA-256 for hash calculation
+ as specified in FIPS PUB 186-3</td>
+ <td align = "center" valign = "middle">SHA256/DSA, SHA-256/DSA,
+ SHA256withDSA, SHA-256withDSA, 2.16.840.1.101.3.4.3.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/SHA384withDSA.html" title="class in iaik.security.dsa"><code>SHA384withDSA</code></a>
+ (Digital Signature Algorithm with SHA-384)</td>
+ <td valign = "top">DSA signature algorithm using SHA-384 for hash calculation
+ as specified in FIPS PUB 186-3</td>
+ <td align = "center" valign = "middle">SHA384/DSA, SHA-384/DSA,
+ SHA384withDSA, SHA-384withDSA</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/SHA512withDSA.html" title="class in iaik.security.dsa"><code>SHA512withDSA</code></a>
+ (Digital Signature Algorithm with SHA-512)</td>
+ <td valign = "top">DSA signature algorithm using SHA-512 for hash calculation
+ as specified in FIPS PUB 186-3</td>
+ <td align = "center" valign = "middle">SHA512/DSA, SHA-512/DSA,
+ SHA512withDSA, SHA-512withDSA</td>
+ </tr> 
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/SSLRSASignature.html" title="class in iaik.security.rsa"><code>SSL/RSA</code></a> (SSL
+ with RSA encryption)</td>
+ <td valign = "top">RSA based signature algorithm using the SHA <i>and</i> MD5
+ hash algorithms for message digest computation as specified by the <i>Secure
+ Sockets Layer</i> (SSL) protocol; in accordance to PKCS#1</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/Md2RSASignature.html" title="class in iaik.security.rsa"><code>MD2/RSA</code></a> (MD2
+ with RSA encryption)</td>
+ <td valign = "top">RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) using the
+ <i>MD2</i> algorithm for message digest computation as specified in PKCS#1</td>
+ <td align = "center" valign = "middle">MD2WithRSA, MD2withRSA,
+ 1.2.840.113549.1.1.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/Md5RSASignature.html" title="class in iaik.security.rsa"><code>MD5/RSA</code></a> (MD5
+ with RSA encryption)</td>
+ <td valign = "top">RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) using the
+ <i>MD5</i> algorithm for message digest computation as specified in PKCS#1</td>
+ <td align = "center" valign = "middle">MD5WithRSA, MD5withRSA,
+ 1.2.840.113549.1.1.4</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/ShaRSASignature.html" title="class in iaik.security.rsa"><code>SHA/RSA</code></a> (SHA
+ with RSA encryption)</td>
+ <td valign = "top">RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) using the
+ <i>Secure Hash Algorithm (SHA)</i> for message digest computation; in
+ accordance to PKCS#1</td>
+ <td align = "center" valign = "middle">SHA-1/RSA, SHA1/RSA, SHAWithRSA,
+ SHA1WithRSA, SHAwithRSA, SHA1withRSA, SHA-1withRSA, 1.3.14.3.2.29,
+ 1.2.840.113549.1.1.5</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/Sha224RSASignature.html" title="class in iaik.security.rsa"><code>SHA224/RSA</code></a>
+ (SHA224 with RSA encryption)</td>
+ <td valign = "top">RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) using the
+ <i>SHA-224</i> for message digest computation; in accordance to PKCS#1</td>
+ <td align = "center" valign = "middle">SHA-224/RSA, SHA224WithRSA,
+ SHA224withRSA, 1.2.840.113549.1.1.14</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/Sha256RSASignature.html" title="class in iaik.security.rsa"><code>SHA256/RSA</code></a>
+ (SHA256 with RSA encryption)</td>
+ <td valign = "top">RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) using the
+ <i>SHA-256</i> for message digest computation; in accordance to PKCS#1</td>
+ <td align = "center" valign = "middle">SHA-256/RSA, SHA256WithRSA,
+ SHA256withRSA, 1.2.840.113549.1.1.11</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/Sha384RSASignature.html" title="class in iaik.security.rsa"><code>SHA384/RSA</code></a>
+ (SHA384 with RSA encryption)</td>
+ <td valign = "top">RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) using the
+ <i>SHA-384</i> for message digest computation; in accordance to PKCS#1</td>
+ <td align = "center" valign = "middle">SHA-384/RSA, SHA384WithRSA,
+ SHA384withRSA, 1.2.840.113549.1.1.12</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/Sha512RSASignature.html" title="class in iaik.security.rsa"><code>SHA512/RSA</code></a>
+ (SHA512 with RSA encryption)</td>
+ <td valign = "top">RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) using the
+ <i>SHA-512</i> for message digest computation; in accordance to PKCS#1</td>
+ <td align = "center" valign = "middle">SHA-512/RSA, SHA512WithRSA,
+ SHA512withRSA, 1.2.840.113549.1.1.13</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RipeMd160RSASignature.html" title="class in iaik.security.rsa"><code>RIPEMD160/RSA</code></a> (rsaSignatureWithRipemd160)</td>
+ <td valign = "top">RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) using the
+ <i>RipeMd160</i> algorithm for message digest computation</td>
+ <td align = "center" valign = "middle">RipeMd160WithRSA, RipeMd160withRSA,
+ RIPEMD-160/RSA, 1.3.36.3.3.1.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RipeMd128RSASignature.html" title="class in iaik.security.rsa"><code>RIPEMD128/RSA</code></a> (rsaSignatureWithRipemd128)</td>
+ <td valign = "top">RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) using the
+ <i>RipeMd128</i> algorithm for message digest computation</td>
+ <td align = "center" valign = "middle">RipeMd128WithRSA, RipeMd128withRSA,
+ RIPEMD-128/RSA, 1.3.36.3.3.1.3</td>
+ </tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RipeMd256RSASignature.html" title="class in iaik.security.rsa"><code>RIPEMD128/RSA</code></a> (rsaSignatureWithRipemd256)</td>
+ <td valign = "top">RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) using the
+ <i>RipeMd256</i> algorithm for message digest computation</td>
+ <td align = "center" valign = "middle">RipeMd256WithRSA, RipeMd256withRSA,
+ RIPEMD-256/RSA, 1.3.36.3.3.1.4</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/WhirlpoolRSASignature.html" title="class in iaik.security.rsa"><code>WHIRLPOOL/RSA</code></a> (rsaSignatureWithWhirlpool)</td>
+ <td valign = "top">RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) using the
+ <i>Whirlpool</i> algorithm (ISO/IEC 10118-3) for message digest computation</td>
+ <td align = "center" valign = "middle">WHIRLPOOLWithRSA, WHIRLPOOLwithRSA,
+ WHIRLPOOL/RSA</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RawRSASignature.html" title="class in iaik.security.rsa"><code>RSA</code></a> (Raw RSA)</td>
+ <td valign = "top">Raw RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) requiring the
+ application to do all the hashing and DigestInfo coding outside.</td>
+ <td align = "center" valign = "middle">RawRSA, NONEwithRSA, RSAforSSL</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RawRSAPkcs1v15Signature.html" title="class in iaik.security.rsa"><code>RawRSASSA-PKCS1-v1_5</code></a> (Raw RSA PKCS1v1.5)</td>
+ <td valign = "top">Raw RSA PKCS#1v1.5 based signature algorithm (<a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>) requiring the
+ application to do the hashing outside.</td>
+ <td align = "center" valign = "middle">RSAPkcs15, RawRSAPkcs15,
+ NONEwithRSAPkcs15, RSASSA-PKCS1-v1_5, RawRSASSA-PKCS1-v1_5,
+ NONEwithRSASSA-PKCS1-v1_5</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/MD2withRSAandMGF1Signature.html" title="class in iaik.security.rsa"><code>MD2withRSAandMGF1</code></a> (RSA PSS with MD2 and MGF1)</td>
+ <td valign = "top">RSA <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a> PSS based signature algorithm using MD2 as
+ hash and MGF1 as mask generation algorithm.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/MD5withRSAandMGF1Signature.html" title="class in iaik.security.rsa"><code>MD5withRSAandMGF1</code></a> (RSA PSS with MD5 and MGF1)</td>
+ <td valign = "top">RSA <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a> PSS based signature algorithm using MD5 as
+ hash and MGF1 as mask generation algorithm.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/SHAwithRSAandMGF1Signature.html" title="class in iaik.security.rsa"><code>SHA1withRSAandMGF1</code></a> (RSA PSS with SHA-1 and MGF1)</td>
+ <td valign = "top">RSA <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a> PSS based signature algorithm using SHA-1 as
+ hash and MGF1 as mask generation algorithm.</td>
+ <td align = "center" valign = "middle">SHAwithRSAandMGF1, SHA-1withRSAandMGF1
+ </td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/SHA224withRSAandMGF1Signature.html" title="class in iaik.security.rsa"><code>SHA224withRSAandMGF1</code></a> (RSA PSS with SHA224 and MGF1)</td>
+ <td valign = "top">RSA <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a> PSS based signature algorithm using SHA224 as
+ hash and MGF1 as mask generation algorithm.</td>
+ <td align = "center" valign = "middle">SHA-224withRSAandMGF1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/SHA256withRSAandMGF1Signature.html" title="class in iaik.security.rsa"><code>SHA256withRSAandMGF1</code></a> (RSA PSS with SHA256 and MGF1)</td>
+ <td valign = "top">RSA <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a> PSS based signature algorithm using SHA256 as
+ hash and MGF1 as mask generation algorithm.</td>
+ <td align = "center" valign = "middle">SHA-256withRSAandMGF1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/SHA384withRSAandMGF1Signature.html" title="class in iaik.security.rsa"><code>SHA384withRSAandMGF1</code></a> (RSA PSS with SHA384 and MGF1)</td>
+ <td valign = "top">RSA <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a> PSS based signature algorithm using SHA384 as
+ hash and MGF1 as mask generation algorithm.</td>
+ <td align = "center" valign = "middle">SHA-384withRSAandMGF1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/SHA512withRSAandMGF1Signature.html" title="class in iaik.security.rsa"><code>SHA512withRSAandMGF1</code></a> (RSA PSS with SHA512 and MGF1)</td>
+ <td valign = "top">RSA <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a> PSS based signature algorithm using SHA512 as
+ hash and MGF1 as mask generation algorithm.</td>
+ <td align = "center" valign = "middle">SHA-512withRSAandMGF1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RIPEMD128withRSAandMGF1Signature.html" title="class in iaik.security.rsa"><code>RIPEMD128withRSAandMGF1</code></a> (RSA PSS with RipeMd128 and MGF1)</td>
+ <td valign = "top">RSA <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a> PSS based signature algorithm using RipeMd128
+ as hash and MGF1 as mask generation algorithm.</td>
+ <td align = "center" valign = "middle">RIPEMD-128withRSAandMGF1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RIPEMD160withRSAandMGF1Signature.html" title="class in iaik.security.rsa"><code>RIPEMD160withRSAandMGF1</code></a> (RSA PSS with RipeMd160 and MGF1)</td>
+ <td valign = "top">RSA <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a> PSS based signature algorithm using RipeMd160
+ as hash and MGF1 as mask generation algorithm.</td>
+ <td align = "center" valign = "middle">RIPEMD-160withRSAandMGF1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/WHIRLPOOLwithRSAandMGF1Signature.html" title="class in iaik.security.rsa"><code>WHIRLPOOLwithRSAandMGF1</code></a> (RSA PSS with WHIRLPOOL and MGF1)</td>
+ <td valign = "top">RSA <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a> PSS based signature algorithm using WHIRLPOOL
+ as hash and MGF1 as mask generation algorithm.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAPssSignature.html" title="class in iaik.security.rsa"><code>RSASSA-PSS</code></a> (RSA
+ PSS)</td>
+ <td valign = "top">RSA <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a> PSS signature algorithm; all parameters have
+ to be supplied by the application.</td>
+ <td align = "center" valign = "middle">RSAPss, PSS, 1.2.840.113549.1.1.10</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RawRSAPssSignature.html" title="class in iaik.security.rsa"><code>RawRSASSA-PSS</code></a>
+ (Raw RSA PSS)</td>
+ <td valign = "top">RSA <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a> PSS signature algorithm; all parameters and
+ message hash have to be supplied by the application.</td>
+ <td align = "center" valign = "middle">RawRSAPss, RawPSS, NONEwithRSAPss</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAISO9796P2Signature.html" title="class in iaik.security.rsa"><code>RSA-ISO9796-2</code></a> (RSA ISO9796-2 S1)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S1) with message recovery</td>
+ <td align = "center" valign = "middle">RSA-ISO9796-2-1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAISO9796P2S2S3Signature.html" title="class in iaik.security.rsa"><code>RSA-ISO9796-2-2-3</code></a> (RSA ISO9796-2 S2 S3)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S2, S3) with message recovery</td>
+ <td align = "center" valign = "middle">1.3.36.3.4.2.2, 1.3.36.3.4.2.3</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/SHAwithRSAISO9796P2Signature.html" title="class in iaik.security.rsa"><code>SHA/RSA-ISO9796-2</code></a> (RSA ISO9796-2 S1 with SHA-1)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S1) with message recovery using SHA-1 as hash algorithm</td>
+ <td align = "center" valign = "middle">SHA1/RSA-ISO9796-2,
+ SHA-1/RSA-ISO9796-2, SHAwithRSA/ISO9796-2, SHA1withRSA/ISO9796-2,
+ SHA-1withRSA/ISO9796-2, SHA/RSA-ISO9796-2-1, SHA1/RSA-ISO9796-2-1,
+ SHA-1/RSA-ISO9796-2-1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/SHA256withRSAISO9796P2Signature.html" title="class in iaik.security.rsa"><code>SHA256/RSA-ISO9796-2</code></a> (RSA ISO9796-2 S1 with SHA-256)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S1) with message recovery using SHA-256 as hash algorithm</td>
+ <td align = "center" valign = "middle">SHA-256/RSA-ISO9796-2,
+ SHA256withRSA/ISO9796-2, SHA-256withRSA/ISO9796-2, SHA256/RSA-ISO9796-2-1,
+ SHA-256/RSA-ISO9796-2-1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/SHA384withRSAISO9796P2Signature.html" title="class in iaik.security.rsa"><code>SHA384/RSA-ISO9796-2</code></a> (RSA ISO9796-2 S1 with SHA-384)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S1) with message recovery using SHA-384 as hash algorithm</td>
+ <td align = "center" valign = "middle">SHA-384/RSA-ISO9796-2,
+ SHA384withRSA/ISO9796-2, SHA-384withRSA/ISO9796-2, SHA384/RSA-ISO9796-2-1,
+ SHA-384/RSA-ISO9796-2-1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/SHA512withRSAISO9796P2Signature.html" title="class in iaik.security.rsa"><code>SHA512/RSA-ISO9796-2</code></a> (RSA ISO9796-2 S1 with SHA-512)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S1) with message recovery using SHA-512 as hash algorithm</td>
+ <td align = "center" valign = "middle">SHA-512/RSA-ISO9796-2,
+ SHA512withRSA/ISO9796-2, SHA-512withRSA/ISO9796-2, SHA512/RSA-ISO9796-2-1,
+ SHA-512/RSA-ISO9796-2-1</td>
+ </tr>
+ <tr>
+ <td valign = "top">
+ <a href="docs/iaik/security/rsa/RIPEMD128withRSAISO9796P2Signature.html" title="class in iaik.security.rsa"><code>RIPEMD128/RSA-ISO9796-2</code></a> (RSA ISO9796-2 S1 with RIPEMD-128)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S1) with message recovery using RIPEMD-128 as hash algorithm</td>
+ <td align = "center" valign = "middle">RIPEMD-128/RSA-ISO9796-2,
+ RIPEMD128withRSA/ISO9796-2, RIPEMD-128withRSA/ISO9796-2,
+ RIPEMD128/RSA-ISO9796-2-1, RIPEMD-128/RSA-ISO9796-2-1</td>
+ </tr>
+ <tr>
+ <td valign = "top">
+ <a href="docs/iaik/security/rsa/RIPEMD160withRSAISO9796P2Signature.html" title="class in iaik.security.rsa"><code>RIPEMD160/RSA-ISO9796-2</code></a> (RSA ISO9796-2 S1 with RIPEMD-160)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S1) with message recovery using RIPEMD-160 as hash algorithm</td>
+ <td align = "center" valign = "middle">RIPEMD-160/RSA-ISO9796-2,
+ RIPEMD160withRSA/ISO9796-2, RIPEMD-160withRSA/ISO9796-2,
+ RIPEMD160/RSA-ISO9796-2-1, RIPEMD-160/RSA-ISO9796-2-1</td>
+ </tr>
+ <tr>
+ <td valign = "top">
+ <a href="docs/iaik/security/rsa/WHIRLPOOLwithRSAISO9796P2Signature.html" title="class in iaik.security.rsa"><code>WHIRLPOOL/RSA-ISO9796-2</code></a> (RSA ISO9796-2 S1 with WHIRLPOOL)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S1) with message recovery using WHIRLPOOL as hash algorithm</td>
+ <td align = "center" valign = "middle">WHIRLPOOL/RSA-ISO9796-2,
+ WHIRLPOOLwithRSA/ISO9796-2, WHIRLPOOL/RSA-ISO9796-2-1</td>
+ </tr>
+ <tr>
+ <td valign = "top">
+ <a href="docs/iaik/security/rsa/SHAwithRSAISO9796P2S2S3andMGF1Signature.html" title="class in iaik.security.rsa"><code>SHAandMGF1/RSA-ISO9796-2-2-3</code></a> (RSA ISO9796-2 S2, S3 with SHA-1 and MGF1)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S2, S3) with message recovery using SHA-1 as hash and MGF1 as mask generation
+ algorithm</td>
+ <td align = "center" valign = "middle">SHA1andMGF1/RSA-ISO9796-2-2-3,
+ SHA-1andMGF1/RSA-ISO9796-2-2-3, SHAwithRSAandMGF1/ISO9796-2,
+ SHA1withRSAandMGF1/ISO9796-2, SHA-1withRSAandMGF1/ISO9796-2,
+ 1.3.36.3.4.2.2.1, 1.3.36.3.4.2.3.1</td>
+ </tr>
+ <tr>
+ <td valign = "top">
+ <a href="docs/iaik/security/rsa/SHA256withRSAISO9796P2S2S3andMGF1Signature.html" title="class in iaik.security.rsa"><code>SHA256andMGF1/RSA-ISO9796-2-2-3</code></a> (RSA ISO9796-2 S2, S3 with SHA-256 and MGF1)
+ </td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S2, S3) with message recovery using SHA-256 as hash and MGF1 as mask
+ generation algorithm</td>
+ <td align = "center" valign = "middle">SHA-256andMGF1/RSA-ISO9796-2-2-3,
+ SHA256withRSAandMGF1/ISO9796-2, SHA-256withRSAandMGF1/ISO9796-2</td>
+ </tr>
+ <tr>
+ <td valign = "top">
+ <a href="docs/iaik/security/rsa/SHA384withRSAISO9796P2S2S3andMGF1Signature.html" title="class in iaik.security.rsa"><code>SHA384andMGF1/RSA-ISO9796-2-2-3</code></a> (RSA ISO9796-2 S2, S3 with SHA-384 and MGF1)
+ </td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S2, S3) with message recovery using SHA-384 as hash and MGF1 as mask
+ generation algorithm</td>
+ <td align = "center" valign = "middle">SHA-384andMGF1/RSA-ISO9796-2-2-3,
+ SHA384withRSAandMGF1/ISO9796-2, SHA-384withRSAandMGF1/ISO9796-2</td>
+ </tr>
+ <tr>
+ <td valign = "top">
+ <a href="docs/iaik/security/rsa/SHA512withRSAISO9796P2S2S3andMGF1Signature.html" title="class in iaik.security.rsa"><code>SHA512andMGF1/RSA-ISO9796-2-2-3</code></a> (RSA ISO9796-2 S2, S3 with SHA-512 and MGF1)
+ </td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S2, S3) with message recovery using SHA-512 as hash and MGF1 as mask
+ generation algorithm</td>
+ <td align = "center" valign = "middle">SHA-512andMGF1/RSA-ISO9796-2-2-3,
+ SHA512withRSAandMGF1/ISO9796-2, SHA-512withRSAandMGF1/ISO9796-2</td>
+ </tr>
+ <tr>
+ <td valign = "top">
+ <a href="docs/iaik/security/rsa/RIPEMD128withRSAISO9796P2S2S3andMGF1Signature.html" title="class in iaik.security.rsa"><code>RIPEMD128andMGF1/RSA-ISO9796-2-2-3</code></a> (RSA ISO9796-2 S2, S3 with RIPEMD-128 and
+ MGF1)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S2, S3) with message recovery using RIPEMD-128 as hash and MGF1 as mask
+ generation algorithm</td>
+ <td align = "center" valign = "middle">RIPEMD-128andMGF1/RSA-ISO9796-2-2-3,
+ RIPEMD128withRSAandMGF1/ISO9796-2, RIPEMD-128withRSAandMGF1/ISO9796-2</td>
+ </tr>
+ <tr>
+ <td valign = "top">
+ <a href="docs/iaik/security/rsa/RIPEMD160withRSAISO9796P2S2S3andMGF1Signature.html" title="class in iaik.security.rsa"><code>RIPEMD160andMGF1/RSA-ISO9796-2-2-3</code></a> (RSA ISO9796-2 S2, S3 with RIPEMD-160 and
+ MGF1)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S2, S3) with message recovery using RIPEMD-160 as hash and MGF1 as mask
+ generation algorithm</td>
+ <td align = "center" valign = "middle">RIPEMD-160andMGF1/RSA-ISO9796-2-2-3,
+ RIPEMD160withRSAandMGF1/ISO9796-2, RIPEMD-160withRSAandMGF1/ISO9796-2,
+ 1.3.36.3.4.2.2.2, 1.3.36.3.4.2.3.2</td>
+ </tr>
+ <tr>
+ <td valign = "top">
+ <a href="docs/iaik/security/rsa/WHIRLPOOLwithRSAISO9796P2S2S3andMGF1Signature.html" title="class in iaik.security.rsa"><code>WHIRLPOOLandMGF1/RSA-ISO9796-2-2-3</code></a> (RSA ISO9796-2 S2, S3 with SHA-512 and
+ MGF1)</td>
+ <td valign = "top">RSA based ISO 9796-2 (2002) signature algorithm (scheme
+ S2, S3) with message recovery using WHIRLPOOL as hash and MGF1 as mask
+ generation algorithm</td>
+ <td align = "center" valign = "middle">WHIRLPOOLandMGF1/RSA-ISO9796-2-2-3,
+ WHIRLPOOLwithRSAandMGF1/ISO9796-2, WHIRLPOOLwithRSAandMGF1/ISO9796-2</td>
+ </tr>
+ 
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Key Pair Generators</b>
+ 
+ <pre>
+ KeyPairGenerator keyGen = KeyPairGenerator.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAKeyPairGenerator.html" title="class in iaik.security.rsa"><code>RSA</code></a> (RSA key
+ pair generator)</td>
+ <td valign = "top">Key pair generation method for the RSA signature scheme as described
+ in <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>.
+ The RSA modulus is generated according to IEEE P1363.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAKeyPairGeneratorFIPS.html" title="class in iaik.security.rsa"><code>RSA-FIPS-186-3</code></a> (RSA key pair generator)</td>
+ <td valign = "top">Key pair generation method for the RSA signature scheme as described
+ in <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>. The RSA
+ modulus is generated according to <a href =
+ "http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf"
+ target="_blank">FIPS 186-3</a></td>
+ <td align = "center" valign = "middle">RSA-FIPS</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAPssKeyPairGenerator.html" title="class in iaik.security.rsa"><code>RSASSA-PSS</code></a> (RSA-PSS key pair generator)</td>
+ <td valign = "top">Key pair generator for generating RSASSA-PSS keys
+ according to <a href = "http://www.ietf.org/rfc/rfc4055.txt" target="_blank">
+ RFC 4055</a> to be used for the RSASSA-PSS signature scheme as specified by
+ <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1v2.1</a>.
+ The RSA modulus is generated according to IEEE P1363.</td>
+ <td align = "center" valign = "middle">RSA-PSS, PSS, 1.2.840.113549.1.1.10</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAPssKeyPairGeneratorFIPS.html" title="class in iaik.security.rsa"><code>RSASSA-PSS-FIPS-186-3</code></a> (RSA-PSS key pair generator)</td>
+ <td valign = "top">Key pair generator for generating RSASSA-PSS keys
+ according to <a href = "http://www.ietf.org/rfc/rfc4055.txt" target="_blank">
+ RFC 4055</a> to be used for the RSASSA-PSS signature scheme as specified by
+ <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1v2.1.</a>
+ The RSA modulus is generated according to <a href =
+ "http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf"
+ target="_blank">FIPS 186-3</a></td>
+ <td align = "center" valign = "middle">RSA-PSS-FIPS-186-3, RSA-PSS-FIPS,
+ PSS-FIPS-186-3, PSS-FIPS</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/DSAKeyPairGenerator.html" title="class in iaik.security.dsa"><code>DSA</code></a> (DSA key
+ pair generator)</td>
+ <td valign = "top">Key pair generation method for the DSA algorithm as
+ described in FIPS PUB 186-2</td>
+ <td align = "center" valign = "middle">SHAwithDSA, SHA1withDSA, SHA-1withDSA,
+ SHA/DSA, SHA1/DSA, SHA-1/DSA, 1.3.14.3.2.12, 1.2.840.10040.4.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/SHA224withDSAKeyPairGenerator.html" title="class in iaik.security.dsa"><code>SHA224withDSA</code></a> (DSA/SHA224 key pair generator)</td>
+ <td valign = "top">Key pair generation method for the DSA algorithm using
+ SHA-224 for parameter generation as specified in FIPS PUB 186-3</td>
+ <td align = "center" valign = "middle">SHA224/DSA, SHA-224/DSA,
+ SHA224withDSA, SHA-224withDSA, 2.16.840.1.101.3.4.3.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/SHA256withDSAKeyPairGenerator.html" title="class in iaik.security.dsa"><code>SHA256withDSA</code></a> (DSA/SHA256 key pair generator)</td>
+ <td valign = "top">Key pair generation method for the DSA algorithm using
+ SHA-256 for parameter generation as specified in FIPS PUB 186-3</td>
+ <td align = "center" valign = "middle">SHA256/DSA, SHA-256/DSA,
+ SHA256withDSA, SHA-256withDSA, 2.16.840.1.101.3.4.3.2</td>
+ </tr>
+ 
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Key Factories</b>
+ 
+ <pre>
+ KeyFactory keyFac = KeyFactory.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAKeyFactory.html" title="class in iaik.security.rsa"><code>RSA</code></a> (RSA key
+ factory)</td>
+ <td valign = "top">Key factory for converting keys into key specifications
+ (and vice versa) to be used for RSA encryption which is described in <a href
+ = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAPssKeyFactory.html" title="class in iaik.security.rsa"><code>RSASSA-PSS</code></a>
+ (RSA-PSS key facrory)</td>
+ <td valign = "top">Key factory for converting RSASSA-PSS (<a href =
+ "http://www.ietf.org/rfc/rfc4055.txt"> RFC 4055</a>) keys into key
+ specifications (and vice versa) to to be used for the RSASSA-PSS signature
+ scheme as specified by <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a></td>
+ <td align = "center" valign = "middle">RSA-PSS, PSS, 1.2.840.113549.1.1.10</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/DSAKeyFactory.html" title="class in iaik.security.dsa"><code>DSA</code></a> (DSA key
+ factory)</td>
+ <td valign = "top">Key factory for converting keys into key specifications
+ (and vice versa) to be used for the DSA algorithm which is described in FIPS
+ PUB 186-2</a></td>
+ <td align = "center" valign = "middle">SHAwithDSA, SHA1withDSA, SHA-1withDSA,
+ SHA/DSA, SHA1/DSA, SHA-1/DSA, 1.3.14.3.2.12, 1.2.840.10040.4.1,
+ 1.3.14.3.2.13, 1.3.14.3.2.27, 1.2.840.10040.4.3, SHA224/DSA, SHA-224/DSA,
+ SHA224withDSA, SHA-224withDSA, 2.16.840.1.101.3.4.3.1, SHA256/DSA,
+ SHA-256/DSA, SHA256withDSA, SHA-256withDSA, 2.16.840.1.101.3.4.3.2</td>
+ </tr>
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Algorithm Parameter Generators</b>
+ 
+ <pre>
+ AlgorithmParameterGenerator paramGen =
+         AlgorithmParameterGenerator.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/DSAParameterGenerator.html" title="class in iaik.security.dsa"><code>DSA</code></a> (DSA
+ parameter generator)</td>
+ <td valign = "top">Generator for creating parameters (prime, sub-prime, base
+ generator) to be used for DSA according to FIPS PUB 186.</td>
+ <td align = "center" valign = "middle">SHAwithDSA, SHA1withDSA, SHA-1withDSA,
+ SHA/DSA, SHA1/DSA, SHA-1/DSA, 1.3.14.3.2.12, 1.2.840.10040.4.1,
+ 1.3.14.3.2.13, 1.3.14.3.2.27, 1.2.840.10040.4.3</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/SHA224withDSAParameterGenerator.html" title="class in iaik.security.dsa"><code>SHA224withDSA</code></a> (DSA/SHA224 parameter generator)</td>
+ <td valign = "top">DSA parameter generator using SHA-224 as hash algorithm as
+ specified in FIPS PUB 186-3</td>
+ <td align = "center" valign = "middle">SHA224/DSA, SHA-224/DSA,
+ SHA224withDSA, SHA-224withDSA, 2.16.840.1.101.3.4.3.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/SHA256withDSAParameterGenerator.html" title="class in iaik.security.dsa"><code>SHA256withDSA</code></a> (DSA/SHA256 parameter generator)</td>
+ <td valign = "top">DSA parameter generator using SHA-256 as hash algorithm as
+ specified in FIPS PUB 186-3</td>
+ <td align = "center" valign = "middle">SHA256/DSA, SHA-256/DSA,
+ SHA256withDSA, SHA-256withDSA, 2.16.840.1.101.3.4.3.2</td>
+ </tr>
+ 
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Algorithm Parameters</b>
+ 
+ <pre>
+ AlgorithmParameters params =
+         AlgorithmParameters.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dsa/DSAParameters.html" title="class in iaik.security.dsa"><code>DSA</code></a> (DSA
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (p, q, g) representation for the
+ Digital Signature Algorithm (DSA)</td>
+ <td align = "center" valign = "middle">SHAwithDSA, SHA1withDSA, SHA-1withDSA,
+ SHA/DSA, SHA1/DSA, SHA-1/DSA, 1.3.14.3.2.12, 1.2.840.10040.4.1,
+ 1.3.14.3.2.13, 1.3.14.3.2.27, 1.2.840.10040.4.3, SHA224/DSA, SHA-224/DSA,
+ SHA224withDSA, SHA-224withDSA, 2.16.840.1.101.3.4.3.1, SHA256/DSA,
+ SHA-256/DSA, SHA256withDSA, SHA-256withDSA, 2.16.840.1.101.3.4.3.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs1/RSASSAPkcs1v15Parameters.html" title="class in iaik.pkcs.pkcs1"><code>RawRSASSA-PKCS1-v1_5</code></a> (RSA PKCS1v1.5 signature algorithm parameters)</td>
+ <td valign = "top">Algorithm parameters for the RSASSA-PKCS1-v1_5 signature
+ scheme (see <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1</a>; only may be used to specify the hash algorithm
+ when using a raw RSA <a href="docs/iaik/security/rsa/RawRSAPkcs1v15Signature.html" title="class in iaik.security.rsa"><code>PKCS1v1.5</code></a> signature engine</td>
+ <td align = "center" valign = "middle">RSASSA-PKCS1-v1_5, RSAPkcs15,
+ RawRSAPkcs15, NONEwithRSAPkcs15, NONEwithRSASSA-PKCS1-v1_5</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs1/RSAPssParameters.html" title="class in iaik.pkcs.pkcs1"><code>RSASSA-PSS</code></a> (RSA
+ PSS parameters)</td>
+ <td valign = "top">Algorithm parameters for the RSA <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1v2.1</a> PSS
+ signature scheme</td>
+ <td align = "center" valign = "middle">RSA-PSS, RSAPss, PSS,
+ 1.2.840.113549.1.1.10</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/iso/iso9796/RecoveredMessage.html" title="class in iaik.iso.iso9796"><code>ISO9796-2-RM</code></a>
+ (ISO 9796-2 recovered message)</td>
+ <td valign = "top">Algorithm parameters to may be get from an ISO 9796-2
+ Signature <a href="docs/iaik/iso/iso9796/ISO9796P2Signature.html" title="class in iaik.iso.iso9796"><code>engine</code></a> for retrieving
+ the recovered part of the messafe</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs1/MGF1Parameters.html" title="class in iaik.pkcs.pkcs1"><code>MGF1</code></a> (MGF1
+ parameters)</td>
+ <td valign = "top">Algorithm parameters for the RSA <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1v2.1</a> MGF1 mask
+ generation function as used by the PSS signature and OAEP encryption scheme</td>
+ <td align = "center" valign = "middle">mgf1, 1.2.840.113549.1.1.8</td>
+ </tr>
+ 
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Key Stores</b>
+ 
+ <pre>
+ KeyStore keyStore = KeyStore.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/keystore/IAIKKeyStore.html" title="class in iaik.security.keystore"><code>IAIKKeyStore</code></a>
+ (IAIK key store)</td>
+ <td valign = "top">The IAIKKeyStore uses the password based key derivation
+ function 2 from the PKCS#5 v2.0 Password-Based Cryptography Standard</td>
+ <td align = "center" valign = "middle">KeyStore</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs12/PKCS12KeyStore.html" title="class in iaik.pkcs.pkcs12"><code>PKCS12</code></a> (PKCS#12
+ key store)</td>
+ <td valign = "top">The PKCS12 keystore uses the PKCS#12 (Personal Information
+ Exchange Syntax) standard format to read and store keys and certificates.
+ This allows key exchange with various other products like Microsoft Windows,
+ Microsoft Internet Explorer, Microsoft Outlook, Firefox, Thunderbird and many
+ more.</td>
+ <td align = "center" valign = "middle">PKCS#12</td>
+ </tr>
+ 
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Certificate Factories</b>
+ 
+ <pre>
+ X509Certificate x509Certificate = CertificateFactory.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/x509/CertificateFactory.html" title="class in iaik.x509"><code>X.509</code></a> (X.509
+ certificate factory)</td>
+ <td valign = "top">Certifcate factory for generating X.509 certificates and
+ CRLs (as specified in the RFC 3280) from their encodings</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/x509/qualified/QualifiedCertificateFactory.html" title="class in iaik.x509.qualified"><code>Qualified</code></a> (Qualified certificate factory)</td>
+ <td valign = "top">Certifcate factory for generating qualified certificates
+ from their encodings according to the PKIX <a href =
+ "http://www.ietf.org/rfc/rfc3739.txt" target="_blank"> Qualified Certificate
+ Profile</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ 
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Mask Generation Functions</b>
+ 
+ <pre>
+ MaskGenerationAlgorithm mga = MaskGenerationAlgorithm.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs1/MGF1.html" title="class in iaik.pkcs.pkcs1"><code>MGF1</code></a></td>
+ <td valign = "top">(<a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#1v2.1</a>) mask generation function MGF1 as used by the
+ PSS signature and OAEP encryption scheme.</td>
+ <td align = "center" valign = "middle">mgf1, 1.2.840.113549.1.1.8</td>
+ </tr>
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Secure Random Generators</b>
+ 
+ <pre>
+ SecureRandom random = SecureRandom.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ or
+ <pre>
+ SecureRandom random = new &lt;Class Name&gt;();
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name | Class Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>-</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA1Random.html" title="class in iaik.security.random"><code>SHA1PRNG</code></a></td>
+ <td valign = "top">A SHA-1 hash-based secure random according to example E.5
+ of the AIS 20 (v2.0) document for Common Criteria from BSI.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/MD5Random.html" title="class in iaik.security.random"><code>MD5Random</code></a>
+ <br><small>(not available via <code>SecureRandom.getInstance()</code>)</small></td>
+ <td valign = "top">A MD5 hash-based secure random according to example E.5 of
+ the AIS 20 (v2.0) document for Common Criteria from BSI.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/RipeMd128Random.html" title="class in iaik.security.random"><code>RipeMd128Random</code></a>
+ <br><small>(not available via <code>SecureRandom.getInstance()</code>)</smalL></td>
+ <td valign = "top">A RIPEMD-128 hash-based secure random</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/RipeMd160Random.html" title="class in iaik.security.random"><code>RipeMD160PRNG</code></a>
+ </td>
+ <td valign = "top">A RIPEMD-160 hash-based secure random according to example
+ E.5 of the AIS 20 (v2.0) document for Common Criteria from BSI.</td>
+ <td align = "center" valign = "middle">RIPEMD160PRNG</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA256Random.html" title="class in iaik.security.random"><code>SHA256PRNG</code></a></td>
+ <td valign = "top">A SHA-256 hash-based secure random according to example
+ E.5 of the AIS 20 (v2.0) document for Common Criteria from BSI.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA384Random.html" title="class in iaik.security.random"><code>SHA384PRNG</code></a></td>
+ <td valign = "top">A SHA-384 hash-based secure random according to example
+ E.5 of the AIS 20 (v2.0) document for Common Criteria from BSI.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA512Random.html" title="class in iaik.security.random"><code>SHA512PRNG</code></a></td>
+ <td valign = "top">A SHA-512 hash-based secure random according to example
+ E.5 of the AIS 20 (v2.0) document for Common Criteria from BSI.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/WhirlpoolRandom.html" title="class in iaik.security.random"><code>WhirlpoolPRNG</code></a>
+ </td>
+ <td valign = "top">A WHIRLPOOL hash-based secure random according to example
+ E.5 of the AIS 20 (v2.0) document for Common Criteria from BSI.</td>
+ <td align = "center" valign = "middle">WHIRLPOOLPRNG</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA1FIPS186Random.html" title="class in iaik.security.random"><code>SHA1PRNG-FIPS186</code></a></td>
+ <td valign = "top">A SHA-1 hash-based secure random according to the general
+ purpose version of the FIPS 186-2 random generator.</td>
+ <td align = "center" valign = "middle">SHA1PRNG-FIPS</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/RipeMd160FIPS186Random.html" title="class in iaik.security.random"><code>RipeMd160PRNG-FIPS186</code></a></td>
+ <td valign = "top">A RIPEMD-160 hash-based secure random according to the
+ general purpose version of the FIPS 186-2 random generator.</td>
+ <td align = "center" valign = "middle">RipeMd160PRNG-FIPS</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA256FIPS186Random.html" title="class in iaik.security.random"><code>SHA256PRNG-FIPS186</code></a></td>
+ <td valign = "top">A SHA-256 hash-based secure random according to the
+ general purpose version of the FIPS 186-2 random generator.</td>
+ <td align = "center" valign = "middle">SHA256PRNG-FIPS</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA384FIPS186Random.html" title="class in iaik.security.random"><code>SHA384PRNG-FIPS186</code></a></td>
+ <td valign = "top">A SHA-384 hash-based secure random according to the
+ general purpose version of the FIPS 186-2 random generator.</td>
+ <td align = "center" valign = "middle">SHA384PRNG-FIPS</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA512FIPS186Random.html" title="class in iaik.security.random"><code>SHA512PRNG-FIPS186</code></a></td>
+ <td valign = "top">A SHA-512 hash-based secure random according to the
+ general purpose version of the FIPS 186-2 random generator.</td>
+ <td align = "center" valign = "middle">SHA512PRNG-FIPS</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA1SP80090Random.html" title="class in iaik.security.random"><code>SHA1PRNG-SP80090</code></a></td>
+ <td valign = "top">A SHA-1 hash-based secure random according to <a href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >NIST SP800-90</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA224SP80090Random.html" title="class in iaik.security.random"><code>SHA224PRNG-SP80090</code></a></td>
+ <td valign = "top">A SHA-224 hash-based secure random according to <a href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >NIST SP800-90</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA256SP80090Random.html" title="class in iaik.security.random"><code>SHA256PRNG-SP80090</code></a></td>
+ <td valign = "top">A SHA-256 hash-based secure random according to <a href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >SHA256PRNG-SP80090</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA384SP80090Random.html" title="class in iaik.security.random"><code>SHA384PRNG-SP80090</code></a></td>
+ <td valign = "top">A SHA-384 hash-based secure random according to <a href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >NIST SP800-90</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/SHA512SP80090Random.html" title="class in iaik.security.random"><code>SHA512PRNG-SP80090</code></a></td>
+ <td valign = "top">A SHA-512 hash-based secure random according to <a href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >NIST SP800-90</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/HMacSHA1SP80090Random.html" title="class in iaik.security.random"><code>HMacSHA1PRNG-SP80090</code></a></td>
+ <td valign = "top">A HMac/SHA-1 hash-based secure random according to <a
+ href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >NIST SP800-90</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/HMacSHA224SP80090Random.html" title="class in iaik.security.random"><code>HMacSHA224PRNG-SP80090</code></a></td>
+ <td valign = "top">A HMac/SHA-224 hash-based secure random according to <a
+ href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >NIST SP800-90</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/HMacSHA256SP80090Random.html" title="class in iaik.security.random"><code>HMacSHA256PRNG-SP80090</code></a></td>
+ <td valign = "top">A HMac/SHA-256 hash-based secure random according to <a
+ href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >NIST SP800-90</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/HMacSHA384SP80090Random.html" title="class in iaik.security.random"><code>HMacSHA384PRNG-NISTSP80090</code></a></td>
+ <td valign = "top">A HMac/SHA-384 hash-based secure random according to <a
+ href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >NIST SP800-90</a></td>
+ <td align = "center" valign = "middle">HMacSHA384PRNG-SP80090</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/HMacSHA512SP80090Random.html" title="class in iaik.security.random"><code>HMacSHA512PRNG-SP80090</code></a></td>
+ <td valign = "top">A HMac/SHA-512 hash-based secure random according to <a
+ href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >NIST SP800-90</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/AES128SP80090Random.html" title="class in iaik.security.random"><code>AES128PRNG-SP80090</code></a></td>
+ <td valign = "top">An AES-128 hash-based secure random according to <a href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >NIST SP800-90</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/AES192SP80090Random.html" title="class in iaik.security.random"><code>AES192PRNG-SP80090</code></a></td>
+ <td valign = "top">An AES-192 hash-based secure random according to <a href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >NIST SP800-90</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/AES256SP80090Random.html" title="class in iaik.security.random"><code>AES256PRNG-SP80090</code></a></td>
+ <td valign = "top">An AES-256 hash-based secure random according to <a href=
+ "http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf"
+ >NIST SP800-90</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/random/AnsiRandom.html" title="class in iaik.security.random"><code>DESedePRNG</code></a></td>
+ <td valign = "top">A triple DES based secure random according to ANSI X9.17.</td>
+ <td align = "center" valign = "middle">3DESPRNG, TripleDESPRNG</td>
+ </tr>
+ </table>
+ <p>
+ 
+ 
+ 
+ 
+ 
+ <p>
+ <table border = 1>
+ <tr>
+ <th colspan = 3 bgcolor = "#AAABBB" align = center><a name =
+ "JCE"><big><b>JCE implementations</b></big></a></th>
+ </tr>
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Ciphers<SUP><A
+ HREF="#modesAndPaddings">1</A></SUP></b>
+ 
+ <pre>
+ Cipher cipher = Cipher.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/Rijndael.html" title="class in iaik.security.cipher"><code>AES</code></a> (Advanced
+ Encryption Standard AES)</td>
+ <td valign = "top">Block cipher with variable block length (this
+ implementation uses 128 bit) and key length, designed by Joan Daemen and
+ Vincent Rijmen, see <A HREF="http://www.nist.gov/aes/"
+ target="_blank">http://www.nist.gov/aes/</A>.</td>
+ <td align = "center" valign = "middle">AES, AES128, AES-128, AES192, AES-192,
+ AES256, AES-256, Rijndael</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/Blowfish.html" title="class in iaik.security.cipher"><code>Blowfish</code></a> (Blowfish)</td>
+ <td valign = "top">64-bit block cipher with variable length keys (up to 448
+ bits); developed by Bruce Schneier</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/Camellia.html" title="class in iaik.security.cipher"><code>Camellia</code></a> (Camellia)</td>
+ <td valign = "top">128 bit block cipher with 128-, 192- and 256-bit key
+ sizes, developed by Nippon Telegraph and Telephone Corporation and Mitsubishi
+ Electric Corporation, see <A HREF="http://www.ietf.org/rfc/rfc3713.txt"
+ target="_blank">http://www.ietf.org/rfc/rfc3713.txt</A>.</td>
+ <td align = "center" valign = "middle">Camellia128, Camellia-128,
+ Camellia192, Camellia-192, Camellia256, Camellia-256</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/CAST128.html" title="class in iaik.security.cipher"><code>CAST128</code></a> (Carlisle
+ Adams and Stafford Tavares)</td>
+ <td valign = "top">64 bit Feistel type block cipher with a key length of
+ 40-128 bits</td>
+ <td align = "center" valign = "middle">CAST, CAST5</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/DES.html" title="class in iaik.security.cipher"><code>DES</code></a> (Data Encryption
+ Standard)</td>
+ <td valign = "top">Symmetric 64-bit block encryption algorithm as defined by
+ NIST in FIPS PUB 46-1 and FIPS PUB 46-2</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/TripleDES.html" title="class in iaik.security.cipher"><code>DESede</code></a> (Triple DES)
+ </td>
+ <td valign = "top">A variant of the <i>Data Encryption Standard (DES)</i>
+ using an encrypting-decrypting-encrypting (EDE) scheme based on two or three
+ keys</td>
+ <td align = "center" valign = "middle">3DES</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GOST.html" title="class in iaik.security.cipher"><code>GOST</code></a> (Gosudarstvennyi
+ Standard)</td>
+ <td valign = "top">Russian 64 bit Feistel based block cipher with a key
+ length of 256 bits; described in the goverment standard GOST 28147-89</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>IDEA</code> (International Data
+ Encryption Algorithm)</td>
+ <td valign = "top">Symmetric 64-bit block encryption algorithm, patented by
+ <a href = "http://www.mediacrypt.com/" target="_blank">MediaCrypt</a>; key
+ length: 128 bits</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/MARS.html" title="class in iaik.security.cipher"><code>MARS</code></a> (AES candidate)</td>
+ <td valign = "top">128 bit block cipher with a total of 32 rounds and accepts
+ keys from 128 to 448 bits, specified by IBM in their paper
+ <EM>MARS - a candidate
+       cipher for AES</EM> available at <A
+ HREF="http://www.research.ibm.com/security/mars.html"
+ target="_blank">http://www.research.ibm.com/security/mars.html</A>.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/RC2.html" title="class in iaik.security.cipher"><code>RC2</code></a> (Ron's Code 2;
+ Rivest Cipher 2)</td>
+ <td valign = "top">Variable-key-size 64-Bit block cipher; developed by Ron
+ Rivest for RSA Data Security, Inc.; described in <a href =
+ "http://www.ietf.org/rfc/rfc2268.txt" target="_blank">RFC2268</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/ARCFOUR.html" title="class in iaik.security.cipher"><code>ARCFOUR</code></a></td>
+ <td valign = "top">Variable-key-size stream cipher, specified by the IETF
+ draft "A Stream Cipher Encryption Algorithm 'Arcfour'"
+ (draft-kaukonen-cipher-arcfour-03.txt). It is believed to be compatible with
+ RC4[TM] (described for example in Bruce Schneier's Applied Cryptography), a
+ proprietary cipher of RSA Security Inc..</td>
+ <td align = "center" valign = "middle">RC4</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/elgamal/ElGamal.html" title="class in iaik.security.elgamal"><code>ElGamal</code></a></td>
+ <td valign = "top">Public key encryption algorithm scheme over prime fields</td>
+ <td align = "center" valign = "middle">ElGamal/ECB/PKCS1Padding, 1.3.14.7.2.1.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>RC5</code> (Ron's Code 5;
+ Rivest Cipher 5)</td>
+ <td valign = "top">Variable-key-size 64-Bit block cipher with variable number
+ of rounds; developed by Ron Rivest for RSA Data Security, Inc. The RC5 [TM]
+ algorithm is patented, for licensing conditions contact RSA DSI.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>RC6</code> (AES candidate)</td>
+ <td valign = "top">128 bit block cipher with 20 rounds aimed at the keysizes
+ of 128, 192, and 256 bits, specified by Ronald L. Rivest, M.J.B. Robshaw, R.
+ Sidney, and Y.L. Yin in their paper <EM>The RC6 [TM] Block Cipher</EM>
+ available from the AES Web site at <A HREF="http://www.nist.gov/aes/"
+ target="_blank">http://www.nist.gov/aes/</A>.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/Rijndael.html" title="class in iaik.security.cipher"><code>Rijndael</code></a> (Advanced
+ Encryption Standard AES)</td>
+ <td valign = "top">Block cipher with variable block length (this
+ implementation uses 128 bit) and key length, designed by Joan Daemen and
+ Vincent Rijmen, see <A HREF="http://www.nist.gov/aes/"
+ target="_blank">http://www.nist.gov/aes/</A>.</td>
+ <td align = "center" valign = "middle">AES, AES128, AES-128, AES192, AES-192,
+ AES256, AES-256</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/Rijndael256.html" title="class in iaik.security.cipher"><code>Rijndael-256</code></a>
+ (Rijndael 256)</td>
+ <td valign = "top">Rijndael cipher implementation for block size of 256 bit</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs1/RSACipher.html" title="class in iaik.pkcs.pkcs1"><code>RSA</code></a> (Rivest Shamir
+ Adleman)</td>
+ <td valign = "top">Public key encryption algorithm, developed by Ron Rivest,
+ Adi Shamir and Leonard Adleman; described in <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>. See note about
+ <A HREF="#blinding">blinding</A>.</td>
+ <td align = "center" valign = "middle">RSA/ECB/PKCS1Padding</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/Serpent.html" title="class in iaik.security.cipher"><code>Serpent</code></a> (AES
+ candidate)</td>
+ <td valign = "top">128 bit block cipher with variable key length, designed R.
+ Anderson, E. Biham, L. Knudsen, see <A HREF="http://www.nist.gov/aes/"
+ target="_blank">http://www.nist.gov/aes/</A>.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/Twofish.html" title="class in iaik.security.cipher"><code>Twofish</code></a> (AES
+ candidate)</td>
+ <td valign = "top">128-bit Feistel-type block cipher that accepts a
+ variable-length key up to 256 bits, developed by B. Schneier, J. Kelsey, D.
+ Whiting, D. Wagner, C. Hall and N. Ferguson, see <A
+ HREF="http://www.nist.gov/aes/" target="_blank">http://www.nist.gov/aes/</A>.
+ </td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/PbeWithMD5AndDES_CBC.html" title="class in iaik.security.cipher"><code>PbeWithMD5AndDES_CBC</code></a> (password based "MD5 with DES-CBC" algorithm)</td>
+ <td valign = "top">Password based key-encryption algorithm for encrypting a
+ given message with the DES algorithm in CBC mode using a secret key which is
+ derived from a password with the MD5 message-digest algorithm; specified in
+ <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5</a></td>
+ <td align = "center" valign = "middle">PBEWithMD5AndDES, 1.2.840.113549.1.5.3
+ </td>
+ </tr>
+ <tr>
+ <td valign = "top">
+ <a href="docs/iaik/security/cipher/PbeWithSHAAnd3_KeyTripleDES_CBC.html" title="class in iaik.security.cipher"><code>PbeWithSHAAnd3_KeyTripleDES_CBC</code></a> (password based "SHA with TripleDES-CBC"
+ algorithm)</td>
+ <td valign = "top">Password based key-encryption algorithm for encrypting a
+ given message (octet string) with the TripleDES algorithm in CBC mode using a
+ secret key which is derived from a password with the SHA hash algorithm as
+ described in "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#12</a></td>
+ <td align = "center" valign = "middle">PBEWithSHA1And3_KeyTripleDES_CBC,
+ 1.2.840.113549.1.12.1.3</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/PbeWithSHAAnd40BitRC2_CBC.html" title="class in iaik.security.cipher"><code>PbeWithSHAAnd40BitRC2_CBC</code></a> (password based "SHA with 40BitRC2-CBC" algorithm)
+ </td>
+ <td valign = "top">Password based key-encryption algorithm for encrypting a
+ given message with the RC2 algorithm in CBC mode using a 40Bit secret key
+ which is derived from a password with the SHA hash algorithm as described in
+ <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#12</a></td>
+ <td align = "center" valign = "middle">PBEWithSHA1AndRC2_40,
+ 1.2.840.113549.1.12.1.6</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/AESKeyWrap.html" title="class in iaik.security.cipher"><code>AESWrapAES</code></a> (AES
+ Key Wrap)</td>
+ <td valign = "top">AES key wrap algorithm as specified by <A
+ HREF="http://www.ietf.org/rfc/rfc3394.txt" target="_blank">RFC 3394</A> for
+ wrapping AES content encryption keys with AES key encryption keys</td>
+ <td align = "center" valign = "middle">AESWRAP, AES128WRAP, AES128WrapAES128,
+ 2.16.840.1.101.3.4.1.5, AES192WRAP, AES192WrapAES192,
+ 2.16.840.1.101.3.4.1.25, AES256WRAP, AES256WrapAES256,
+ 2.16.840.1.101.3.4.1.45</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/CamelliaKeyWrap.html" title="class in iaik.security.cipher"><code>CamelliaWrapCamellia</code></a> (Camellia Key Wrap)</td>
+ <td valign = "top">Camellia key wrap algorithm as specified by <A
+ HREF="http://www.ietf.org/rfc/rfc3657.txt" target="_blank">RFC 3657</A> for
+ wrapping Camellia content encryption keys with Camellia key encryption keys</td>
+ <td align = "center" valign = "middle">CamelliaWRAP, Camellia128WRAP,
+ Camellia128WrapCamellia128, 1.2.392.200011.61.1.1.3.2, Camellia192WRAP,
+ Camellia192WrapCamellia192, 1.2.392.200011.61.1.1.3.3, Camellia256WRAP,
+ Camellia256WrapCamellia256, 1.2.392.200011.61.1.1.3.4</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/PBES2Cipher.html" title="class in iaik.security.cipher"><code>PBES2</code></a> (Password Based Encryption Scheme 2)</td>
+ <td valign = "top">Password based key-encryption algorithm for encrypting a
+ given message with the PBES2 password scheme according to  
+ <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5v2.1</a>
+ (using AES128-CBC as cipher algorithm and hMAC-SHA1 as PRF by default)</td>
+ <td align = "center" valign = "middle">1.2.840.113549.1.5.13</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/PBES2Cipher.PBES2WithHmacSHA1AndAES.html" title="class in iaik.security.cipher"><code>PBES2WithHmacSHA1AndAES</code></a> (PBES2 with hMAC-SHA1 and AES128-CBC)</td>
+ <td valign = "top">Password based key-encryption algorithm for encrypting a
+ given message with the PBES2 password scheme according to  
+ <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5v2.1</a>
+ using AES128-CBC as cipher algorithm and hMAC-SHA1 as PRF</td>
+ <td align = "center" valign = "middle">PBES2WithHmacSHA1AndAES128,
+ PBEWithHmacSHA1AndAES, PBEWithHmacSHA1AndAES128</td>
+ </tr>   
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/PBES2Cipher.PBES2WithHmacSHA256AndAES.html" title="class in iaik.security.cipher"><code>PBES2WithHmacSHA256AndAES</code></a> (PBES2 with hMAC-SHA256 and AES128-CBC)</td>
+ <td valign = "top">Password based key-encryption algorithm for encrypting a
+ given message with the PBES2 password scheme according to  
+ <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5v2.1</a>
+ using AES128-CBC as cipher algorithm and hMAC-SHA256 as PRF</td>
+ <td align = "center" valign = "middle">PBES2WithHmacSHA256AndAES128,
+ PBEWithHmacSHA256AndAES, PBEWithHmacSHA256AndAES128</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/PBES2Cipher.PBES2WithHmacSHA384AndAES192.html" title="class in iaik.security.cipher"><code>PBES2WithHmacSHA384AndAES192</code></a> (PBES2 with hMAC-SHA384 and AES192-CBC)</td>
+ <td valign = "top">Password based key-encryption algorithm for encrypting a
+ given message with the PBES2 password scheme according to  
+ <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5v2.1</a>
+ using AES192-CBC as cipher algorithm and hMAC-SHA384 as PRF</td>
+ <td align = "center" valign = "middle">PBEWithHmacSHA384AndAES192</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/PBES2Cipher.PBES2WithHmacSHA512AndAES256.html" title="class in iaik.security.cipher"><code>PBES2WithHmacSHA512AndAES256</code></a> (PBES2 with hMAC-SHA512 and AES256-CBC)</td>
+ <td valign = "top">Password based key-encryption algorithm for encrypting a
+ given message with the PBES2 password scheme according to  
+ <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5v2.1</a>
+ using AES256-CBC as cipher algorithm and hMAC-SHA512 as PRF</td>
+ <td align = "center" valign = "middle">PBEWithHmacSHA512AndAES256</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/PBES2Cipher.PBES2WithHmacSHA1AndDESede.html" title="class in iaik.security.cipher"><code>PBES2WithHmacSHA1AndDESede</code></a> (PBES2 with hMAC-SHA1 and DESede-CBC)</td>
+ <td valign = "top">Password based key-encryption algorithm for encrypting a
+ given message with the PBES2 password scheme according to  
+ <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5v2.1</a>
+ using DESede-CBC as cipher algorithm and hMAC-SHA1 as PRF</td>
+ <td align = "center" valign = "middle">PBEWithHmacSHA1AndDESede,
+ PBES2WithHmacSHA1AndTripleDES, PBEWithHmacSHA1AndTripleDES</td>
+ </tr> 
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/AESKeyWrap.html" title="class in iaik.security.cipher"><code>AESWrapAES</code></a> (AES
+ Key Wrap)</td>
+ <td valign = "top">AES key wrap algorithm as specified by <A
+ HREF="http://www.ietf.org/rfc/rfc3394.txt" target="_blank">RFC 3394</A> for
+ wrapping AES content encryption keys with AES key encryption keys</td>
+ <td align = "center" valign = "middle">AESWRAP, AES128WRAP, AES128WrapAES128,
+ 2.16.840.1.101.3.4.1.5, AES192WRAP, AES192WrapAES192,
+ 2.16.840.1.101.3.4.1.25, AES256WRAP, AES256WrapAES256,
+ 2.16.840.1.101.3.4.1.45</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/CamelliaKeyWrap.html" title="class in iaik.security.cipher"><code>CamelliaWrapCamellia</code></a> (Camellia Key Wrap)</td>
+ <td valign = "top">Camellia key wrap algorithm as specified by <A
+ HREF="http://www.ietf.org/rfc/rfc3657.txt" target="_blank">RFC 3657</A> for
+ wrapping Camellia content encryption keys with Camellia key encryption keys</td>
+ <td align = "center" valign = "middle">CamelliaWRAP, Camellia128WRAP,
+ Camellia128WrapCamellia128, 1.2.392.200011.61.1.1.3.2, Camellia192WRAP,
+ Camellia192WrapCamellia192, 1.2.392.200011.61.1.1.3.3, Camellia256WRAP,
+ Camellia256WrapCamellia256, 1.2.392.200011.61.1.1.3.4</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/CAST128KeyWrap.html" title="class in iaik.security.cipher"><code>CAST128WrapCAST128</code></a> (CAST128 Key Wrap)</td>
+ <td valign = "top">CAST128 key wrap algorithm as used by <A HREF =
+ "http://www.ietf.org/rfc/rfc2984.txt" target="_blank">CMS</A> for wrapping
+ CAST128 content encryption keys with CAST128 key encryption keys</td>
+ <td align = "center" valign = "middle">CAST5WrapCAST5, CASTWrapCAST,
+ CASTWRAP, CAST128WRAP, CAST5WRAP, 1.2.840.113533.7.66.15</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/TripleDESKeyWrap.html" title="class in iaik.security.cipher"><code>DESedeWrapDESede</code></a> (Triple-DES Key Wrap)</td>
+ <td valign = "top">Triple-DES key wrap algorithm as used by <A
+ HREF="http://www.ietf.org/html.charters/smime-charter.html"
+ target="_blank">CMS</A> for wrapping TripleDES content encryption keys with
+ TripleDES key encryption keys</td>
+ <td align = "center" valign = "middle">3DESWrap3DES, TripleDESWrapTripleDES,
+ DESEDEWRAP, 1.2.840.113549.1.9.16.3.6</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>IDEAWrapIDEA</code>
+ (IDEA Key Wrap)</td>
+ <td valign = "top">IDEA key wrap algorithm as used by <A HREF =
+ "http://www.ietf.org/rfc/rfc3058.txt" target="_blank">CMS</A> for wrapping
+ IDEA content encryption keys with IDEA key encryption keys</td>
+ <td align = "center" valign = "middle">IdeaWrapIdea, IDEAWRAP,
+ 1.3.6.1.4.1.188.7.1.1.6</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/RC2KeyWrap.html" title="class in iaik.security.cipher"><code>RC2WrapRC2</code></a> (RC2
+ Key Wrap)</td>
+ <td valign = "top">RC2 key wrap algorithm as used by <A
+ HREF="http://www.ietf.org/html.charters/smime-charter.html"
+ target="_blank">CMS</A> for wrapping RC2 content encryption keys with RC2 key
+ encryption keys</td>
+ <td align = "center" valign = "middle">RC2WRAP, 1.2.840.113549.1.9.16.3.7</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/HMACwith3DESwrap.html" title="class in iaik.security.cipher"><code>3DESwrapHMAC</code></a>
+ (3DES based HMAC Key Wrap)</td>
+ <td valign = "top">Key wrap algorithm as used by <A
+ HREF="http://www.ietf.org/html.charters/smime-charter.html"
+ target="_blank">CMS</A> for wrapping a HMAC key with a 3DES key encryption
+ key according to <A HREF="http://www.ietf.org/rfc/rfc3537.txt"
+ target="_blank">RFC 3537</a></td>
+ <td align = "center" valign = "middle">HMACwith3DESwrap,
+ HMACwithTripleDESwrap, HMACwithDESedewrap, 1.2.840.113549.1.9.16.3.11</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/HMACwithAESwrap.html" title="class in iaik.security.cipher"><code>AESwrapHMAC</code></a>
+ (AES based HMAC Key Wrap)</td>
+ <td valign = "top">Key wrap algorithm as used by <A
+ HREF="http://www.ietf.org/html.charters/smime-charter.html"
+ target="_blank">CMS</A> for wrapping a HMAC key with an AES key encryption
+ key according to <A HREF="http://www.ietf.org/rfc/rfc3537.txt"
+ target="_blank">RFC 3537</a></td>
+ <td align = "center" valign = "middle">HMACwithAESwrap,
+ 1.2.840.113549.1.9.16.3.12</td>
+ </tr>
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Key Exchange Algorithms</b>
+ 
+ <pre>
+ KeyAgreement keyAgr = KeyAgreement.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dh/DHKeyAgreement.html" title="class in iaik.security.dh"><code>DH</code></a> (Diffie Hellman
+ Key Agreement)</td>
+ <td valign = "top">DH key exchange protocol as described in <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#3</a></td>
+ <td align = "center" valign = "middle">DiffieHellman, Diffie-Hellman, 1.2.840.113549.1.3.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>ESDH</code> (Ephemeral
+ Static Diffie Hellman Key Agreement)</td>
+ <td valign = "top">ESDH key exchange based algorithm for generating shared
+ key materialas as described in <a href =
+ "http://www.ietf.org/rfc/rfc2631.txt" target="_blank">RFC 2631</a></td>
+ <td align = "center" valign = "middle">ESDiffieHellman,
+ 1.2.840.113549.1.9.16.3.5</td>
+ </tr>
+ 
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Message Authentiaction Codes</b>
+ 
+ <pre>
+ MAC mac = MAC.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacMd5.html" title="class in iaik.security.mac"><code>HMAC/MD5</code></a> (HMAC with MD5)
+ </td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>MD5</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacMD5, 1.3.6.1.5.5.8.1.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacSha.html" title="class in iaik.security.mac"><code>HMAC/SHA1</code></a> (HMAC with SHA1)
+ </td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>SHA-1</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacSHA1, HMAC/SHA-1, HMAC/SHA,
+ 1.3.6.1.5.5.8.1.2, 1.2.840.113549.2.7</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacSha224.html" title="class in iaik.security.mac"><code>HMAC/SHA224</code></a> (HMAC
+ with SHA224)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>SHA-224</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacSHA224, HMAC/SHA-224, 1.2.840.113549.2.8</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacSha256.html" title="class in iaik.security.mac"><code>HMAC/SHA256</code></a> (HMAC
+ with SHA256)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>SHA-256</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacSHA256, HMAC/SHA-256, 1.2.840.113549.2.9</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacSha384.html" title="class in iaik.security.mac"><code>HMAC/SHA384</code></a> (HMAC
+ with SHA384)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>SHA-384</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacSHA384, HMAC/SHA-384, 1.2.840.113549.2.10</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacSha512.html" title="class in iaik.security.mac"><code>HMAC/SHA512</code></a> (HMAC
+ with SHA512)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>SHA-512</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacSHA512, HMAC/SHA-512, 1.2.840.113549.2.11</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacRipeMd128.html" title="class in iaik.security.mac"><code>HMAC/RIPEMD128</code></a>
+ (HMAC with RipeMd128)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>RipeMd128</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacRipeMd128, HMAC/RIPEMD-128,
+ HMAC/RipeMd128</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacRipeMd160.html" title="class in iaik.security.mac"><code>HMAC/RIPEMD160</code></a>
+ (HMAC with RipeMd160)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>RipeMd160</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacRipeMd160, HMAC/RIPEMD-160,
+ 1.3.6.1.5.5.8.1.4, HMAC/RipeMd160</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacWhirlpool.html" title="class in iaik.security.mac"><code>HMAC/WHIRLPOOL</code></a>
+ (HMAC with WHIRLPOOL)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>WHIRLPOOL</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacWHIRLPOOL, HmacWhirlpool</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacGOST.html" title="class in iaik.security.mac"><code>HMAC/GOST3411</code></a>
+ (HMAC with GOST3411)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>GOST3411</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacGOST, 1.2.643.2.2.10</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/CMacAES.html" title="class in iaik.security.mac"><code>CmacAES</code></a> (CMAC with AES)</td>
+ <td valign = "top">Message Authentication as described in <a
+ href="http://csrc.nist.gov/publications/nistpubs/800-38B/SP_800-38B.pdf"
+ target="_blank">NISP SP 800-38B</a>. using <em>AES</em> as block cipher
+ algorithm</td>. It supports 128, 192 and 256 bit keys.
+ <td align = "center" valign = "middle">CMAC/AES</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/CMacDESede.html" title="class in iaik.security.mac"><code>CmacDESede</code></a> (CMAC with
+ Triple DES)</td>
+ <td valign = "top">Message Authentication as described in <a
+ href="http://csrc.nist.gov/publications/nistpubs/800-38B/SP_800-38B.pdf"
+ target="_blank">NISP SP 800-38B</a>. using <em>Triple DES</em> (TDEA) as
+ block cipher algorithm</td>. It supports two-key Triple DES (112 bit) and
+ three-key Triple DES (168 bit).
+ <td align = "center" valign = "middle">CMAC/DESede</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/CBCMac.html" title="class in iaik.security.mac"><code>CBCMAC/AES</code></a></td>
+ <td valign = "top">CBC Message Authentication as described in ISO/IEC 9797-1.
+ algorithm</td>. It supports 128, 192 and 256 bit keys.
+ <td align = "center" valign = "middle">CBCmacAES</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/CBCMac.html" title="class in iaik.security.mac"><code>CBCMAC/DESede</code></a></td>
+ <td valign = "top">CBC Message Authentication as described in ISO/IEC 9797-1.
+ algorithm</td>.
+ <td align = "center" valign = "middle">CBCmacDESede</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/CBCMac.html" title="class in iaik.security.mac"><code>CBCMAC/DES</code></a></td>
+ <td valign = "top">CBC Message Authentication as described in ISO/IEC 9797-1.
+ algorithm</td>. 
+ <td align = "center" valign = "middle">CBCmacDES</td>
+ </tr>
+ 
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Key Pair Generators</b>
+ 
+ <pre>
+ KeyPairGenerator keyGen = KeyPairGenerator.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dh/DHKeyPairGenerator.html" title="class in iaik.security.dh"><code>DH</code></a> (Diffie
+ Hellman key pair generator)</td>
+ <td valign = "top">Key pair generation method for Diffie Hellman key exchange
+ as described in <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#3</a></td>
+ <td align = "center" valign = "middle">DiffieHellman, Diffie-Hellman, 1.2.840.113549.1.3.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/elgamal/ElGamalKeyPairGenerator.html" title="class in iaik.security.elgamal"><code>ElGamal</code></a> (ElGamal pair generator)</td>
+ <td valign = "top">Key pair generation method for ElGamal public key encryption scheme over prime fields</td>
+ <td align = "center" valign = "middle">1.3.14.7.2.1.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>ESDH</code> (ESDH
+ Key Pair Generator)</td>
+ <td valign = "top">Key pair generator for Ephemeral Static Diffie Hellman key
+ exchange as described in <a href = "http://www.ietf.org/rfc/rfc2631.txt"
+ target="_blank">RFC 2631</a></td>
+ <td align = "center" valign = "middle">ESDiffieHellman</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAKeyPairGenerator.html" title="class in iaik.security.rsa"><code>RSA</code></a> (RSA key
+ pair generator)</td>
+ <td valign = "top">Key pair generation method for the RSA encryption scheme as described
+ in <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>.
+ The RSA modulus is generated according to IEEE P1363.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAKeyPairGeneratorFIPS.html" title="class in iaik.security.rsa"><code>RSA-FIPS-186-3</code></a> (RSA key pair generator)</td>
+ <td valign = "top">Key pair generation method for the RSA encryption scheme as described
+ in <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a>. The RSA
+ modulus is generated according to <a href =
+ "http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf"
+ target="_blank">FIPS 186-3</a></td>
+ <td align = "center" valign = "middle">RSA-FIPS</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAOaepKeyPairGenerator.html" title="class in iaik.security.rsa"><code>RSAES-OAEP</code></a> (RSA-OAEP key pair generator)</td>
+ <td valign = "top">Key pair generator for generating RSAES-OAEP keys
+ according to <a href = "http://www.ietf.org/rfc/rfc4055.txt" target="_blank">
+ RFC 4055</a> to be used for the RSAES-OAEP encryption method as specified by
+ <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1v2.1</a></td>
+ <td align = "center" valign = "middle">RSA-OAEP, OAEP, 1.2.840.113549.1.1.7</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAOaepKeyPairGeneratorFIPS.html" title="class in iaik.security.rsa"><code>RSAES-OAEP-FIPS-186-3</code></a> (RSA-OAEP key pair generator)</td>
+ <td valign = "top">Key pair generator for generating RSAES-OAEP keys
+ according to <a href = "http://www.ietf.org/rfc/rfc4055.txt" target="_blank">
+ RFC 4055</a> to be used for the RSAES-OAEP encryption method as specified by
+ <a href = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1v2.1.</a>
+ The RSA modulus is generated according to <a href =
+ "http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf"
+ target="_blank">FIPS 186-3</a></td>
+ <td align = "center" valign = "middle">RSA-OAEP-FIPS-186-3, RSA-OAEP-FIPS,
+ OAEP-FIPS, OAEP-FIPS-186-3</td>
+ </tr>
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Key Factories</b>
+ 
+ <pre>
+ KeyFactory keyFac = KeyFactory.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dh/DHKeyFactory.html" title="class in iaik.security.dh"><code>DH</code></a> (Diffie Hellman
+ key factory)</td>
+ <td valign = "top">Key factory for converting keys into key specifications
+ (and vice versa) to be used for Diffie Hellman key exchange which is
+ described in <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#3</a></td>
+ <td align = "center" valign = "middle">DiffieHellman, Diffie-Hellman, 1.2.840.113549.1.3.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/elgamal/ElGamalKeyFactory.html" title="class in iaik.security.elgamal"><code>ElGamal</code></a> (ElGamal
+ key factory)</td>
+ <td valign = "top">Key factory for converting keys into key specifications
+ (and vice versa) to be used for ElGamal encryption scheme over prime fields></td>
+ <td align = "center" valign = "middle">1.3.14.7.2.1.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>ESDH</code> (Ephemeral
+ Static Diffie Hellman key factory)</td>
+ <td valign = "top">Key factory for converting keys into key specifications
+ (and vice versa) to be used for Ephemeral Static Diffie Hellman key exchange
+ which is described in <a href = "http://www.ietf.org/rfc/rfc2631.txt"
+ target="_blank">RFC 2631</a></td>
+ <td align = "center" valign = "middle">ESDiffieHellman, 1.2.840.10046.2.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAKeyFactory.html" title="class in iaik.security.rsa"><code>RSA</code></a> (RSA key
+ factory)</td>
+ <td valign = "top">Key factory for converting keys into key specifications
+ (and vice versa) to be used for RSA encryption which is described in <a href
+ = "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/rsa/RSAOaepKeyFactory.html" title="class in iaik.security.rsa"><code>RSAES-OAEP</code></a>
+ (RSA-OAEP key factory)</td>
+ <td valign = "top">Key factory for converting RSAES-OAEP (<a href =
+ "http://www.ietf.org/rfc/rfc4055.txt" target="_blank"> RFC 4055</a>) keys
+ into key specifications (and vice versa) to be used for the RSAES-OAEP
+ encryption method as specified by <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1v2.1</a></td>
+ <td align = "center" valign = "middle">RSA-OAEP, OAEP, 1.2.840.113549.1.1.7</td>
+ </tr>
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Key Generators</b>
+ 
+ <pre>
+ keyGen = KeyGenerator.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/AESKeyGenerator.html" title="class in iaik.security.cipher"><code>AES</code></a> (AES key
+ generator)</td>
+ <td valign = "top">Key generation method for the Advanced Encryption Standard
+ (AES, Rijndael) block cipher.</td>
+ <td align = "center" valign = "middle">AES128, AES-128,
+ 2.16.840.1.101.3.4.1.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/AES192KeyGenerator.html" title="class in iaik.security.cipher"><code>AES192</code></a>
+ (AES-192 key generator)</td>
+ <td valign = "top">Key generation method for creating 192bit keys for the
+ Advanced Encryption Standard (AES, Rijndael) block cipher.</td>
+ <td align = "center" valign = "middle">AES192, AES-192,
+ 2.16.840.1.101.3.4.1.22</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/AES256KeyGenerator.html" title="class in iaik.security.cipher"><code>AES256</code></a>
+ (AES-256 key generator)</td>
+ <td valign = "top">Key generation method for creating 256bit keys for the
+ Advanced Encryption Standard (AES, Rijndael) block cipher.</td>
+ <td align = "center" valign = "middle">AES256, AES-256,
+ 2.16.840.1.101.3.4.1.42</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/BlowfishKeyGenerator.html" title="class in iaik.security.cipher"><code>Blowfish</code></a>
+ (Blowfish key generator)</td>
+ <td valign = "top">Key generation method for the Blowfish 64-bit block
+ cipher; developed by Bruce Schneier</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/CamelliaKeyGenerator.html" title="class in iaik.security.cipher"><code>Camellia</code></a>
+ (Camellia key generator)</td>
+ <td valign = "top">Key generation method for the Camellia block cipher.</td>
+ <td align = "center" valign = "middle">Camellia128, Camellia-128,
+ 1.2.392.200011.61.1.1.1.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/Camellia192KeyGenerator.html" title="class in iaik.security.cipher"><code>Camellia192</code></a> (Camellia-192 key generator)</td>
+ <td valign = "top">Key generation method for creating 192bit keys for the
+ Camellia block cipher.</td>
+ <td align = "center" valign = "middle">Camellia192, Camellia-192,
+ 1.2.392.200011.61.1.1.1.3</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/Camellia256KeyGenerator.html" title="class in iaik.security.cipher"><code>Camellia256</code></a> (Camellia-256 key generator)</td>
+ <td valign = "top">Key generation method for creating 256bit keys for the
+ Camellia block cipher.</td>
+ <td align = "center" valign = "middle">Camellia256, Camellia-256,
+ 1.2.392.200011.61.1.1.1.4</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/CAST128KeyGenerator.html" title="class in iaik.security.cipher"><code>CAST128</code></a>
+ (CAST128 key generator)</td>
+ <td valign = "top">Key generation method for the CAST128 64 bit Feistel type
+ block cipher</td>
+ <td align = "center" valign = "middle">CAST, CAST5</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/DESKeyGenerator.html" title="class in iaik.security.cipher"><code>DES</code></a> (DES key
+ generator)</td>
+ <td valign = "top">Key generation method for the DES cipher which is defined
+ by NIST in FIPS PUB 46-1 and FIPS PUB 46-2</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/TripleDESKeyGenerator.html" title="class in iaik.security.cipher"><code>DESede</code></a>
+ (Triple DES key generator)</td>
+ <td valign = "top">Key generation method for the TripleDES cipher</td>
+ <td align = "center" valign = "middle">3DES</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GOSTKeyGenerator.html" title="class in iaik.security.cipher"><code>GOST</code></a> (GOST
+ key generator)</td>
+ <td valign = "top">Key generation method for the GOST 64-bit block cipher.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>IDEA</code> (IDEA
+ key generator)</td>
+ <td valign = "top">Key generation method for the IDEA cipher which is
+ patented by <a href = "http://www.mediacrypt.com/systec/idea.html"
+ target="_blank">MediaCrypt</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/MARSKeyGenerator.html" title="class in iaik.security.cipher"><code>MARS</code></a> (MARS
+ key generator)</td>
+ <td valign = "top">Key generation method for the MARS AES candidate block
+ cipher.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/RC2KeyGenerator.html" title="class in iaik.security.cipher"><code>RC2</code></a> (RC2 key
+ generator)</td>
+ <td valign = "top">Key generation method for the RC2 cipher which has been
+ developed by Ron Rivest for RSA Data Security, Inc.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/ARCFOURKeyGenerator.html" title="class in iaik.security.cipher"><code>ARCFOUR</code></a>
+ (ARCFOUR key generator)</td>
+ <td valign = "top">Key generation method for the ARCFOUR stream cipher.</td>
+ <td align = "center" valign = "middle">RC4</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>RC5</code> (RC5 key
+ generator)</td>
+ <td valign = "top">Key generation method for the RC5 block cipher.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>RC6</code> (RC6 key
+ generator)</td>
+ <td valign = "top">Key generation method for the RC6 AES candidate block
+ cipher.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/RijndaelKeyGenerator.html" title="class in iaik.security.cipher"><code>Rijndael</code></a>
+ (Rijndael key generator)</td>
+ <td valign = "top">Key generation method for the Rijndael AES block cipher.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/RijndaelKeyGenerator.html" title="class in iaik.security.cipher"><code>Rijndael-256</code></a> (Rijndael key generator)</td>
+ <td valign = "top">Key generation method for the Rijndael block cipher with
+ block size of 256 bits.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/SerpentKeyGenerator.html" title="class in iaik.security.cipher"><code>Serpent</code></a>
+ (Serpent key generator)</td>
+ <td valign = "top">Key generation method for the Serpent AES candidate block
+ cipher.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/TwofishKeyGenerator.html" title="class in iaik.security.cipher"><code>Twofish</code></a>
+ (Twofish key generator)</td>
+ <td valign = "top">Key generation method for the Twofish AES candidate block
+ cipher.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs5/PBKDF2.html" title="class in iaik.pkcs.pkcs5"><code>PBKDF2</code></a> (password based key
+ derivation function 2)</td>
+ <td valign = "top">Key generation method for for deriving secret keys from
+ password, salt and an iteration count; specified by the PKCS#5 Version 2.1
+ Password-Based Cryptography Standard) using hMAC-SHA1 as PRF by default</td>
+ <td align = "center" valign = "middle">1.2.840.113549.1.5.12</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs5/PBKDF2.PBKDF2WithHmacSHA1.html" title="class in iaik.pkcs.pkcs5"><code>PBKDF2WithHmacSHA1</code></a> 
+ (password based key derivation function 2)</td>
+ <td valign = "top">Key generation method for for deriving secret keys from
+ password, salt and an iteration count; specified by the PKCS#5 Version 2.1
+ Password-Based Cryptography Standard) using hMAC-SHA1 as PRF</td>
+ <td align = "center" valign = "middle"></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs5/PBKDF2.PBKDF2WithHmacSHA224.html" title="class in iaik.pkcs.pkcs5"><code>PBKDF2WithHmacSHA224</code></a> 
+ (password based key derivation function 2)</td>
+ <td valign = "top">Key generation method for for deriving secret keys from
+ password, salt and an iteration count; specified by the PKCS#5 Version 2.1
+ Password-Based Cryptography Standard) using hMAC-SHA224 as PRF</td>
+ <td align = "center" valign = "middle"></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs5/PBKDF2.PBKDF2WithHmacSHA256.html" title="class in iaik.pkcs.pkcs5"><code>PBKDF2WithHmacSHA256</code></a> 
+ (password based key derivation function 2)</td>
+ <td valign = "top">Key generation method for for deriving secret keys from
+ password, salt and an iteration count; specified by the PKCS#5 Version 2.1
+ Password-Based Cryptography Standard) using hMAC-SHA256 as PRF</td>
+ <td align = "center" valign = "middle"></td>
+ </tr>  
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs5/PBKDF2.PBKDF2WithHmacSHA384.html" title="class in iaik.pkcs.pkcs5"><code>PBKDF2WithHmacSHA384</code></a> 
+ (password based key derivation function 2)</td>
+ <td valign = "top">Key generation method for for deriving secret keys from
+ password, salt and an iteration count; specified by the PKCS#5 Version 2.1
+ Password-Based Cryptography Standard) using hMAC-SHA384 as PRF</td>
+ <td align = "center" valign = "middle"></td>
+ </tr> 
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs5/PBKDF2.PBKDF2WithHmacSHA512.html" title="class in iaik.pkcs.pkcs5"><code>PBKDF2WithHmacSHA512</code></a> 
+ (password based key derivation function 2)</td>
+ <td valign = "top">Key generation method for for deriving secret keys from
+ password, salt and an iteration count; specified by the PKCS#5 Version 2.1
+ Password-Based Cryptography Standard) using hMAC-SHA512 as PRF</td>
+ <td align = "center" valign = "middle"></td>
+ </tr> 
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs12/SecretKeyGenerator.html" title="class in iaik.pkcs.pkcs12"><code>PKCS#12</code></a>
+ (PKCS#12 key generator)</td>
+ <td valign = "top">Key generation method for for deriving <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#12</a> secret keys
+ from password, salt and iteration count.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs12/IvGenerator.html" title="class in iaik.pkcs.pkcs12"><code>PKCS12-IV</code></a> (PKCS#12 Iv
+ generator)</td>
+ <td valign = "top">Key generation method for for deriving <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#12</a> initialization
+ vectors from password, salt and iteration count. count</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs12/MacKeyGenerator.html" title="class in iaik.pkcs.pkcs12"><code>PKCS12-MAC</code></a>
+ (PKCS#12 MAC-Key generator)</td>
+ <td valign = "top">Key generation method for for deriving <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#12</a> MAC-keys from
+ password, salt and an iteration count. count</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacMd5KeyGenerator.html" title="class in iaik.security.mac"><code>HMAC/MD5</code></a>
+ (HMAC with MD5)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>MD5</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacMD5, 1.3.6.1.5.5.8.1.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacShaKeyGenerator.html" title="class in iaik.security.mac"><code>HMAC/SHA1</code></a>
+ (HMAC with SHA)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>SHA-1</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacSHA1, HMAC/SHA-1, HMAC/SHA,
+ 1.3.6.1.5.5.8.1.2, 1.2.840.113549.2.7</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacSha224KeyGenerator.html" title="class in iaik.security.mac"><code>HMAC/SHA224</code></a> (HMAC with SHA224)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>SHA-224</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacSHA224, HMAC/SHA-224, 1.2.840.113549.2.8</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacSha256KeyGenerator.html" title="class in iaik.security.mac"><code>HMAC/SHA256</code></a> (HMAC with SHA256)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>SHA-256</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacSHA256, HMAC/SHA-256, 1.2.840.113549.2.9</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacSha384KeyGenerator.html" title="class in iaik.security.mac"><code>HMAC/SHA384</code></a> (HMAC with SHA384)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>SHA-384</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacSHA384, HMAC/SHA-384, 1.2.840.113549.2.10</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacSha512KeyGenerator.html" title="class in iaik.security.mac"><code>HMAC/SHA512</code></a> (HMAC with SHA512)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>SHA-512</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacSHA512, HMAC/SHA-512, 1.2.840.113549.2.11</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacRipeMd128KeyGenerator.html" title="class in iaik.security.mac"><code>HMAC/RIPEMD128</code></a> (HMAC with RipeMd128)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>RipeMd128</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacRipeMd128, HMAC/RIPEMD-128,
+ HMAC/RipeMd128</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacRipeMd160KeyGenerator.html" title="class in iaik.security.mac"><code>HMAC/RIPEMD160</code></a> (HMAC with RipeMd160)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>RipeMd160</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacRipeMd160, HMAC/RIPEMD-160,
+ 1.3.6.1.5.5.8.1.4, HMAC/RipeMd160</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacWhirlpoolKeyGenerator.html" title="class in iaik.security.mac"><code>HMAC/WHIRLPOOL</code></a> (HMAC with WHIRLPOOL)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>WHIRLPOOL</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacWHIRLPOOL, HmacWhirlpool</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/mac/HMacGOSTKeyGenerator.html" title="class in iaik.security.mac"><code>HMAC/GOST3411</code></a> (HMAC with GOST3411)</td>
+ <td valign = "top">Keyed-Hashing for Message Authentication as described in
+ <a href = "http://www.ietf.org/rfc/rfc2104.txt"
+ target="_blank">RFC&nbsp;2104</a> using <em>GOST3411</em> as message digest
+ algorithm</td>
+ <td align = "center" valign = "middle">HmacGOST, 1.2.643.2.2.10</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/AESKeyGenerator.html" title="class in iaik.security.cipher"><code>AESWrapAES</code></a>
+ (AES Key Wrap)</td>
+ <td valign = "top">Key generator for generating AES 128 bit key encryption
+ keys for wrapping content encryption keys with 128 bit AES key encryption
+ keys as specified by <A HREF="http://www.ietf.org/rfc/rfc3394.txt"
+ target="_blank">RFC 3394</A></td>
+ <td align = "center" valign = "middle">AESWRAP, AES128WRAP, AES128WrapAES128,
+ 2.16.840.1.101.3.4.1.5</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/AES192KeyGenerator.html" title="class in iaik.security.cipher"><code>AES192WrapAES192</code></a> (AES Key Wrap)</td>
+ <td valign = "top">Key generator for generating AES 192 bit key encryption
+ keys for wrapping content encryption keys with 192 bit AES key encryption
+ keys as specified by <A HREF="http://www.ietf.org/rfc/rfc3394.txt"
+ target="_blank">RFC 3394</A></td>
+ <td align = "center" valign = "middle">AES192WRAP,AES192WrapAES192,
+ 2.16.840.1.101.3.4.1.25</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/AES256KeyGenerator.html" title="class in iaik.security.cipher"><code>AES256WrapAES256</code></a> (AES Key Wrap)</td>
+ <td valign = "top">Key generator for generating AES 256 bit key encryption
+ keys for wrapping content encryption keys with 256 bit AES key encryption
+ keys as specified by <A HREF="http://www.ietf.org/rfc/rfc3394.txt"
+ target="_blank">RFC 3394</A></td>
+ <td align = "center" valign = "middle">AES256WRAP,AES256WrapAES256,
+ 2.16.840.1.101.3.4.1.45</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/CamelliaKeyGenerator.html" title="class in iaik.security.cipher"><code>CamelliaWrapCamellia</code></a> (Camellia Key Wrap)</td>
+ <td valign = "top">Key generator for generating Camellia 128 bit key
+ encryption keys for wrapping content encryption keys with 128 bit Camellia
+ key encryption keys as specified by <A
+ HREF="http://www.ietf.org/rfc/rfc3657.txt" target="_blank">RFC 3657</A></td>
+ <td align = "center" valign = "middle">CamelliaWRAP, Camellia128WRAP,
+ Camellia128WrapCamellia128, 1.2.392.200011.61.1.1.3.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/Camellia192KeyGenerator.html" title="class in iaik.security.cipher"><code>Camellia192WrapCamellia192</code></a> (Camellia Key Wrap)</td>
+ <td valign = "top">Key generator for generating Camellia 192 bit key
+ encryption keys for wrapping content encryption keys with 192 bit Camellia
+ key encryption keys as specified by <A
+ HREF="http://www.ietf.org/rfc/rfc3657.txt" target="_blank">RFC 3657</A></td>
+ <td align = "center" valign = "middle">
+ Camellia192WRAP,Camellia192WrapCamellia192, 1.2.392.200011.61.1.1.3.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/Camellia256KeyGenerator.html" title="class in iaik.security.cipher"><code>Camellia256WrapCamellia256</code></a> (Camellia Key Wrap)</td>
+ <td valign = "top">Key generator for generating Camellia 256 bit key
+ encryption keys for wrapping content encryption keys with 256 bit Camellia
+ key encryption keys as specified by <A
+ HREF="http://www.ietf.org/rfc/rfc3657.txt" target="_blank">RFC 3657</A></td>
+ <td align = "center" valign = "middle">
+ Camellia256WRAP,Camellia256WrapCamellia256, 1.2.392.200011.61.1.1.3.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/CAST128KeyGenerator.html" title="class in iaik.security.cipher"><code>CAST128WrapCAST128</code></a> (CAST128 Key Wrap)</td>
+ <td valign = "top">Key generator for generating CAST128 key encryption keys
+ as used by <A HREF = "http://www.ietf.org/rfc/rfc2984.txt"
+ target="_blank">CMS</A> for wrapping CAST128 content encryption keys with
+ CAST128 key encryption keys</td>
+ <td align = "center" valign = "middle">CAST5WrapCAST5, CASTWrapCAST,
+ CASTWRAP, CAST128WRAP, CAST5WRAP, 1.2.840.113533.7.66.15</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/TripleDESKeyGenerator.html" title="class in iaik.security.cipher"><code>DESedeWrapDESede</code></a> (Triple-DES Key Wrap)</td>
+ <td valign = "top">Key generator for generating 3DES key encryption keys as
+ used by <A HREF="http://www.ietf.org/html.charters/smime-charter.html"
+ target="_blank">CMS</A> for wrapping TripleDES content encryption keys with
+ TripleDES key encryption keys</td>
+ <td align = "center" valign = "middle">3DESWrap3DES, TripleDESWrapTripleDES,
+ DESEDEWRAP, 1.2.840.113549.1.9.16.3.6</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>IDEAWrapIDEA</code>
+ (IDEA Key Wrap)</td>
+ <td valign = "top">Key generator for generating IDEA key encryption keys used
+ by <A HREF = "http://www.ietf.org/rfc/rfc3058.txt" target="_blank">CMS</A>
+ for wrapping IDEA content encryption keys with IDEA key encryption keys</td>
+ <td align = "center" valign = "middle">IdeaWrapIdea, IDEAWRAP,
+ 1.3.6.1.4.1.188.7.1.1.6</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/RC2KeyGenerator.html" title="class in iaik.security.cipher"><code>RC2WrapRC2</code></a>
+ (RC2 Key Wrap)</td>
+ <td valign = "top">Key generator for generating RC2 key encryption keys as
+ used by <A HREF="http://www.ietf.org/html.charters/smime-charter.html"
+ target="_blank">CMS</A> for wrapping RC2 content encryption keys with RC2 key
+ encryption keys</td>
+ <td align = "center" valign = "middle">RC2WRAP, 1.2.840.113549.1.9.16.3.7</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/TripleDESKeyGenerator.html" title="class in iaik.security.cipher"><code>3DESwrapHMAC</code></a> (3DES based HMAC Key Wrap)</td>
+ <td valign = "top">Key generator for generating 3DES key encryption keys as
+ used by <A HREF="http://www.ietf.org/html.charters/smime-charter.html"
+ target="_blank">CMS</A> for wrapping a HMAC key with a 3DES key encryption
+ keys</td>
+ <td align = "center" valign = "middle">HMACwith3DESwrap,
+ HMACwithTripleDESwrap, HMACwithDESedewrap, 1.2.840.113549.1.9.16.3.11</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/AESKeyGenerator.html" title="class in iaik.security.cipher"><code>AESwrapHMAC</code></a>
+ (AES based HMAC Key Wrap)</td>
+ <td valign = "top">Key generator for generating AES key encryption keys as
+ used by <A HREF="http://www.ietf.org/html.charters/smime-charter.html"
+ target="_blank">CMS</A> for wrapping a HMAC key with an AES key encryption
+ key according to <A HREF="http://www.ietf.org/rfc/rfc3537.txt"
+ target="_blank">RFC 3537</a></td>
+ <td align = "center" valign = "middle">HMACwithAESwrap,
+ 1.2.840.113549.1.9.16.3.12</td>
+ </tr>
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Secret Key Factories</b>
+ 
+ <pre>
+ SecretKeyFactory skf = SecretKeyFactory.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>AES</code></a> (AES
+ Key Factory)</td>
+ <td valign = "top">Key Factory for the Advanced Encryption Standard (AES,
+ Rijndael) block cipher.</td>
+ <td align = "center" valign = "middle">AES128, AES-128,
+ 2.16.840.1.101.3.4.1.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>AES192</code></a>
+ (AES-192 Key Factory)</td>
+ <td valign = "top">Key Factory for creating 192bit keys for the Advanced
+ Encryption Standard (AES, Rijndael) block cipher.</td>
+ <td align = "center" valign = "middle">AES192, AES-192,
+ 2.16.840.1.101.3.4.1.22</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>AES256</code></a>
+ (AES-256 Key Factory)</td>
+ <td valign = "top">Key Factory for creating 256bit keys for the Advanced
+ Encryption Standard (AES, Rijndael) block cipher.</td>
+ <td align = "center" valign = "middle">AES256, AES-256,
+ 2.16.840.1.101.3.4.1.42</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>Blowfish</code></a>
+ (Blowfish Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the Blowfish block cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>Camellia</code></a>
+ (Camellia Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the Camellia block cipher with
+ block size of 128 bits.</td>
+ <td align = "center" valign = "middle">Camellia128, Camellia-128,
+ 1.2.392.200011.61.1.1.1.2</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>Camellia192</code></a>
+ (Camellia-192 Key Factory)</td>
+ <td valign = "top">Key Factory for creating 192bit keys for the Camellia
+ block cipher.</td>
+ <td align = "center" valign = "middle">Camellia192, Camellia-192,
+ 1.2.392.200011.61.1.1.1.3</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>Camellia256</code></a>
+ (Camellia-256 Key Factory)</td>
+ <td valign = "top">Key Factory for creating 256bit keys for the Camellia
+ block cipher.</td>
+ <td align = "center" valign = "middle">Camellia256, Camellia-256,
+ 1.2.392.200011.61.1.1.1.4</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>CAST128</code></a>
+ (CAST128 Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the CAST128 block cipher</td>
+ <td align = "center" valign = "middle">CAST5, CAST</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>DES</code></a> (DES
+ Key Factory)</td>
+ <td valign = "top">Symmetric 64-bit block encryption algorithm as defined by
+ NIST in FIPS PUB 46-1 and FIPS PUB 46-2</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>DESede</code></a>
+ (DESede Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the DESede (3DES) algorithm</td>
+ <td align = "center" valign = "middle">3DES</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>GOST</code></a> (GOST
+ Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the GOST block cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>IDEA</code></a> (IDEA
+ Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the IDEA block cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>MARS</code></a> (MARS
+ Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the MARS AES candidate block cipher
+ </td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>RC2</code></a> (RC2
+ Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the RC2 block cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>ARCFOUR</code></a>
+ (ARCFOUR Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the ARCFOUR stream cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>RC5</code></a> (RC5
+ Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the RC5 block cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>RC6</code></a> (RC6
+ Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the RC6 AES candidate block cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>Serpent</code></a>
+ (Serpent Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the Serpent AES candidate block
+ cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>Rijndael</code></a>
+ (Rijndael Key Factory)</td>
+ <td valign = "top">Key Factory for the Rijndael AES block cipher.</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>Rijndael-256</code></a> (Rijndael Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the Rijndael block cipher with
+ block size of 256 bits.</td>
+ <td align = "center" valign = "middle"></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GeneralKeyFactory.html" title="class in iaik.security.cipher"><code>Twofish</code></a>
+ (Twofish Key Factory)</td>
+ <td valign = "top">Secret Key Factory for the Twofish AES candidate block
+ cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs5/KeyFactory.html" title="class in iaik.pkcs.pkcs5"><code>PBE</code></a> (Password Based
+ Encryption Key Factory)</td>
+ <td valign = "top">Password Based Encryption according to <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5</a></td>
+ <td align = "center" valign = "middle">PKCS#5, PKCS5, PbeWithMD5AndDES_CBC,
+ PBEWithMD5AndDES, PbeWithMD5AndDES_CBC, 1.2.840.113549.1.5.3,
+ PBES2, 1.2.840.113549.1.5.13, PBES2WithHmacSHA1AndAES, PBES2WithHmacSHA1AndAES128,
+ PBEWithHmacSHA1AndAES, PBEWithHmacSHA1AndAES128, PBES2WithHmacSHA256AndAES,
+ PBES2WithHmacSHA256AndAES128, PBEWithHmacSHA256AndAES, PBEWithHmacSHA256AndAES128,
+ PBES2WithHmacSHA384AndAES192, PBEWithHmacSHA384AndAES192, PBES2WithHmacSHA512AndAES256,
+ PBEWithHmacSHA512AndAES256, PBES2WithHmacSHA1AndDESede, PBEWithHmacSHA1AndDESede,
+ PBES2WithHmacSHA1AndTripleDES, PBEWithHmacSHA1AndTripleDES</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs12/KeyFactory.html" title="class in iaik.pkcs.pkcs12"><code>PKCS#12</code></a> (Password
+ Based Encryption Key Factory)</td>
+ <td valign = "top">Password Based Encryption according to <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#12</a></td>
+ <td align = "center" valign = "middle">PKCS12, PbeWithSHAAnd3_KeyTripleDES_CBC,
+ PBEWithSHA1And3_KeyTripleDES_CBC, 1.2.840.113549.1.12.1.3,
+ PbeWithSHAAnd40BitRC2_CBC, PBEWithSHA1AndRC2_40, 1.2.840.113549.1.12.1.6,
+ </td>
+ </tr>
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Algorithm Parameter Generators</b>
+ 
+ <pre>
+ AlgorithmParameterGenerator paramGen =
+         AlgorithmParameterGenerator.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dh/DHParameterGenerator.html" title="class in iaik.security.dh"><code>DH</code></a> (Diffie
+ Hellman parameter generator)</td>
+ <td valign = "top">Generator for creating parameters (prime modulus, base
+ generator, length of the private value) to be used for Diffie Hellman key
+ exchange according to <a href = "http://www.ietf.org/rfc/rfc2631.txt"
+ target="_blank">RFC 2631</a>.</td>
+ <td align = "center" valign = "middle">DiffieHellman, Diffie-Hellman, 1.2.840.113549.1.3.1</td>
+ </tr>
+ <td valign = "top"><a href="docs/iaik/security/elgamal/ElGamalParameterGenerator.html" title="class in iaik.security.elgamal"><code>ElGamal</code></a> (ElGamal
+ parameter generator)</td>
+ <td valign = "top">Generator for creating parameters (prime modulus, base
+ generator,...) to be used for the ElGamal encryption scheme over prime fields/td>
+ <td align = "center" valign = "middle">1.3.14.7.2.1.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>ESDH</code>
+ (Ephemeral Static Diffie Hellman parameter generator)</td>
+ <td valign = "top">Generator for creating parameters for the Ephemeral Static
+ Diffie Hellman key exchange according to <a href =
+ "http://www.ietf.org/rfc/rfc2631.txt" target="_blank">RFC 2631</a>.</td>
+ <td align = "center" valign = "middle">ESDiffieHellman</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/pbe/PBEParameterGenerator.html" title="class in iaik.security.pbe"><code>PBE</code></a> (PBE
+ parameter generator)</td>
+ <td valign = "top">Generator for creating parameters (salt and iteration
+ count) to be used for password based encryption according to <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5</a> / <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#12</a></td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ 
+ <tr>
+ <td colspan = 3 bgcolor = "#AEAEAE"><b>Algorithm Parameters</b>
+ 
+ <pre>
+ AlgorithmParameters params =
+         AlgorithmParameters.getInstance(&lt;Standard Name&gt; | &lt;Alias&gt;, "IAIK");
+ </pre>
+ 
+ </td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Standard Name</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Specification</b></td>
+ <td align = "center" bgcolor = "#C0C0C0"><b>Aliases</b></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs1/RSAOaepParameters.html" title="class in iaik.pkcs.pkcs1"><code>RSAES-OAEP</code></a> (RSA
+ OAEP parameters)</td>
+ <td valign = "top">Algorithm parameters for the RSA <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1v2.1</a> OAEP
+ encryption scheme</td>
+ <td align = "center" valign = "middle">RSA-OAEP, RSAOaep, OAEP,
+ 1.2.840.113549.1.1.7, RSA/ECB/OAEP</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/dh/DHParameters.html" title="class in iaik.security.dh"><code>DH</code></a> (Diffie Hellman
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (prime modulus, base generator,
+ length of the private value) representation for Diffie Hellman key exchange
+ which is described in <a href = "http://www.rsa.com/rsalabs/pkcs/"
+ target="_blank">PKCS#3</a></td>
+ <td align = "center" valign = "middle">DiffieHellman, Diffie-Hellman, 1.2.840.113549.1.3.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/elgamal/ElGamalParameters.html" title="class in iaik.security.elgamal"><code>ElGamal</code></a> (ElGamal
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (prime modulus, base generator,
+ length of the private value) representation for ElGamal encryption scheme over prime fields</td>
+ <td align = "center" valign = "middle">1.3.14.7.2.1.1</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>ESDH</code> (Ephemeral
+ Static Diffie Hellman parameters)</td>
+ <td valign = "top">Algorithm parameters for Ephmeral Static Diffie Hellman
+ key exchange according to <a href = "http://www.ietf.org/rfc/rfc2631.txt"
+ target="_blank">RFC 2631</a></td>
+ <td align = "center" valign = "middle">ESDiffieHellman</td>
+ </tr>
+ <tr>
+ <td valign = "top"><code>ESDHKEK</code>
+ (Ephemeral Static Diffie Hellman key encryption key (KEK) parameters)</td>
+ <td valign = "top">Algorithm parameters (OtherInfo) representation for
+ generation of shared key material based on the Ephmeral Static Diffie Hellman
+ key exchange according to <a href = "http://www.ietf.org/rfc/rfc2631.txt"
+ target="_blank">RFC 2631</a></td>
+ <td align = "center" valign = "middle">DiffieHellman</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>AES</code></a> (AES
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the Rijndael Advanced Encryption Standard (AES)</td>
+ <td align = "center" valign = "middle">Rijndael, AES128, AES-128, AES192,
+ AES-192, AES256, AES-256, 2.16.840.1.101.3.4.1.2, 2.16.840.1.101.3.4.1.22,
+ 2.16.840.1.101.3.4.1.42, AES/CBC/PKCS5Padding, AES128/CBC/PKCS5Padding,
+ AES-128/CBC/PKCS5Padding, AES192/CBC/PKCS5Padding, AES-192/CBC/PKCS5Padding,
+ AES256/CBC/PKCS5Padding, AES-256/CBC/PKCS5Padding</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>Blowfish</code></a>
+ (Blowfish parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the Blowfish cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>Camellia</code></a>
+ (Camellia parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the Camellia block cipher with block size of 128 bits.</td>
+ <td align = "center" valign = "middle">Camellia128, Camellia-128,
+ Camellia192, Camellia-192, Camellia256, Camellia-256,
+ 1.2.392.200011.61.1.1.1.2, 1.2.392.200011.61.1.1.1.3,
+ 1.2.392.200011.61.1.1.1.4, Camellia/CBC/PKCS5Padding,
+ Camellia128/CBC/PKCS5Padding, Camellia-128/CBC/PKCS5Padding,
+ Camellia192/CBC/PKCS5Padding, Camellia-192/CBC/PKCS5Padding,
+ Camellia256/CBC/PKCS5Padding, Camellia-256/CBC/PKCS5Padding</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/CAST128Parameters.html" title="class in iaik.security.cipher"><code>CAST128</code></a>
+ (CAST128 parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the CAST128 cipher</td>
+ <td align = "center" valign = "middle">CAST5, CAST, CAST5/CBC/PKCS5Padding,
+ CAST128/CBC/PKCS5Padding, CAST/CBC/PKCS5Padding</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>DES</code></a> (DES
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the DES cipher</td>
+ <td align = "center" valign = "middle">DES/CBC/PKCS5Padding</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>DESede</code></a> (DESede
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the DESede cipher</td>
+ <td align = "center" valign = "middle">3DES, 3DES/CBC/PKCS5Padding,
+ DESede/CBC/PKCS5Padding, TripleDES/CBC/PKCS5Padding</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>GOST</code></a> (GOST
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the GOST cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>IDEA</code></a> (IDEA
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the IDEA cipher</td>
+ <td align = "center" valign = "middle">IDEA/CBC/PKCS5Padding</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>IV</code></a> (IV
+ parameters)</td>
+ <td valign = "top">Initialization vector</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>MARS</code></a> (MARS
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the MARS cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/RC2Parameters.html" title="class in iaik.security.cipher"><code>RC2</code></a> (RC2
+ parameters)</td>
+ <td valign = "top">Algorithm parameters representation for the RC2 cipher</td>
+ <td align = "center" valign = "middle">RC2/CBC/PKCS5Padding</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>RC5</code></a> (RC5
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the RC5 cipher</td>
+ <td align = "center" valign = "middle">RC5/CBC/PKCS5Padding</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>RC6</code></a> (RC6
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the RC6 cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>Rijndael</code></a>
+ (Rijndael parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the Rijndael Advanced Encryption Standard (AES)</td>
+ <td align = "center" valign = "middle">AES, AES128, AES-128, AES192, AES-192,
+ AES256, AES-256, 2.16.840.1.101.3.4.1.2, 2.16.840.1.101.3.4.1.22,
+ 2.16.840.1.101.3.4.1.42, AES/CBC/PKCS5Padding, AES128/CBC/PKCS5Padding,
+ AES-128/CBC/PKCS5Padding, AES192/CBC/PKCS5Padding, AES-192/CBC/PKCS5Padding,
+ AES256/CBC/PKCS5Padding, AES-256/CBC/PKCS5Padding</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>Rijndael-256</code></a>
+ (Rijndael parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the Rijndael block cipher with block size of 256 bits.</td>
+ <td align = "center" valign = "middle"></td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>Serpent</code></a> (Serpent
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the Serpent cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/IvParameters.html" title="class in iaik.security.cipher"><code>Twofish</code></a> (Twofish
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (initialization vector)
+ representation for the Twofish cipher</td>
+ <td align = "center" valign = "middle">-</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs5/PBKDF2.html" title="class in iaik.pkcs.pkcs5"><code>PBKDF2</code></a> (PBKDF2
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (salt, iteration count, PRF, derived key length)
+ representation for the PBDF2 key derivation function specified in <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5v2.1</a></td>
+ <td align = "center" valign = "middle">1.2.840.113549.1.5.12</td>
+ </tr> 
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/pbe/PBEParameters.html" title="class in iaik.security.pbe"><code>PBE</code></a> (PBE
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (salt and iteration count)
+ representation for password based encryption according to <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5</a> / <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#12</a></td>
+ <td align = "center" valign = "middle">PbeWithMD5AndDES_CBC, PBEWithMD5AndDES,
+ 1.2.840.113549.1.5.3, PbeWithSHAAnd3_KeyTripleDES_CBC, PBEWithSHA1And3_KeyTripleDES_CBC,
+ 1.2.840.113549.1.12.1.3, PbeWithSHAAnd40BitRC2_CBC, PBEWithSHA1AndRC2_40,
+ 1.2.840.113549.1.12.1.6
+ </td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/pkcs/pkcs5/PBES2Parameters.html" title="class in iaik.pkcs.pkcs5"><code>PBES2</code></a> (PBES2
+ parameters)</td>
+ <td valign = "top">Algorithm parameters (KDF (with salt, iteration count, PRF, derived key length)
+ and encryption scheme) representation for password based encryption according to <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5v2.1</a> PBES2 scheme</td>
+ <td align = "center" valign = "middle">1.2.840.113549.1.5.13, PBES2WithHmacSHA1AndAES,
+ PBES2WithHmacSHA1AndAES128, PBEWithHmacSHA1AndAES, PBEWithHmacSHA1AndAES128,
+ PBES2WithHmacSHA256AndAES, PBES2WithHmacSHA256AndAES128, PBEWithHmacSHA256AndAES,
+ PBEWithHmacSHA256AndAES128, PBES2WithHmacSHA384AndAES192, PBEWithHmacSHA384AndAES192,
+ PBES2WithHmacSHA512AndAES256, PBEWithHmacSHA512AndAES256, PBES2WithHmacSHA1AndDESede,
+ PBEWithHmacSHA1AndDESede, PBES2WithHmacSHA1AndTripleDES, PBEWithHmacSHA1AndTripleDES</td>
+ </tr> 
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/CAST128WrapParameters.html" title="class in iaik.security.cipher"><code>CAST128Wrap</code></a> (CAST128 key wrap parameters)</td>
+ <td valign = "top">Algorithm parameters (key length) representation for the
+ CAST128 Key Wrap algorithm as used by <a href =
+ http://www.ietf.org/rfc/rfc2984.txt>CMS</a>.</td>
+ <td align = "center" valign = "middle">CAST128KeyWrap, CAST128WrapCAST128,
+ CASTWrap, CASTKeyWrap, CASTWrapCAST, CAST5Wrap, CAST5KeyWrap, CAST5WrapCAST5</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/RC2WrapParameters.html" title="class in iaik.security.cipher"><code>RC2Wrap</code></a>
+ (RC2 key wrap parameters)</td>
+ <td valign = "top">Algorithm parameters (RC2ParameterVersion) representation
+ for the RC2 Key Wrap algorithm as used by <a href =
+ http://www.ietf.org/rfc/rfc2630.txt>CMS</a>.</td>
+ <td align = "center" valign = "middle">RC2KeyWrap, RC2WrapRC2, RC2WRAP</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/CCMParameters.html" title="class in iaik.security.cipher"><code>CCM</code></a> (Counter
+ with CBC-MAC mode parameters)</td>
+ <td valign = "top">Algorithm parameters (associated data, nonce and
+ macLength) for the CCM block cipher mode as specified in <a href =
+ "http://www.ietf.org/rfc/rfc3610.txt?number=3610" target="_blank">RFC
+ 3610</a>, <a href =
+ "http://csrc.nist.gov/publications/nistpubs/800-38C/SP800-38C_updated-July20_2007.pdf"
+ target="_blank"> NIST Special Publication 800-38C</a> and <a href =
+ "http://www.rfc-editor.org/rfc/rfc5084.txt" target="_blank">RFC 5084</a>.</td>
+ <td align = "center" valign = "middle">CCM, AES/CCM/NoPadding, AES128/CCM/NoPadding,
+ AES192/CCM/NoPadding, AES256/CCM/NoPadding, AES-128/CCM/NoPadding,
+ AES-192/CCM/NoPadding, AES-256/CCM/NoPadding</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/CCMCMSParameters.html" title="class in iaik.security.cipher"><code>CCMCMS</code></a>
+ (Counter with CBC-MAC mode parameters)</td>
+ <td valign = "top">Algorithm parameters (associated data, nonce and mac
+ value) for the CCM block cipher mode as specified in <a href =
+ "http://www.ietf.org/rfc/rfc3610.txt?number=3610" target="_blank">RFC
+ 3610</a>, <a href =
+ "http://csrc.nist.gov/publications/nistpubs/800-38C/SP800-38C_updated-July20_2007.pdf"
+ target="_blank"> NIST Special Publication 800-38C</a> and <a href =
+ "http://www.rfc-editor.org/rfc/rfc5084.txt" target="_blank">RFC 5084</a> when
+ used with CMS "http://www.ietf.org/rfc/rfc3610.txt?number=5084"
+ target="_blank">RFC 5084</a>.</td>
+ <td align = "center" valign = "middle">CCMCMS, AES/CCMCMS/NoPadding, AES128/CCMCMS/NoPadding,
+ AES192/CCMCMS/NoPadding, AES256/CCMCMS/NoPadding, AES-128/CCMCMS/NoPadding,
+ AES-192/CCMCMS/NoPadding, AES-256/CCMCMS/NoPadding</td>
+ </tr>
+ <tr>
+ <td valign = "top"><a href="docs/iaik/security/cipher/GCMParameters.html" title="class in iaik.security.cipher"><code>GCM</code></a>
+ (Galois/Counter mode parameters)</td>
+ <td valign = "top">Algorithm parameters (associated data, nonce, macLength
+ and macBlock) for the GCM block cipher mode as specified in <a href =
+ "http://csrc.nist.gov/publications/nistpubs/800-38D/SP-800-38D.pdf"
+ target="_blank">NIST Special Publication 800-38D</a> and <a href =
+ "http://www.rfc-editor.org/rfc/rfc5084.txt" target="_blank">RFC 5084</a>.</td>
+ <td align = "center" valign = "middle">GCM, AES/GCM/NoPadding, AES128/GCM/NoPadding,
+ AES192/GCM/NoPadding, AES256/GCM/NoPadding, AES-128/GCM/NoPadding,
+ AES-192/GCM/NoPadding, AES-256/GCM/NoPadding</td>
+ </tr>
+ </table>
+ <p>
+ 
+ 
+ <HR>
+ <A NAME="modesAndPaddings">1</A>) The IAIK provider supports the following
+ cipher modes and padding schemes:
+ <p>
+ &nbsp;&nbsp;&nbsp;&nbsp;General Usage: <blockquote>
+ 
+ <pre>
+ Cipher cipher = Cipher.getInstance(&quot;Cipher/Operation Mode/Padding Scheme&quot;);
+ </pre>
+ 
+ </blockquote> &nbsp;&nbsp;&nbsp;&nbsp;for instance: <blockquote>
+ 
+ <pre>
+ Cipher des = Cipher.getInstance("DES/CBC/PKCS5Padding", "IAIK");
+ <br>
+ Cipher rsa = Cipher.getInstance("RSA/ECB/PKCS1Padding", "IAIK");
+ </pre>
+ 
+ </blockquote>
+ <p>
+ <table border = "1">
+ <tr>
+ <td colspan = 2 bgcolor = "#AEAEAE"><b>Cipher Modes</b> (default: ECB)</td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0">Name</td>
+ <td align = "center" bgcolor = "#C0C0C0">Specification</td>
+ </tr>
+ <tr>
+ <td valign = "top">ECB (Electronic Code Book)</td>
+ <td valign = "top">"DES MODES OF OPERATION", <a href =
+ "http://www.itl.nist.gov/div897/pubs/fip81.htm" target="_blank">NIST FIPS PUB
+ 81</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">CBC (Cipher Block Chaining)</td>
+ <td valign = "top">"DES MODES OF OPERATION", <a href =
+ "http://www.itl.nist.gov/div897/pubs/fip81.htm" target="_blank">NIST FIPS PUB
+ 81</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">PCBC (Propagated Cipher Block Chaining)</td>
+ <td valign = "top">defined by <a href = "http://www.pdc.kth.se/kth-krb/"
+ target="_blank">Kerberos</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">CFB (Cipher FeedBack)</td>
+ <td valign = "top">"DES MODES OF OPERATION", <a href =
+ "http://www.itl.nist.gov/div897/pubs/fip81.htm" target="_blank">NIST FIPS PUB
+ 81</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">OFB (Output FeedBack)</td>
+ <td valign = "top">"DES MODES OF OPERATION", <a href =
+ "http://www.itl.nist.gov/div897/pubs/fip81.htm" target="_blank">NIST FIPS PUB
+ 81</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">CTR (Counter Mode Encryption)</td>
+ <td valign = "top">"AES MODES OF OPERATION", <a href =
+ "http://csrc.nist.gov/publications/nistpubs/800-38a/sp800-38a.pdf"
+ target="_blank"> NIST: Recommendation for Block Cipher Modes of Operation</a>
+ </td>
+ </tr>
+ <tr>
+ <td valign = "top">CTS (Ciphertext Stealing)</td>
+ <td valign = "top">"Bruce Schneier, "Applied Cryptography""</td>
+ </tr>
+ <tr>
+ <td valign = "top">CCM (Counter with CBC-MAC)</td>
+ <td valign = "top">specified in <a href =
+ "http://www.ietf.org/rfc/rfc3610.txt?number=3610" target="_blank">RFC
+ 3610</a> and <a href =
+ "http://csrc.nist.gov/publications/nistpubs/800-38C/SP800-38C_updated-July20_2007.pdf"
+ target="_blank"> NIST Special Publication 800-38C</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">GCM (Galois/Counter Mode)</td>
+ <td valign = "top">specified in <a href =
+ "http://csrc.nist.gov/publications/nistpubs/800-38D/SP-800-38D.pdf"
+ target="_blank">NIST Special Publication 800-38D</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">0 (only for RSA ciphers)</td>
+ <td valign = "top">block type 00 for RSA PKCS#1v1.5 encryption, private key
+ operations, as specified by <a href =
+ "http://www.rsa.com/rsalabs/node.asp?id=2125" target="_blank">PKCS#1</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">1 (only for RSA ciphers)</td>
+ <td valign = "top">block type 01 for RSA PKCS#1v1.5 encryption, private key
+ operations, as specified by <a href =
+ "http://www.rsa.com/rsalabs/node.asp?id=2125" target="_blank">PKCS#1</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">2 (only for RSA ciphers)</td>
+ <td valign = "top">block type 02 for RSA PKCS#1v1.5 encryption, public key
+ operations, as specified by <a href =
+ "http://www.rsa.com/rsalabs/node.asp?id=2125 target="_blank">PKCS#1</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">SSL (only for RSA ciphers)</td>
+ <td valign = "top">PKCS#1v1.5 RSA encryption (<a href =
+ "http://www.rsa.com/rsalabs/node.asp?id=2125 target="_blank">PKCS#1</a>) as
+ used by IBMJSSE</td>
+ </tr>
+ <tr>
+ <td colspan = 2 bgcolor = "#AEAEAE"><b>Padding Schemes</b> (default:
+ NoPadding)</td>
+ </tr>
+ <tr>
+ <td align = "center" bgcolor = "#C0C0C0">Name</td>
+ <td align = "center" bgcolor = "#C0C0C0">Specification</td>
+ </tr>
+ <tr>
+ <td valign = "top">NoPadding</td>
+ <td valign = "top">Uses no padding scheme. If no padding is used the input
+ must be a multiple of the block size unless cipher mode is CFB, OFB, CTR,
+ CTS, CCM or GCM.</td>
+ </tr>
+ <tr>
+ <td valign = "top">PKCS5Padding (PKCS#5 Padding)</td>
+ <td valign = "top">padding scheme as described in specified by <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#5</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">SSL3Padding</td>
+ <td valign = "top">padding scheme as described in the Secure Sockets Layer
+ (SSL v3)</a> specification</td>
+ </tr>
+ <tr>
+ <td valign = "top">ISO78164Padding</td>
+ <td valign = "top">padding scheme as described in the ISO 7816-4 Standard
+ (Information technology -- Identification cards -- Integrated circuit(s)
+ cards with contacts -- Part 4: Interindustry commands for interchange)</td>
+ </tr>
+ <tr>
+ <td valign = "top">ISO10126-2</td>
+ <td valign = "top">padding scheme as described in the ISO 10126-2 Standard;
+ used by <a href = "XML Encryption" target="_blank">
+ http://www.w3.org/TR/xmlenc-core/</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">PKCS1Padding (only for RSA ciphers)</td>
+ <td valign = "top">padding scheme as specified by <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1 v1.5</a></td>
+ </tr>
+ <tr>
+ <td valign = "top">OAEP (only for RSA ciphers)</td>
+ <td valign = "top">A padding scheme as specified by <a href =
+ "http://www.rsa.com/rsalabs/pkcs/" target="_blank">PKCS#1 v2.1</a> and P1363.
+ If just <code>OAEP</code> is used as padding name, the hash algorithm is
+ SHA-1 and the mask generation function is MFG1 as specified in PKCS#1. To use
+ a different hash algorithm, the naming scheme is <code>OAEPWith</code>
+ &lt;digest><code>And</code>&lt;mgf><code>Padding</code>; e.g.
+ <code>OAEPWithSHA1AndMGF1Padding</code>. This is as specified in the JCE
+ specification.</td>
+ </tr>
+ </table>
+ <p>
+ 
+ 
+ <HR>
+ <A NAME="blinding">2</A>) The RSA implementation of the IAIK toolkit supports
+ blinding (see e.g. RSA Labs Bulletin Nr. 2, 23 January, 1996). All RSA
+ implementations of the IAIK provider including RSA ciphers and RSA signatures
+ are based on the <a href="docs/iaik/pkcs/pkcs1/RSACipher.html" title="class in iaik.pkcs.pkcs1"><code>RSACipher</code></a> class, which implements
+ the core RSA operation. In this class, blinding can be switched on and off.
+ Per default blinding is switched on. Practical performance measures showed
+ that blinding decreases the performance not that much. A few percent are
+ typical if public exponents are used which improve the performance; e.g.
+ 65537 (decimal). In practice, such exponents are almost always used.</div>
+
+  <hr>
+
+  <h3 class="c7"><a name="ASN.1"></a>ASN.1</h3><span class="c8">The
+  <i>Abstract Syntax Notation One</i> <i>(ASN.1)</i>, defined by
+  the ISO standard ISO 8824/ITU X.208, specifies a language for
+  describing data structures in an abstract and platform
+  independent manner. <i>IAIK-JCE</i> supports all essential basic
+  - simple and constructed - ASN.1 types:</span>
+
+  <ul>
+    <li><span class="c8">BOOLEAN</span></li>
+
+    <li><span class="c8">INTEGER</span></li>
+
+    <li><span class="c8">BITSTRING</span></li>
+
+    <li><span class="c8">OCTETSTRING</span></li>
+
+    <li><span class="c8">NULL</span></li>
+
+    <li><span class="c8">OBJECTIDENTIFIER</span></li>
+
+    <li><span class="c8">ENUMERATED</span></li>
+
+    <li><span class="c8">SEQUENCE</span></li>
+
+    <li><span class="c8">SET</span></li>
+
+    <li><span class="c8">SEQUENCE OF</span></li>
+
+    <li><span class="c8">SET OF</span></li>
+
+    <li><span class="c8">UTCTime</span></li>
+
+    <li><span class="c8">GeneralizedTime</span></li>
+
+    <li><span class="c8">all essential String types</span></li>
+  </ul><span class="c8"><i>IAIK-JCE</i> provides the functionality
+  for porperly handling private, context-specific and application
+  dependent types, as well as the pre-defined standard
+  types.</span>
+
+  <p class="c9">Several en/decoding utilities support mechanisms
+  for DER, Base64, and PEM en/decoding ASN.1 structures that may be
+  implemented as Java classes. For avoiding memory problems ASN.1
+  structures may be written or parsed to/from their encodings in
+  stream based manner.</p>
+
+  <p class="c9"><i>IAK-JCE</i> <span class="c10" lang=
+  "EN-US">i</span><span lang="EN-US" class="c10">ncludes a library
+  of pre-built ASN.1 structures to be used for application
+  protocols like PKCS or X.509</span></p>
+
+  <h3 class="c7"><a name="PKCS"></a>PKCS</h3><span class=
+  "c8">IAIK-JCE supports the following standards of the <a href=
+  "http://www.rsasecurity.com/rsalabs/pkcs/">PKCS</a> public-key
+  cryptography family:</span>
+
+  <ul>
+    <li><span class="c8">PKCS#1: RSA Encryption
+    Standard</span></li>
+
+    <li><span class="c8">PKCS#3: Diffie Hellman Key Agreement
+    Standard</span></li>
+
+    <li><span class="c8">PKCS#5: Password-Based Encryprion
+    Standard</span></li>
+
+    <li><span class="c8">PKCS#7: Cryptographic Message Syntax
+    Standard</span></li>
+
+    <li><span class="c8">PKCS#8: Private-Key Information Syntax
+    Standard</span></li>
+
+    <li><span class="c8">PKCS#9: Selected Attribute
+    Types</span></li>
+
+    <li><span class="c8">PKCS#10: Certification Request Syntax
+    Standard</span></li>
+
+    <li><span class="c8">PKCS#12: Personal Information Exchange
+    Syntax Standard</span></li>
+  </ul><span class="c8">There is support for these additional
+  standards via separate products:</span>
+
+  <ul>
+    <li><span class="c8">PKCS#11: Cryptographic Token Interface
+    Standard. Not supported by IAIK-JCE, but supported by the
+    separate product <a href=
+    "http://jce.iaik.tugraz.at/sic/products/core_crypto_toolkits/pkcs_11_provider">
+    PKCS#11 Provider</a></span></li>
+  </ul>
+
+  <h3><a name="X.509"></a><span class="c8">X.509</span></h3>
+
+  <ul class="c17" type="disc">
+    <li class="MsoNormal c13"><span lang="EN-US" class="c12">fits
+    into the JCA certificate/crl API</span></li>
+
+    <li class="MsoNormal c13"><span lang="EN-US" class=
+    "c12">extends the JCA certificate/crl API about the ability of
+    creating and issuing new certificates</span></li>
+
+    <li class="MsoNormal c13"><span lang="EN-US" class=
+    "c12">supports X.509 public key certificates</span></li>
+
+    <li class="MsoNormal c13"><span lang="EN-US" class=
+    "c12">supports X.509 certificate revocation lists (CRLs), delta
+    CRLs and indirect CRLs</span></li>
+
+    <li class="MsoNormal c13"><span lang="EN-US" class=
+    "c12">supports X.509 qualified certificates</span></li>
+
+    <li class="MsoNormal c13"><span lang="EN-US" class=
+    "c12">supports X.509 attribute certificates</span></li>
+
+    <li class="MsoNormal c13"><span lang="EN-US" class=
+    "c12">implements all X.509 certificate and crl
+    extensions</span></li>
+
+    <li class="MsoNormal c13"><span lang="FR" class=
+    "c14">implements all private Netscape cert
+    extenions</span></li>
+
+    <li class="MsoNormal c13"><span lang="FR" class=
+    "c14">implements all pkix qualified, attribute, and OCSP
+    certificate extensions</span></li>
+
+    <li class="MsoNormal c13"><span lang="FR" class=
+    "c14">implements all mandatory pkix attribute certificate
+    attributes</span></li>
+
+    <li class="MsoNormal c13"><span lang="EN-US" class=
+    "c12">implements the OCSP Online Certificate Status Protocol,
+    version 2.01</span></li>
+
+    <li class="c18">
+      <ul class="c17" type="circle">
+        <li class="MsoNormal c15"><span lang="EN-US" class=
+        "c12">supports client-side and server-side creation,
+        signing, parsing and verification of OCSP requests and
+        responses</span></li>
+
+        <li class="MsoNormal c15"><span lang="EN-US" class=
+        "c12">implements all OCSP client and server
+        extensions</span></li>
+
+        <li class="MsoNormal c15"><span lang="EN-US" class=
+        "c12">supports OCSP over HTTP</span></li>
+
+        <li class="MsoNormal c15"><span class="c16" lang=
+        "EN-US">includes utilities for creating OCSP responses from
+        CRLs and maintaining trusted responder certs</span></li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3 class="c7"><a name="LDAP"></a>LDAP Search
+  utilities</h3><span class="c8">The IAIK-JCE</span> <span class=
+  "c19">LdapURLConnection</span><span class="c8">allows to search
+  an ldap directory for certificates, attribute certificates and
+  certificate revocation lists in a way as accustomed from
+  the</span> <span class="c19">java.net</span><span class="c8">URL
+  framework. Special ldap command line utilities maybe used for
+  downloading certificates, attribute certificates or certificate
+  revocation lists from an ldap server.</span>
+
+  <h3 class="c7"><a name="Random Number Generators"></a>Random
+  Number Generators</h3><span class="c8">IAIK-JCE includes a
+  variety of random number generators including those from NIST
+  SP800-90, ANSI X9.17, FIPS PUB 186-2 and other hash-based random
+  generators. See the table above for available implementations. In
+  addition, IAIK-JCE provides utilities making it easy for GUI
+  developers to use Java AWT events for seeding the
+  generator.</span>
+
+  <h3 class="c7"><a name="jurisdiction"></a>Unlimited Strengh
+  Cryptography</h3><span class="c8">Due to import restrictions of
+  some countries JDK versions &gt;= 1.4 contain so-called
+  jurisdiction policy files only allowing strong but not unlimited
+  cryptography. Trying to use Cipher keys that exceed the
+  restricted key size limit may cause errors mentioning unsupported
+  key sizes. However, since most countries do not have any crypto
+  restrictions, unlimited versions of the jurisdiction policy files
+  are available to may be installed for allowing unlimited key
+  sizes and algorithm parameters. Usually, you can download them
+  from the same web page as the Java runtime or JDK. Usually these
+  files have to be put into the lib/security subdirectory of your
+  JRE; however some VMs (e.g. IBM) may require to put them into
+  another directory (e.g. lib/ext). Please read the installation
+  instructions that come with these policy files. Take care to
+  install these policy files in the correct JRE installation (Note
+  that many JDKs install two JREs by default and that the one which
+  is used by default is not(!) the one embedded in the JDK
+  directory. To see which one is used, you may type <code>java
+  &#8722;verbose &#8722;version</code>).</span>
+
+  <p class="c9">IAIK-JCE (version 3.17 or later) provides special
+  versions of <code>iaik_jce.jar</code> allowing to use unlimited
+  strength cryptography also if only the default jurisdiction
+  policy files are installed. These special versions of
+  <code>iaik_jce.jar</code> are contained in the
+  <i><code>lib-signed/unltd</code></i> sub-directory of the
+  IAIK-JCE distribution. If your application does not directly
+  create a <code>Cipher</code> object (if you are, e.g., accessing
+  a KeyStore or doing document encryption with PKCS#7 or IAIK-CMS
+  (version 4.02 or later), or, for instance, using iSaSiLk (version
+  4.2 or later) for SSL/TLS connections), you simply have to put
+  this unlimited strength version of <code>iaik_jce.jar</code> into
+  your classpath. If you yourself create a <code>Cipher</code>
+  object you should call:</p>
+  <pre class="c20">
+<code>
+  Cipher cipher = iaik.utils.IaikSecurity.getCipher(...);
+</code>
+</pre><span class="c8">instead of calling</span>
+  <pre class="c20">
+<code>
+  Cipher cipher = Cipher.getInstance(...);
+</code>
+</pre><span class="c8">Of course, these unlimited strength versions
+shall be used only in countries which do not have any restrictions
+to cryptographic key sizes or algorithm parameters (which are most
+countries). Therefore these file are not included in the IAIK-JCE
+install file; but can be separatly downloaded from our <a href=
+"http://jce.iaik.tugraz.at/sic/download" target=
+"_blank">Website</a>. These versions of <code>iaik_jce.jar</code>
+may be useful when you want to deploy your application in countries
+with no crypto restrictions, but do not want that all your end
+users have to manually install the unlimited strength jurisdiction
+policy files.</span>
+
+ <h3 class="c7"><a name="aes_addon"></a>AES Addon</h3><span class="c8">
+  Some modern amd64/EMT64 CPUs include Intel's new AES-NI instruction set extension, which allows great performance gains for AES implementations. 
+  Since version 5.0 of IAIK-JCE we have been delivering an addon to our library that makes use of AES-NI. Take a look at the
+  <a href="Install.html#aes_addon">installation guide</a> and at our <a href="Speed.html">speed tables</a> for more details.
+  </span>
+
+  <div class="c22">
+    <table border="0" cellpadding="2">
+      <tr>
+        <td><img src="images/arrow.gif" alt="arrow.gif (1267 Byte)"
+        height="42" width="55"></td>
+
+        <td><span class="c21">Back to <a href=
+        "Readme.html">Readme</a></span></td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+
+  <div class="c23">
+    Copyright (c) 2002 by IAIK. Copyright (C) 2003 - 2015
+    Stiftung SIC. All rights reserved.
+  </div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+  <HEAD>
+    <TITLE>IAIK JCE Provider for PKCS#11</TITLE>
+    <META NAME="Keywords" CONTENT="IAIK, Java, Security, Hardware, JCA, JCE, PKCS#11, Cryptoki, Signature, Encrpytion, Decryption, Cryptography">
+    <META NAME="Description" CONTENT="A Java JCA/JCE Provider that uses PKCS#11 compatible Cryptogrphic Tokens">
+  </HEAD>
+  <BODY>
+    <TABLE BORDER=0>
+      <TR>
+        <TD><IMG SRC="images/siclogo.jpg" ALT="SIC Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD><IMG SRC="images/iaik_logo.gif" ALT="IAIK Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD>
+          <H2>IAIK JCE Provider for PKCS#11, Version 1.5</H2>
+        </TD>
+      </TR>
+    </TABLE>
+    <P><b>This product allows easy integration of smart cards, USB tokens and HSMs
+    into Java&trade; applications. It provides a simple 
+    <code>java.security.KeyStore</code> view of
+    these tokens and makes cryptographic operations of these devices accessible
+    via the JCA/JCE framework. For the application, it is just like working 
+    with pure software crypto and file key stores. The library accesses the 
+    hardware tokens via the PKCS#11 API, also known as Cryptoki. Hence, it can
+    work with any product which supports PKCS#11.</b></P>
+    
+    <P>This package contains a provider implementation of the Java&trade; Cryptography 
+    Extension (JCE, specified by SUN). It is based on the IAIK PKCS#11 Wrapper 
+    and the IAIK-JCE. Thus, it supports Windows, Linux, MacOS and Solaris platform out 
+    of the box. Support for other platforms can be added easily, because the 
+    code of the underlying PKCS#11 Wrapper is available under an Apache-style 
+    license and can be ported with little effort. It runs on JDK 1.3 or later.</P>
+
+    <P>The IAIK JCE Provider for PKCS#11 provides cryptographic functionality, 
+    including hash functions, message authentication codes, symmetric, 
+    asymmetric, stream encryption, block encryption, key and certificate 
+    management. It makes most of the functionality of the PKCS#11 standard 
+    accessible to Java&trade; applications through the JCE API from SUN. This enables 
+    developers to use cryptographic hardware within their Java&trade; applications. 
+    Applications which are already based on a pure software implementation of 
+    the JCE API can use cryptographic hardware with little or no change of their 
+    existing applications. </P>
+    
+    <P>All cryptographic tokens compliant to PKCS#11 version 2.20 or lower can 
+    be used; this includes cryptographic smart cards and USB tokens as well as 
+    hardware security modules (HSMs). 
+    In particular, we tested with products from A.E.T., SUN, Utimaco, 
+    SafeNet, Mozilla, etc.</P>
+
+    <P>The current version of this package is available from <a HREF="http://jce.iaik.tugraz.at/download/">http://jce.iaik.tugraz.at/download/</a></P>
+
+    <P>For people in hurry there is a <A HREF="QuickStart.html">quick start guide</A>.</P>
+
+    <P>For detailed information on the IAIK JCE Provider for PKCS#11 see:
+      <UL type="square">
+        <LI><A HREF="Install.html">Installation</A></LI>
+        <LI><A HREF="Features.html">Features</A></LI>
+        <LI><A HREF="License.html">License</A></LI>
+        <LI><A HREF="Changes.html">Changes</A></LI>
+        <LI><A HREF="Using.html">Using</A></LI>
+        <LI><A HREF="Demo.html">Demos</A></LI>
+        <LI><A HREF="FAQs.html">FAQs</A></LI>
+        <LI><A HREF="api/index.html">API documentation</A></LI>
+      </UL>
+    </P>
+    <HR>
+    <CENTER>Copyright (c) 1997 - 2003 IAIK. Copyright (c) 2003 - 2015 Stiftung SIC. All rights reserved.</CENTER>
+  </BODY>
+</HTML>

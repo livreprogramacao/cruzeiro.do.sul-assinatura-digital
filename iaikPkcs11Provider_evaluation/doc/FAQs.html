@@ -1,0 +1,330 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+  <head>
+    <title>Frequently Asked Questions</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  </head>
+
+  <body bgcolor="#FFFFFF" text="#000000">
+    <TABLE BORDER=0>
+      <TR>
+        <TD><IMG SRC="images/siclogo.jpg" ALT="SIC Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD><IMG SRC="images/iaik_logo.gif" ALT="IAIK Logo"></TD>
+        <TD WIDTH="10"></TD>
+        <TD>
+          <H2>IAIK JCE Provider for PKCS#11: Frequently asked Questions (FAQs)</H2>
+        </TD>
+      </TR>
+    </TABLE>
+
+    <p>Here we provide answers to frequently asked questions. These may help you to solve
+       problems quickly.
+    <p>You can also read the <a href="http://jce.iaik.tugraz.at/products/14_PKCS11_Wrapper/faq/index.php">
+       frequently asked questions (FAQs) for the PKCS#11 wrapper</a>.
+       There you may also find answers that help you finding the reason for errors.
+
+
+    <h2><a href="#1">1. Errors</a></h2>
+
+    <h3>Q1.1: <a href="#Q1_1">When I try to sign or decrypt with my PKCS#11 RSA private
+      key I get an <code>java.lang.UnsupportedOperationException</code> exception
+      with the message &quot;Private Exponent value is sensitive.&quot; What is the
+      problem?</a></h3>
+
+    <h3>Q1.2: <a href="#Q1_2">When I try to encrypt or decrypt with my PKCS#11 secret
+      key I get an <code>java.lang.UnsupportedOperationException</code> exception
+      with the message &quot;Value is sensitive.&quot; What is the problem?</a></h3>
+
+    <h3>Q1.3: <a href="#Q1_3">When reading the key store, after entering the 
+      PIN, I always get an exception like 
+      "<code>java.lang.IllegalArgumentException: Argument "keySpec" must be of 
+      instance iaik.pkcs.pkcs11.provider.keyfactories.PKCS11KeySpec</code>". What 
+      is wrong?</a></h3>
+
+    <h3>Q1.4: <a href="#Q1_4">I try to sign XML using the XSECT library from IAIK.
+      I got the key from the PKCS#11 keystore, but when I try to sign I get an exception
+      including a message saying "Prime P value is sensitive". I used the same code as for
+      signing with a software key, so what is wrong?</a></h3>
+
+    <h3>Q1.5: <a href="#Q1_5">I use the PKCS#11 provider in an applet. 
+      Everything works as expected, but when I reload the applet in the browser
+      the PIN dialog hangs and the complete browser freezes. What is the problem?</a></h3>
+      
+    <h3>Q1.6: <a href="#Q1_6">When I try to use the PKCS#11 provider in my application or with a demo, 
+      I get <code>iaik.pkcs.pkcs11.provider.IAIKPkcs11Exception: 
+      iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_CANT_LOCK</code>. How can I solve this problem?</a></h3>
+
+    <h3>Q1.7: <a href="#Q1_7">I configured the PKCS#11 module for my hardware, but the provider
+      initially throws 
+      <code>iaik.pkcs.pkcs11.provider.IAIKPkcs11Exception: iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_ARGUMENTS_BAD</code>.
+      What can be the problem?</a></h3>
+
+    <h3>Q1.8: <a href="#Q1_8">My application throws an 
+     <code>iaik.pkcs.pkcs11.provider.IAIKPkcs11Exception: iaik.pkcs.pkcs11.wrapper.PKCS11Exception: 
+     CKR_RANDOM_SEED_NOT_SUPPORTED</code>. What is wrong?</a></h3>
+
+    <h3>Q1.9: <a href="#Q1_9">My application throws an 
+     <code>iaik.pkcs.pkcs11.provider.IAIKPkcs11Exception: Required PKCS11_NATIVE_MODULE property has not been configured.</code> What is wrong?</a></h3>
+
+   <h3>Q1.10: <a href="#Q1_10">My application throws an 
+     <code>java.lang.UnsatisfiedLinkError: no pkcs11wrapper in library path or jar file.</code> What is wrong?</a></h3>
+
+    <h3>Q1.11: <a href="#Q1_11">What can be the reason for getting a  
+     <code>iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_OBJECT_HANDLE_INVALID</code> exception?</a></h3>
+
+    <h3>Q1.12: <a href="#Q1_12">When using the PKCS#11 Provider with JSSE, my program gets an exception
+     including <code>Caused by: java.lang.UnsupportedOperationException: Prime P value is sensitive.</code>
+     What can be the problem?</a></h3>
+
+
+    <h2><a href="#2">2. Strange Behavior</a></h2>
+
+    <h3>Q2.1: <a href="#Q2_1">Why does the PKCS11 KeyStore not show certain keys or
+      certificates which are on the token?</a></h3>
+
+    <h3>Q2.2: <a href="#Q2_2">The dialog that prompts the PIN does not always come up
+      correctly. What can I do?</a></h3>
+
+    <h3>Q2.3: <a href="#Q2_3">My application does not terminate after the <code>main()</code> 
+      method finished. Is it a problem with PKCS#11?</a></h3>
+
+    <h3>Q2.4: <a href="#Q2_4">The login dialog appears only on the first access to a token key.
+      Does the provider cache the PIN?</a></h3>
+
+    <hr>
+
+
+    <h2><a name="1">1. Errors</a></h2>
+
+    <h3><a name="Q1_1">Q1.1: When I try to sign or decrypt with my PKCS#11 RSA
+      private key I get an <code>java.lang.UnsupportedOperationException</code> exception
+      with the message &quot;Private Exponent value is sensitive.&quot; What is the
+      problem?</a></h3>
+    <p>This normally means that the application tries to use the PKCS#11 private key
+      with the <code>Signature</code> or <code>Cipher</code> implementation of another
+      (software) provider. The software implementations try to get the private exponent
+      value from the key object to do the operation. This fails, because for most
+      PKCS#11 tokens the private exponents and other sensitive key values are not
+      accessible from outside the token to protect the key. These keys can only
+      be used on the token itself. Thus you must always ensure that the application
+      uses PKCS#11 keys only with the PKCS#11 JCE provider. Otherwise the operation
+      will fail. For ciphers and symmetric keys (secret keys) the situation is the
+      same (see next question). 
+
+    <h3><a name="Q1_2">Q1.2: When I try to encrypt or decrypt with my PKCS#11
+      secret key I get an <code>java.lang.UnsupportedOperationException</code> exception
+      with the message &quot;Value is sensitive.&quot; What is the problem?</a></h3>
+    <p>This normally means that the application tries to use the PKCS#11 secret key
+      with the <code>Cipher</code> implementation of another (software) provider.
+      The software implementations try to get the key value from the key object to
+      do the operation. This fails, because for most PKCS#11 tokens the key material
+      of secret keys is not accessible from outside the token to protect the key.
+      These keys can only be used on the token itself. Thus you must always ensure
+      that the application uses PKCS#11 keys only with the PKCS#11 JCE provider. Otherwise
+      the operation will fail. For signatures and ciphers with asymmetric keys (private
+      and public keys) the situation is the same (see previous question). 
+
+    <h3>Q1.3: <a name="Q1_3">When reading the key store, after entering the PIN, I
+    always get an exception like "<code>java.lang.IllegalArgumentException: Argument "keySpec" must be of instance iaik.pkcs.pkcs11.provider.keyfactories.PKCS11KeySpec</code>". What is wrong?</a></h3>
+    <p>This is usually caused by the certificate parsing of the first JCE provider that
+    supports a key factory suitable for the public key in the certificate (e.g. RSA).
+    The certificate parsing normally uses the first suitable key factory that supports
+    this algorithm. You have several options to solve this problem.
+    First, you can simply install a software provider (e.g. IAIK-JCE) that supports this
+    key factory at a lower index (i.e. with a higher priority).
+    In this case, this provider will be asked for a key factory.
+    Second, if you have a newer version of the PKCS#11 JCE Provider than version 1.0
+    (e.g. 1.1), you can configure a delegate provider for the key factory using the
+    delegation mechanism of the PKCS#11 JCE Provider. See the
+    <A HREF="Using.html#DelegateProvider">Using/Delegate Provider</A>
+    part of the documentation for details about this feature.
+    Third, you can remove the corresponding key factory algorithms from the
+    <CODE>IAIKPkcs11Algorithm.properties</CODE> of your PKCS#11 provider. In this case, you
+    should have at least one software provider (e.g. IAIK-JCE) installed that provides the
+    required key factory.
+    
+    <h3>Q1.4: <a name="Q1_4">I try to sign XML using the XSECT library from IAIK. I got the key from the PKCS#11 keystore, but when I try to sign I get an exception including a message saying "Prime P value is sensitive". I used the same code as for signing with a software key, so what is wrong?</a></h3>
+    <p>The problem is that XSECT tries to use the first JCA provider which supports the requested signature algorithm, no matter if the private key is a PKCS#11 key. If the selected provider is a software JCA provider, it will try to use the PKCS#11 key with its software implementation of the signature algorithm. When it tries to read the key material it fails and gets this exception message, because for most PKCS#11 tokens the key material of private keys is not accessible from outside the token to protect the key.<br>
+    You can solve this by inserting a single line of code, where you tell XSECT what JCA provider to use for signing. When you register the XSECT Provider, specify the PKCS11-Provider as delegate provider for the used signature algorithm:
+<pre><code>
+    XSecProvider xsecProvider = new XSecProvider();
+    // configure delegation for RSA signature with SHA-1
+    XSecProvider.setDelegationProvider("Signature.SHA1withRSA", pkcs11Provider_.getName());
+    Security.addProvider(xsecProvider);
+</code></pre>
+   Where <code>pkcs11Provider_</code> is the instance of the PKCS#11 provider to use (you may also use other means the get the name of your PKCS#11 provider instance).
+  
+    <h3>Q1.5: <a name="Q1_5">I use the PKCS#11 provider in an applet. 
+      Everything works as expected, but when I reload the applet in the browser
+      the PIN dialog hangs and the complete browser freezes. What is the problem?</a></h3>
+    <p>The problem is that the VM destroys the PIN dialogs of the PKCS#11 provider when it destroys the applet, even though these dialogs haven't been created by the applet itself. Thus, when the browser reloads the applet the PIN dialogs have been disposed, or at least most of the internal resources of the dialogs. When the provider wants to prompt the PIN using these dialogs, this causes an exception to be thrown somewhere in the event queue of the windowing toolkit (AWT/Swing). To avoid this problem, you must tell the PKCS#11 provider to create new instances of PIN dialogs next time it needs such a dialog. You can do this by simply adding the following lines to the <code>destroy()</code> method of your applet:
+<pre><code>
+    public void destroy() {
+    
+      ...
+      
+      if (iaikPkcs11Provider_ != null) {
+        DefaultLoginManager loginManager = (DefaultLoginManager) iaikPkcs11Provider_.getLoginManager();
+        loginManager.setPassphrasePrompt(null);
+        loginManager.setPassphraseChangePrompt(null);
+      }
+    }
+</code></pre>
+    Assuming that <code>iaikPkcs11Provider_</code> is a reference to your PKCS#11 provider instance. If you have implemented your own PIN dialogs, you have to ensure that you create new instances of these dialogs when the browser reloads the applet.
+
+    <h3>Q1.6: <a name="Q1_6">When I try to use the PKCS#11 provider in my application or with a demo, 
+      I get <code>iaik.pkcs.pkcs11.provider.IAIKPkcs11Exception: 
+      iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_CANT_LOCK</code>. How can I solve this problem?</a></h3>
+    <p>This may happen if the PKCS#11 module of your cryptographic hardware does not support access from
+      multiple threads simultaneously. Per default, the PKCS#11 provider initializes the PKCS#11 
+      module for multi-threaded access. If the module does not support this, it will cause an
+      exception. However, you can configure the PKCS#11 provider to initialize the PKCS#11 module
+      for single-threaded access. You can do this by setting the <code>MULTI_THREAD_INIT</code>
+      to <code>false</code>. It is <code>true</code> by default.<br>
+      If you do so and it works, be aware of the fact that your PKCS#11 module does not allow
+      concurrent access of the module from different threads. Your application has to take care
+      not to use this PKCS#11 provider instance from multiple threads simultaneously.
+
+    <h3>Q1.7: <a name="Q1_7">I configured the PKCS#11 module for my hardware, but the provider
+      initially throws 
+      <code>iaik.pkcs.pkcs11.provider.IAIKPkcs11Exception: iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_ARGUMENTS_BAD</code>.
+      What can be the problem?</a></h3>
+    <p>Some PKCS#11 modules do not accept any initialization parameters, but per default
+       the PKCS#11 provider tries to initialize the module for multi-threaded access.
+       You can disable this behavior by setting the <code>MULTI_THREAD_INIT</code> entry in your
+       configuration properties to <code>false</code>. Please read the section about the
+       configuration properties in the <A HREF="Using.html#Properties">usage documentation</A> 
+       of the provider.
+
+    <h3>Q1.8: <a name="Q1_8">My application throws an 
+       <code>iaik.pkcs.pkcs11.provider.IAIKPkcs11Exception: iaik.pkcs.pkcs11.wrapper.PKCS11Exception: 
+       CKR_RANDOM_SEED_NOT_SUPPORTED</code>. What is wrong?</a></h3>
+    <p>This can happen if a token does not support setting a random seed value. For example
+      some Schlumberger cards do not support this feature. If an application instantiates a
+      SecureRandom using e.g.
+<pre>
+  SecureRandom random = new SecureRandom();
+</pre>
+      the JCA framework uses the first SecureRandom implementation it can find amongst all
+      registered providers. If the PKCS#11 provider is installed before other providers,
+      the SecureRandom implementation called <code>PKCS11</code> is normally used (see
+      <A HREF="Features.html#SecureRandom">Features table</A> for details).<br>
+      In the <code>IAIKPkcs11Algorithms.properties</code> file, you can disable the 
+      SecureRandom implementations which may cause problems. The last few lines
+      of the resulting file may look like this:
+<pre>
+# generate random, get seed and set seed operates on token
+# SecureRandom.PKCS11 = iaik.pkcs.pkcs11.provider.random.PKCS11RandomSpi
+
+# get seed from token; get random and set seed to software delegate 
+# SecureRandom.PKCS11Seeded = iaik.pkcs.pkcs11.provider.random.PKCS11SeededRandomSpi
+
+# generate random and get seed operates on token, set seed bytes are ignored if no software delegation used
+SecureRandom.PKCS11NoSetSeed = iaik.pkcs.pkcs11.provider.random.PKCS11RandomNoSetSeedSpi
+</pre>
+      Notice the commented out implementations <code>PKCS11</code> and <code>PKCS11Seeded</code>.
+      The only SecureRandom implementation left is the PKCS11NoSetSeed. It has been designed
+      to solve this problem. It does not pass any seed values to the token.
+
+    <h3>Q1.9: <a name="Q1_9">My application throws an 
+     <code>iaik.pkcs.pkcs11.provider.IAIKPkcs11Exception: Required PKCS11_NATIVE_MODULE property has not been configured.</code> What is wrong?</a></h3>
+    <p>The PKCS#11 Provider will throw this exception if the application did not configure the
+      <code>PKCS11_NATIVE_MODULE</code> property of the provider. If the application uses
+      properties files for the provider configuration, there may be two reasons for this
+      exception. First, it may be that the directory structure which contains the configuration
+      properties files is not included in the <code>CLASSPATH</code>. For example, if the configuration
+      properties are in the <code>resources/iaik/pkcs/pkcs11/provider</code> directory, the 
+      <code>resources</code> directory must be in the <code>CLASSPATH</code>.
+      Second, if the properties files are in the <code>CLASSPATH</code>, the 
+      <code>IAIKPkcs11.properties</code> file may not contain a <code>PKCS11_NATIVE_MODULE</code>
+      entry, or that entry may be commented out.
+      
+     <h3>Q1.10: <a name="Q1_10">My application throws an 
+     <code>java.lang.UnsatisfiedLinkError: no pkcs11wrapper in library path or jar file.</code> What is wrong?</a></h3>
+    <p>The PKCS#11 Provider will throw this exception if the application could not find the native PKCS#11 wrapper library.
+      Since PKCS#11 wrapper version 1.4 the native libraries are included in the wrapper's jar file. They are copied to a local directory 
+      and loaded from there. If you get the given exception you may use a system not supported by us or the library could not be 
+      copied to the local directory.<br>
+      You can also configure which library to use. Please see the <A HREF="Install.html">Installation guide</A> for further details.
+
+    <h3>Q1.11: <a name="Q1_11">What can be the reason for getting a  
+     <code>iaik.pkcs.pkcs11.wrapper.PKCS11Exception: CKR_OBJECT_HANDLE_INVALID</code> exception?</a></h3>
+    <p>This can happen for private objects (e.g. private keys) due to a log out of the user from the token.
+      According to the PKCS#11 specification, when a user logs in to a token, private objects get 
+      visible and become a handle each. If the user logs out from the token, the specification
+      says that the private key handles become invalid and remain invalid even after another login.
+      The same private objects then get new handles. This means, after a log out and login, the application
+      should read the token contents again to avoid referring to the correct objects. 
+      <br>Many PKCS#11 module implementations keep the private objects handles stable after
+      log out/login operations, however, applications cannot rely on this behavior in general. If an
+      application rely on this, the developer should get assurance from the module manufacturer.
+      <br>Also, this can happen for session objects if the session has been closed which has been used 
+      for creating the object. Usually, the PKCS#11 provider cares about this. Thus, this should not
+      happen unless the application explicitly closes sessions.
+      
+    <h3>Q1.12: <a name="Q1_12">When using the PKCS#11 Provider with JSSE, my program gets an exception
+     including <code>Caused by: java.lang.UnsupportedOperationException: Prime P value is sensitive.</code>
+     What can be the problem?</a></h3>
+   <p>Most likely, your user application uses the unsigned JAR files when it should use the signed
+      JAR files. This refers to <code>iaikPkcs11Provider.jar</code> and <code>iaik_jce.jar</code> 
+      (or <code>iaik_jce_full.jar</code>). Use the signed versions of these files. 
+      The installation instructions describe this in more detail.
+      <br>This problem can also happen if you use Java 1.5 with an version prior to
+      Java 1.5.0 Update 4 in combination with a PKCS#11 Provider version 1.1.7 or older.
+      The JCA/JCE framework in these Java versions had a bug which can cause this problem 
+      (Java bug database ID 2113627 and 5097015).
+
+
+    <h2><a name="2">2. Strange Behavior</a></h2>
+
+    <h3>Q2.1: <a name="Q2_1">Why does the PKCS11 KeyStore not show certain keys or
+      certificates which are on the token?</a></h3>
+    <p>You have set the property called LOGIN_KEYSTORE_SESSION_ON_DEMAND to <code>true</code> in your
+      IAIKPkcs11.properties file. The keystore would not see all private keys and other private objects on the token in this case.
+
+    <h3>Q2.2: <a name="Q2_2">The dialog that prompts the PIN does not always come up
+      correctly. What can I do?</a></h3>
+    <p>This behavior of the default PIN dialog may occur with certain Java Runtime Environment
+      (JREs). You may simply try to use a different (newer) JRE. Alternatively, you may try to
+      use a different implementation of the PIN dialog. In the "Using"-section of the provider
+      documentation, you can find the description how to configure a different implementation
+      in the configuration file. You may even implement your own dialog by writing a class
+      that implements the iaik.apps.util.passphrase.PassphrasePrompt interface.
+      You can also set a dialog for prompting a PIN at runtime using the
+      <code>setPassphrasePrompt(PassphrasePrompt)</code> method of the <code>DefaultLoginManager</code> 
+      of the <code>IAIKPkcs11</code> provider instance.
+
+    <h3>Q2.3: <a name="Q2_3">My application does not terminate after the <code>main()</code> 
+      method finished. Is it a problem with PKCS#11?</a></h3>
+    <p>No, it is not a problem of PKCS#11. If your application uses the PKCS#11 provider
+       with the Java Swing-based dialogs for prompting the PIN, this problem occurs.
+       It is a common problem with application which use Swing. You can add a 
+       <code>System.exit(0);</code> as last line of your <code>main()</code> method.
+       For further details see the bug with ID 4030718 in SUN's bug database.
+
+    <h3>Q2.4: <a name="Q2_4">The login dialog appears only on the first access to a token key.
+      Does the provider cache the PIN?</a></h3>
+    <p>The provider does not cache the PIN unless the application provides it via
+       the <code>load(InputStream, char[])</code> method of the <code>KeyStore</code>.
+       The reason for not needing to login again is the login state of PKCS#11 tokens.
+       If an application does a login to the token, the login state remains active
+       until the application does an explicit logout or if the application closes
+       all sessions. The PKCS#11 Provider cannot perform a logout automatically as it 
+       would interrupt other currently active operations on the token. It can also not
+       close all sessions, because this would cause the destruction of session key
+       objects. Thus, it is up to the application to perform a logout manually. It can
+       trigger a logout using the <code>logout(Session)</code> method of the 
+       <code>TokenManager</code>. This may look like this in your code:
+<pre>
+  IAIKPkcs11 providerInstance = ...;
+  
+  // ...
+
+  providerInstance.getTokenManager().logout(null);
+</pre>      
+
+    <HR>
+    <CENTER>Copyright (c) 1997 - 2003 IAIK. Copyright (c) 2003 - 2015 Stiftung SIC. All rights reserved.</CENTER>
+  </body>
+</html>

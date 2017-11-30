@@ -1,0 +1,146 @@
+<!doctype html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+  <head>
+    <title>IAIK [CP]AdES toolkit - Usage</title>
+    <meta name="Keywords" content="IAIK, Java, Security, PDF, Signature, PAdES, Cryptography">
+    <meta name="Description" content="A Java toolkit for signing PDF files">
+  </head>
+  <body>
+    <table width="100%" border=0>
+      <tr>
+        <td><img src="images/siclogo.jpg" alt="SIC Logo"></td>
+        <td width="10"></td>
+        <td align="center">
+          <h2>IAIK [CP]AdES toolkit - Usage</h2>
+        </td>
+        <td width="10"></td>
+        <td align="right"><img src="images/iaik_logo.gif" alt="IAIK Logo"></td>
+      </tr>
+    </table>
+    <p>You can find some basic demonstration code in the demo directory. This site will give you a basic usage overview. </p>
+    
+    <h3>Creating and extracting PDF signatures</h3>
+    <p>The usage of the IAIK [CP]AdES toolkit is very similar to a JCA/JCE provider. <br />
+	First, a PdfSignatureEngine instance has to be created:</p>
+
+    <p>
+        <pre>
+      PdfSignatureInstance sigInstance = PdfSignatureEngine.getInstance();
+	</pre>
+   </p>
+
+    <p>This will return a PdfSignatureInstance object using iText, if iText was found in the classpath.
+    Otherwise, the classpath is checked for the PdfBox library and if successful, a PdfSignatureInstance using PDFBox
+    is returned. If no PDF library could be found, this method returns <b>null</b>.</p>
+    
+  <p>Next, you have to create an instance of the required PAdES parameters, 
+	i.e. use <code>PadesBasicParameters</code> if you want to create a 
+	PAdES basic signature, <code>PadesBESParameters</code> 
+	for a PAdES BES signature or <code>PadesLTVParameters</code> for adding 
+	LTV data and a document timestamp.</p>
+
+    <p>
+        <pre>
+      PadesBESParameters params = new PadesBESParameters();
+	</pre>
+   </p>
+
+    <p> Now you have to specify the parameters that shall be included in your signature
+	like digest algorithm, revocation information or timestamp server details.</p>
+
+    <p>
+        <pre>
+      params.setDigestAlgorithm("SHA512");
+      params.setTsaDetails("http://tsp.iaik.tugraz.at/tsp/TspRequest", null, null);
+	</pre>
+   </p>
+
+    <p> The signature engine has to be initialized with these parameters, the 
+	original document (that shall be signed), the path where the signed file shall 
+	be saved, as well as the private key and certificates. Finally, the signature
+	can be created.</p>
+
+    <p>
+        <pre>
+      sigInstance.initSign("original.pdf", pw, "signedfile.pdf", privKey_, certChain_, params);
+      sigInstance.sign();
+	</pre>
+   </p>
+
+   <p>For verification please specify the signed PDF document and extract the contained signatures:</p>
+   
+   <p>
+   	<pre>
+      sigInstance.initVerify(fileToBeVerified, pw);
+      PdfSignatureDetails[] signatures = sigInstance.getSignatures();
+      </pre>
+    </p>
+    
+    <p>The returned signatures can be of type <code>ApprovalSignature</code>, <code>CertificationSignature</code>
+    or <code>DocumentTimestamp</code>.  ApprovalSignature is the standard signature as typically used for signing PDF documents. 
+    Every class offers specific verification methods, e.g.
+    </p>
+    
+    <p>
+      <pre>
+      if (signature instanceof ApprovalSignature) {
+	      ApprovalSignature appSig = (ApprovalSignature) signature;
+	      appSig.verifySignatureValue();
+	      if (appSig.getSignatureTimeStampToken() != null) {
+          appSig.verifySignatureTimestampImprint();
+        }
+	      RevocationInfoArchival revocationInfo = appSig.getRevocationInformation();
+        if (revocationInfo != null) {
+          CertStatus certStatus = appSig.getOcspRevocationStatus();
+          if (certStatus != null && certStatus.getCertStatus() != CertStatus.GOOD
+              || appSig.getCrlRevocationStatus())
+            System.out.println("signer certificate has been revoked");
+        }
+	    }  
+    		</pre>
+    </p>
+
+<h3>Creation and verification of CAdES signatures</h3>
+<p>To create CAdES signatures you can choose between a stream or non-stream signature type. Use
+<p><pre>CadesSignature cadesSig = new CadesSignature(data, SignedData.EXPLICIT);</pre></p>
+if you prefer the non-stream version and 
+<p><pre>CadesSignatureStream cadesSigStream = new CadesSignatureStream(data, SignedData.EXPLICIT);</pre></p>
+for the stream variant.<br />
+You can now define some properties for the required signature, like hash algorithm or a timestamp server if you would like a timestamp to be included.
+<p><pre>
+		CadesTParameters params = new CadesTParameters("http://tsp.iaik.tugraz.at/tsp/TspRequest", null, null);
+    params.setDigestAlgorithm("SHA512");
+</pre></p>
+For both stream and non-stream variants, add a signer info with the signer's key and certificate data and the defined parameters.
+<p><pre>cadesSig.addSignerInfo(privateKey, certificateChain, params);</pre></p>
+Now call 
+<p><pre>cadesSig.encodeSignature();</pre></p>
+for the non-stream signature object and 
+<p><pre>cadesSigStream.encodeSignature(signedSignatureStream);</pre></p>
+for the signature stream to retrieve the encoded CAdES signature.
+</p>
+
+<p>
+In order to verify a given CAdES signature, provide the signature's encoding to the stream or non-stream signature class:
+<p><pre>CadesSignature cadesSig = new CadesSignature(signatureBytes, data);</pre>or
+<pre>CadesSignatureStream cadesSig = new CadesSignatureStream(signatureStream, data);</pre></p>
+This classes provide the required methods to extract and/or verify the signature value, timestamps, etc. E.g. use 
+<p><pre>
+int signerInfoLength = cadesSig.getSignedDataObject().getSignerInfos().length;
+for (int j = 0; j < signerInfoLength; j++) {
+      cadesSig.verifySignatureValue(j);
+      SignatureTimeStamp[] timestamps = cadesSig.getSignatureTimeStamps(j);
+      for (SignatureTimeStamp tst : timestamps) {
+        tst.verifyTimeStampToken(null);
+      }
+    }
+</pre></p>
+
+    <p>You can find example code in the demos directory of the PAdES toolkit package. This directory also
+	provides examples of how to use the IAIK [CP]AdES toolkit with the iText signature API, in case this API is
+	more suitable for you.</p>
+
+    <hr>
+    <center>Copyright (c) 2002 IAIK. Copyright (c) 2003 - 2016 Stiftung SIC. All rights reserved.</center>
+  </body>
+</html>

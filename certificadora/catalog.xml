@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://siaabh3.cruzeirodosul.edu.br/wscertificacao/ListDocuments?wsdl" uri="xml-resources/web-service-references/ListDocuments/wsdl/siaabh3.cruzeirodosul.edu.br/wscertificacao/ListDocuments.wsdl"/>
+    <system systemId="http://siaabh3.cruzeirodosul.edu.br:80/wscertificacao/ListDocuments?xsd=1" uri="xml-resources/web-service-references/ListDocuments/wsdl/siaabh3.cruzeirodosul.edu.br_80/wscertificacao/ListDocuments.xsd_1.xsd"/>
+</catalog>

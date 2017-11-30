@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<link rel="StyleSheet" href="style.css" type="text/css">
+	<TITLE>IAIK-CMS Problem Solving</TITLE>
+</HEAD>
+<BODY>
+<table border="0" width="100%">
+  <tr>
+    <td><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/siclogo.jpg" alt="IAIK" border="0"></a></td>
+
+    <td align="center"><h1>IAIK-CMS Problem Solving</h1><h2><U>Cryptographic Message Syntax / S/MIME Version 3</U></h2></td>
+    <td align="right"><a href="http://jce.iaik.tugraz.at/" target="_blank"><img src="images/iaik_logo.gif" alt="SIC" border="0"></a></td>
+  </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<h3>Trouble-Shouting</h3>
+
+<p>If you have any problems with IAIK-CMS then please take the following steps:</p>
+  <p>
+  1) Read the known problems described later in this file<br>
+  2) Read the FAQ on our <a href="http://jce.iaik.tugraz.at">Web site </a><br>
+  3) Search our newsgroup at <a href="news://news.iaik.at/jce.general">news://news.iaik.at/jce.general</a>; 
+  and use it for posting questions/comments. <br>
+  4) Report the bug to <a href="mailto:jce-support@iaik.tugraz.at">jce-support@iaik.tugraz.at</a><br>
+  </p>
+
+
+<h4>Known Problems and Limitations (listed at FAQ):</h4> 
+<ul>
+  <li><a href="#JavaMail 1.3.3 bug in Base64 decoding">JavaMail<sup>TM</sup> 1.3.3 bug in Base64 decoding</a></li>
+  <li><a href="#SignerInfo does not exist">Error when running S/MIME demo: Signature verification error: SignerInfo does not exist. Wrong index.</a></li>
+  <li><a href="#Outlook single body part">Outlook Express and Outlook: handling of multipart/signed messages with mutlipart/mixed content that only contains one body part</a></li>
+  <li><a href="#Outlook Express triple wrapping">Outlook Express cannot verify of a triple wrapped message when using the multipart/signed content type</a></li>
+  <li><a href="#Outlook Express encryption Cert">Outlook 
+      Express cannot fetch the encryption certificate sent with a signed message</a></li>
+  <li><a href="#Mailcap Problem">UnsupportedDataTypeException: 
+    &quot;no object DCH for MIME type application/pkcs7-signature; name=smime.p7s&quot;</a></li>
+  <li><a href="#JarVerifier">ClassCastException (iaik.asn1.structures.Name) from JarVerifier</a></li>
+  <li><a href="#Stackoverflow">Stackoverflow in JDK 
+    1.4 provider verification mechanism</a></li>
+  <li><a href="#ExceptionInInitializerError">ExceptionInInitializerError: 
+    &quot;Cannot set up certs for trusted CAs&quot;.</a></li>
+
+</ul>
+
+<ul>
+ <li><i>Problem: </i><a name="JavaMail 1.3.3 bug in Base64 decoding"></a>My S/MIME appliaction does not work properly with JavaMail<sup>TM</sup>
+    version 1.3.3. Signatures cannot be verified and encrypted messages cannot be decrypted. However, all works well with JavaMail<sup>TM</sup> 1.3.2.
+    <p><i>Solution:</i>&nbsp; There seems to be a bug in the BASE64 decoding routine used by JavaMail<sup>TM</sup> version 1.3.3. 
+    For that reason base64 encoded MIME parts cannot be properly decoded and you may get exception messages like 
+    the one described in the following bug report. Unfortunetaly we cannot provide a workaround for this problem 
+    since base64 decoding is invoked inside the JavaMail<sup>TM</sup> library. You may use a JavaMail<sup>TM</sup> version prior 1.3.3 
+    (e.g. 1.3.2) or you may switch to  JavaMail<sup>TM</sup> 1.4 which already has fixed the problem. However, please note 
+    that JavaMail<sup>TM</sup> 1.4 only can be used with JDK 1.4 or later.</p>
+  </li>   
+ <li><i>Problem: </i><a name="SignerInfo does not exist"></a>When using JavaMail<sup>TM</sup> 1.3.3
+    and running the SMimeDemo I get the following exception saying that the signature cannot be verified:
+    <pre>
+    java.security.SignatureException: Signature verification error: iaik.cms.CMSSignatureException: SignerInfo does not exist. Wrong index.
+      at demo.smime.DumpMessage.dump(DumpMessage.java:118)
+      at demo.smime.SMimeV3Demo.start(SMimeDemo.java:213)
+      at demo.smime.SMimeV3Demo.main(SMimeDemo.java:882)
+    java.lang.RuntimeException
+      at demo.smime.SMimeV3Demo.start(SMimeDemo.java:465)
+      at demo.smime.SMimeV3Demo.main(SMimeDemo.java:882)
+    </pre>  
+    <p><i>Solution:</i>&nbsp; Due to a bug in the BASE64 decoding routine used by JavaMail<sup>TM</sup> version 1.3.3 the 
+       SignedData object cannot be decoded corretly. For that reason it is not possible to verify the signature. 
+       Unfortunetaly we cannot provide a workaround for this problem since base64 decoding is invoked inside
+       the JavaMail<sup>TM</sup> library. You may use a JavaMail<sup>TM</sup> version prior 1.3.3 (e.g. 1.3.2) or you may switch to 
+       JavaMail<sup>TM</sup> 1.4 which already has fixed the problem. However, please note that JavaMail<sup>TM</sup> 1.4 only can
+       be used with JDK 1.4 or later.</p>
+  </li> 
+ 
+ <li><i>Problem: </i><a name="Outlook single body part"></a>I have used the S/MIME library of 
+     IAIK-CMS to create and sign a multipart/mixed MIME entity consisting of only one body part:
+     <pre>
+     Content-Type: multipart/mixed;
+       boundary="----=_Part_0_1551868.1088869295069"
+       
+       
+     ------=_Part_0_1551868.1088869295069
+     Content-Type: text/plain; charset=us-ascii
+     Content-Transfer-Encoding: 7bit
+       
+       
+     Hello world !
+     ------=_Part_0_1551868.1088869295069--
+     </pre>
+     Athough I have no problems to display the message and verify the signature when using Mozilla, 
+     both Outlook Express and Outlook are not able to handle the message.
+     
+    <p><i>Solution:</i>&nbsp; For some reason Outlook Express and Outlook seem to have problems 
+      with multipart/signed messages where the content consists of a multipart/mixed MIME entity
+      that contains only one body part. However, when creating an implicit signed message 
+      (application/pkcs7-mime), Outlook and Outlook Express are able to handle the message, too. 
+      So you may either create an application/pkcs7-mime message:
+    </p>
+    <pre>
+    boolean implicit = true;
+    SignedContent sc = new SignedContent(implicit);
+    </pre>
+    <p>or not to use a multipart/mixed entity that only consists of one body part with an explicit 
+    SignedContent object (multipart/signed). For your sample you may immediately call method
+    <code>setText</code> of class SignedContent:</p>
+    <pre>
+    boolean implicit = false;
+    SignedContent sc = new SignedContent(false);
+    sc.setText("Hello world !");
+    </pre>
+  </li>
+  
+  <li><i>Problem: </i><a name="Outlook Express triple wrapping"></a>I 
+    have used the S/MIME library of IAIK-CMS to create and send a triple wrapped 
+    (signed-encrypted-signed) message to an Outlook Express mail client. Outlook 
+    express is able to resolve and display the message, but complains that the 
+    signature is not correct. For the signed parts I have used the &quot;multipart/signed&quot; 
+    content type (explicit SignedContent). 
+     
+    <p><i>Solution:</i>&nbsp; For some reason some versions 
+      of Outlook Express seem to have problems when verifying the signatures of 
+      nested multipart/signed messages. You may use the application/pkcs7-mime 
+      (signed-data) content type by creating implicit <code>SignedContent</code> 
+      objects.</p>
+  </li>
+  
+  <li><i>Problem: </i><a name="Outlook Express encryption Cert"></a>I 
+    have used the S/MIME library of IAIK-CMS to create and send a signed message 
+    to an Outlook Express mail client. I have included my encryption certificate 
+    into the SignedData message, but Outook Express is not able to fetch it from 
+    the certificates field. I am using different certificates for signing and 
+    encryption. 
+     
+    <p><i>Solution:</i>&nbsp; Some versions of Outlook 
+      Express and Outlook 98 are not able to recognize the encryption certificate 
+      included in a signed message when separate certificates are used for signing/encryption. 
+      Some versions of MS Outlook Express even complain that the contents maybe 
+      altered. The reason for this strange behaviour is that MS uses a private 
+      attribute (OID "1.3.6.1.4.1.311.16.4") for identifying the encryption certificate 
+      of the sender by issuer name and serial number. When adding signer information 
+      to your <code>SignedContent</code> object 
+      you will have to ensure to use a proper <code>addSigner</code> 
+      method that creates and adds the required private MS attribute to the corresponding 
+      <code>SignerInfo</code> object (see Javadoc 
+      of class <code>SignedContent</code> for 
+      choosing the right <code>addSigner</code> 
+      method). It might be noticed that S/MIMEv3 introduced new attribute (SMIMEEncryptionKeyPreference) 
+      allowing to include identification information similar to the Microsoft 
+      attribute. You may allow method <code>addSigner</code> 
+      to set this attribute, too.</p>
+  </li>
+  
+  <li><i>Problem: </i><a name="Mailcap Problem"></a>When 
+    trying the SMimeSend demo, an exception is thrown saying that there is no 
+    data content handler for the S/MIME content types. 
+     
+    <p><i>Solution:</i>&nbsp;The 
+      mapping between S/MIME types and data content handlers is done by a RFC1524 
+      mailcap file which is included in the IAIK-S/MIME distribution (named &quot;mailcap&quot;) 
+      to be copied into the lib directory of your JavaHome (e.g. 
+      <code>C:/Java/j2re1.4.2/lib</code>). You alternatively 
+      may register the IAIK-S/MIME mailcap file dynamically by using the default 
+      command map: </p>
+    
+    <pre>
+    String mailcapFileName = ...;
+    MailcapCommandMap mc = new MailcapCommandMap(mailcapFileName);
+    CommandMap.setDefaultCommandMap(mc);
+    </pre>
+    <p>Or you may add the IAIK mailcap entries to the 
+      default mailcap command map, e.g.:</p>
+    <pre>
+    MailcapCommandMap mc = (MailcapCommandMap)CommandMap.getDefaultCommandMap();
+    mc.addMailcap(&quot;multipart/signed;; x-java-content-handler=iaik.smime.signed_content&quot;);
+    mc.addMailcap(&quot;application/x-pkcs7-signature;;&nbsp;x-java-content-handler=iaik.smime.signed_content&quot;);
+    mc.addMailcap(&quot;application/x-pkcs7-mime;; x-java-content-handler=iaik.smime.encrypted_content&quot;);
+    mc.addMailcap(&quot;application/pkcs7-signature;;&nbsp;x-java-content-handler=iaik.smime.signed_content&quot;);
+    mc.addMailcap(&quot;application/pkcs7-mime;;&nbsp;x-java-content-handler=iaik.smime.encrypted_content&quot;);
+    mc.addMailcap(&quot;application/x-pkcs10;;&nbsp;x-java-content-handler=iaik.smime.pkcs10_content&quot;);
+    mc.addMailcap(&quot;application/pkcs10;;&nbsp;x-java-content-handler=iaik.smime.pkcs10_content&quot;);
+    CommandMap.setDefaultCommandMap(mc);
+    </pre>
+    <p>For a more detailed description of mailcap handling 
+      consult the Javadoc of the Activation Framework. </p>
+  </li>
+  
+  <li><i>Problem: </i><a name="JarVerifier"></a>When
+         using the S/MIME library, I get a ClassCastException to <code>iaik.asn1.structures.Name</code> from the Java JarVerifier:
+
+  
+   
+<pre>
+java.lang.ClassCastException: iaik.asn1.structures.Name
+        at sun.security.pkcs.PKCS7.getCertificate(PKCS7.java:569)
+        at sun.security.pkcs.SignerInfo.getCertificate(SignerInfo.java:198)
+        at sun.security.pkcs.SignerInfo.verify(SignerInfo.java:324)
+        at sun.security.pkcs.PKCS7.verify(PKCS7.java:463)
+        at sun.security.pkcs.PKCS7.verify(PKCS7.java:480)
+        at sun.security.util.SignatureFileVerifier.process(SignatureFileVerifier.java:143)
+        at java.util.jar.JarVerifier.processEntry(JarVerifier.java:279)
+</pre>
+I am using JDK1.3 and have the IAIK-JCE crypto provider (jar file is not signed)
+installed as first provider.
+ 
+    <p><i>Solution:</i>&nbsp; Some versions of the JavaMail<sup>TM</sup> jar files (e.g. <code>mail.jar</code>)
+and the JavaBeans<sup>TM</sup> Activation Framework jar files (<code>activation.jar</code>) may be signed. Due to a bug (hardcoded
+cast to SUN´s distinguished name implementation) in the jar file verification mechanism of
+some JDK versions it may be necessary to have SUN based DSA/RSA capable providers installed
+before the IAIK provider when the jar file verification takes places. However, you still
+may use IAIK as first provider if you take care to load classes from the <code>mail.jar</code> and <code>activation.jar</code>
+files <i>before</i> installing the IAIK provider. For instance, you may register the
+mailcap file and create a <code>Session</code> object, e.g.:</p>
+<pre>
+   // register content data handlers for S/MIME types   
+   MailcapCommandMap mc = new MailcapCommandMap(&quot;mailcap&quot;);
+   CommandMap.setDefaultCommandMap(mc);
+
+   // create some properties and get the default Session
+   Properties props = new Properties();
+   props.put(&quot;mail.smtp.host&quot;, host);
+   Session session = Session.getDefaultInstance(props, null);
+   
+   // now install IAIK as first provider
+   IAIK.addAsProvider();
+</pre>
+Now <code>MailcapCommandMap</code> and <code>Session</code> are loaded from <code>activation.jar</code> and <code>mail.jar</code>, respectively, and
+the signatures of these two jar files are verified before the IAIK provider is installed.
+<p></p>
+  </li>
+
+  <li><i>Problem: </i><a name="Stackoverflow"></a>When 
+    installing the IAIK-JCE provider (signed version) as first provider for IAIK-CMS 
+    and trying to do some cipher operation (e.g. with the EnvelopedData type) 
+    a stack overflow error occurs.&nbsp;I am using JDK 1.4.  
+     
+    <p><i>Solution:</i>&nbsp; Due to a bug in the JDK 
+      jar file verification mechanism it may be necessary that the original SUN 
+      provider is installed as first provider. So insert the IAIK provider as 
+      second provider and explicitly request an IAIK engine when calling 
+      getInstance:  
+    <pre>Security.insertProviderAt(new IAIK(), 2);
+         Cipher c = Cipher.getInstance(&quot;DES/CBC/PKCS5Padding&quot;,&nbsp;&quot;IAIK&quot;);
+    </pre>
+     Alternatively you may use static method addAsJDK14Provider 
+    of the IAIK-JCE provider main class. This method uses a work around that allows 
+    to use IAIK as first provider for JDK1.4, too: 
+    <pre>IAIK.addAsJDK14Provider();</pre>
+  </li>
+  <li><i>Problem: </i> <a name="ExceptionInInitializerError"></a> 
+    When using IAIK-JCE as crypto provider for IAIK-CMS and trying to do some 
+    cipher operation (e.g. with the EnvelopedData type) I get an ExceptionInInitializerError 
+    is thrown saying &quot;Cannot set up certs for trusted CAs&quot;.&nbsp;I am 
+    using JDK 1.4.  
+     
+    <p><i>Solution:</i>&nbsp; 
+      With JDK1.4 the JCE framework (JAVAX CRYPTO) has been incorporated into 
+      the standard JDK. Because of export regulations a JCE provider only maybe 
+      used with JDK1.4 (or JCE 1.2.1) if it is signed. IAIK-JCE provides signed 
+      and unsigned versions of its jar files (iaik_jce.jar, iaik_jce_full.jar). 
+      Using the unsigned version with JDK 1.4 will cause the ExceptionInInitializerError 
+      &quot;Cannot set up certs for trusted CAs&quot;. Please use the signed jar 
+      file. <br>
+      You also may ensure that the right JCE policy files are installed in the 
+      lib/security directory. due to import control restrictions of some countries, 
+      JDK1.4 per default comes with jurisdiction policy files allowing &quot;strong&quot; 
+      but limited cryptography; so keys that exeed the allowed strength are not 
+      allowed to be used by this policy. If you are entitled to do so, you may 
+      download and install an &quot;unlimited strengh&quot; version of these files. 
+      Usually, you can download them from the same web page as the Java<sup>TM</sup> runtime 
+      or JDK. Usually these files have to be put into the lib/security subdirectory 
+      of your JRE; however some VMs (e.g. IBM) may require to put them into another 
+      directory (e.g. lib/ext). Please read the installation instructions that 
+      come with these policy files. Take care to install these policy files in 
+      the correct JRE installation. Note that many JDKs install two JREs by default 
+      and that the one which is used by default is not(!) the one embedded in 
+      the JDK directory. To see which one is used, you may type <code>java -verbose 
+      -version</code>.  
+     
+  </li>
+
+</ul>
+<p>&nbsp;</p>
+<DIV align=center>
+  <CENTER>
+   <TABLE cellPadding=2 border=0>
+    <TR>
+     <TD><IMG src="images/arrow.gif"</TD>
+     <TD>Back to <A href="Readme.html">Readme</A></TD>
+    </TR>
+   </TABLE>
+  </CENTER>
+</DIV>
+    
+
+<HR>
+
+<P align=center>Copyright (c) 2002 by&nbsp;IAIK. Copyright (C) 2003 - 2016 Stiftung SIC. All rights reserved.</P>
+<P align=center>&nbsp;</P>
+</BODY>
+</HTML>
